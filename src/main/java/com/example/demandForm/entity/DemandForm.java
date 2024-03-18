@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class demandForm {
+public class DemandForm {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

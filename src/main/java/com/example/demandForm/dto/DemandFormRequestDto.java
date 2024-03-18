@@ -5,9 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class demandFormResponseDto {
+public class DemandFormRequestDto {
 
-    private Long id;
-    private Long productId;
-    private String quantity;
+    private int quantity;
 }

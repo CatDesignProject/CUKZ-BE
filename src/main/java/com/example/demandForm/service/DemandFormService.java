@@ -1,14 +1,14 @@
 package com.example.demandForm.service;
 
-import com.example.demandForm.repository.demandFormRepository;
+import com.example.demandForm.repository.DemandFormRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class demandFormService {
+public class DemandFormService {
 
-    private final demandFormRepository demandFormRepository;
+    private final DemandFormRepository demandFormRepository;
 
-    
+
 }

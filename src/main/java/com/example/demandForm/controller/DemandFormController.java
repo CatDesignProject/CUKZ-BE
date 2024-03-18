@@ -1,12 +1,13 @@
 package com.example.demandForm.controller;
 
-import com.example.demandForm.service.demandFormService;
+import com.example.demandForm.service.DemandFormService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class demandFormController {
+public class DemandFormController {
 
-    private final demandFormService demandFormService;
+    private final DemandFormService demandFormService;
+
 }
