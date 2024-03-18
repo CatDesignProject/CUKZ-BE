@@ -1,5 +1,6 @@
 package com.example.demandForm.dto;
 
+import com.example.demandForm.entity.DemandForm;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,5 +10,11 @@ public class DemandFormResponseDto {
 
     private Long id;
     private Long productId;
-    private String quantity;
+    private int quantity;
+
+    public DemandFormResponseDto(DemandForm demandForm) {
+        this.id = demandForm.getId();
+        this.productId = demandForm.getProduct().getId();
+        this.quantity = demandForm.getQuantity();
+    }
 }

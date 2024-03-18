@@ -29,4 +29,10 @@ public class DemandForm {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+    public DemandForm(int quantity, Member member, Product product) {
+        this.quantity = quantity;
+        this.member = member;
+        this.product = product;
+    }
 }
