@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,10 +23,22 @@ public class DemandFormController {
     public ResponseEntity<DemandFormResponseDto> demand(
         @PathVariable Long productId,
         @Valid @RequestBody DemandFormRequestDto requestDto,
-        @AuthenticationPrincipal Member member) {
+        Member member) {
 
         DemandFormResponseDto responseDto = demandFormService.demand(productId, requestDto, member);
 
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
+//
+//    @GetMapping("/mypage/demand")
+//    public ResponseEntity<Page<DemandFormResponseDto>> getDemandList(
+//        @RequestParam("page") int page,
+//        @RequestParam("size") int size,
+//        Member member) {
+//
+//        Page<DemandFormResponseDto> demandPage = demandFormService.getDemandList(page - 1, size,
+//            member);
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(demandPage);
+//    }
 }
