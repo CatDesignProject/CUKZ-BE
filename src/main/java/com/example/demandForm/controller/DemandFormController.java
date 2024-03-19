@@ -19,26 +19,24 @@ public class DemandFormController {
 
     private final DemandFormService demandFormService;
 
-    @PostMapping("/products/{productId}/demand")
-    public ResponseEntity<DemandFormResponseDto> demand(
+    @PostMapping("/products/{productId}/demand/member")
+    public ResponseEntity<DemandFormResponseDto> demandMember(
         @PathVariable Long productId,
         @Valid @RequestBody DemandFormRequestDto requestDto,
         Member member) {
 
-        DemandFormResponseDto responseDto = demandFormService.demand(productId, requestDto, member);
+        DemandFormResponseDto responseDto = demandFormService.demandMember(productId, requestDto, member);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
-//
-//    @GetMapping("/mypage/demand")
-//    public ResponseEntity<Page<DemandFormResponseDto>> getDemandList(
-//        @RequestParam("page") int page,
-//        @RequestParam("size") int size,
-//        Member member) {
-//
-//        Page<DemandFormResponseDto> demandPage = demandFormService.getDemandList(page - 1, size,
-//            member);
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(demandPage);
-//    }
+
+    @PostMapping("/products/{productId}/demand/non-member")
+    public ResponseEntity<DemandFormResponseDto> demandNonMember(
+            @PathVariable Long productId,
+            @Valid @RequestBody DemandFormRequestDto requestDto) {
+
+        DemandFormResponseDto responseDto = demandFormService.demandNonMember(productId, requestDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+    }
 }
