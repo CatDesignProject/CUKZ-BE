@@ -99,9 +99,7 @@ public class ProductImageServiceImpl implements ProductImageService {
             case "gif":
                 return "image/gif";
             default:
-                return "application/octet-stream"; // 기본적으로 바이너리 데이터로 처리
-            //멀티파트는 임시로 파일을 디스크에 쓰기때문에, 업로드 할 파일이 많거나 용량이 크면 사용하지 않는게 좋습니다
-            //octet stream 추천드려요
+                return "application/octet-stream";
         }
     }
 
