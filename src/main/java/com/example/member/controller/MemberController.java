@@ -1,6 +1,6 @@
 package com.example.member.controller;
 
-import com.example.member.dto.MemberRegisterDto;
+import com.example.member.dto.MemberRegisterRequestDto;
 import com.example.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,8 +19,8 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/register")
-    public ResponseEntity<MemberRegisterDto> registerMember(@RequestBody @Validated MemberRegisterDto memberRegisterDto) {
-        memberService.registerMember(memberRegisterDto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity registerMember(@RequestBody @Validated MemberRegisterRequestDto memberRegisterRequestDto) {
+        memberService.registerMember(memberRegisterRequestDto);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 }

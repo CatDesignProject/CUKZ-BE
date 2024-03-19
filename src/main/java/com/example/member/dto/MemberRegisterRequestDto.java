@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class MemberRegisterDto {
+public class MemberRegisterRequestDto {
 
     @Pattern(regexp = "^[a-zA-Z]{1}[a-zA-Z0-9_]{4,15}$", message = "영문으로 시작, _ 포함 가능, 영문 숫자로 이뤄진 5~16자")
     private String username;
@@ -18,7 +18,7 @@ public class MemberRegisterDto {
     private String nickname;
 
     @Builder
-    public MemberRegisterDto(String username, String password, String nickname) {
+    public MemberRegisterRequestDto(String username, String password, String nickname) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;

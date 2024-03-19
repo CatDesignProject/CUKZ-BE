@@ -1,6 +1,6 @@
 package com.example.member.entity;
 
-import com.example.member.dto.MemberRegisterDto;
+import com.example.member.dto.MemberRegisterRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -33,12 +33,12 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
-    public static Member fromMemberRegisterDto(MemberRegisterDto memberRegisterDto) {
+    public static Member fromMemberRegisterRequestDto(MemberRegisterRequestDto memberRegisterRequestDto) {
         Member member = new Member();
 
-        member.username = memberRegisterDto.getUsername();
-        member.password = memberRegisterDto.getPassword();
-        member.nickname = memberRegisterDto.getNickname();
+        member.username = memberRegisterRequestDto.getUsername();
+        member.password = memberRegisterRequestDto.getPassword();
+        member.nickname = memberRegisterRequestDto.getNickname();
 
         return member;
     }

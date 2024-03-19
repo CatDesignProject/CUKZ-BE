@@ -1,10 +1,11 @@
 package com.example.member.controller;
 
-import com.example.member.dto.MemberRegisterDto;
+import com.example.member.dto.MemberRegisterRequestDto;
 import com.example.member.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,105 +40,108 @@ class MemberControllerTest {
 
     }
 
-    @Test
-    @DisplayName("로그인 DTO 정상 요청")
-    void registerOKMember() throws Exception {
-        // given
-        MemberRegisterDto dto = MemberRegisterDto.builder()
-                .username("username_1234")
-                .password("password!1234")
-                .nickname("닉네임")
-                .build();
+    @Nested()
+    class RegisterTest {
+        @Test
+        @DisplayName("회원가입 DTO 정상 요청")
+        void registerOKMember() throws Exception {
+            // given
+            MemberRegisterRequestDto dto = MemberRegisterRequestDto.builder()
+                    .username("username_1234")
+                    .password("password!1234")
+                    .nickname("닉네임")
+                    .build();
 
 
-        // when
-        ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/members/register")
-                        .content(objectMapper.writeValueAsString(dto))
-                        .contentType(MediaType.APPLICATION_JSON));
+            // when
+            ResultActions resultActions = mockMvc.perform(
+                    MockMvcRequestBuilders.post("/members/register")
+                            .content(objectMapper.writeValueAsString(dto))
+                            .contentType(MediaType.APPLICATION_JSON));
 
-        // then
-        MvcResult mvcResult = resultActions
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn();
+            // then
+            MvcResult mvcResult = resultActions
+                    .andExpect(status().isOk())
+                    .andDo(print())
+                    .andReturn();
 
-        System.out.println(mvcResult.getResponse().getContentAsString());
+            System.out.println(mvcResult.getResponse().getContentAsString());
 
-    }
+        }
 
-    @Test
-    @DisplayName("로그인 DTO username 비정상 요청")
-    void registerUsernameNotOKMember() throws Exception {
-        // given
-        MemberRegisterDto dto = MemberRegisterDto.builder()
-                .username("_username")
-                .password("password!1234")
-                .nickname("닉네임")
-                .build();
+        @Test
+        @DisplayName("회원가입 DTO username 비정상 요청")
+        void registerUsernameNotOKMember() throws Exception {
+            // given
+            MemberRegisterRequestDto dto = MemberRegisterRequestDto.builder()
+                    .username("_username")
+                    .password("password!1234")
+                    .nickname("닉네임")
+                    .build();
 
-        // when
-        ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/members/register")
-                        .content(objectMapper.writeValueAsString(dto))
-                        .contentType(MediaType.APPLICATION_JSON));
+            // when
+            ResultActions resultActions = mockMvc.perform(
+                    MockMvcRequestBuilders.post("/members/register")
+                            .content(objectMapper.writeValueAsString(dto))
+                            .contentType(MediaType.APPLICATION_JSON));
 
-        // then
-        MvcResult mvcResult = resultActions
-                .andExpect(status().is4xxClientError())
-                .andDo(print())
-                .andReturn();
+            // then
+            MvcResult mvcResult = resultActions
+                    .andExpect(status().is4xxClientError())
+                    .andDo(print())
+                    .andReturn();
 
-        System.out.println(mvcResult.getResponse().getContentAsString());
-    }
+            System.out.println(mvcResult.getResponse().getContentAsString());
+        }
 
-    @Test
-    @DisplayName("로그인 DTO password 비정상 요청")
-    void registerPasswordNotOKMember() throws Exception {
-        // given
-        MemberRegisterDto dto = MemberRegisterDto.builder()
-                .username("username_1234")
-                .password("pass4")
-                .nickname("닉네임")
-                .build();
+        @Test
+        @DisplayName("회원가입 DTO password 비정상 요청")
+        void registerPasswordNotOKMember() throws Exception {
+            // given
+            MemberRegisterRequestDto dto = MemberRegisterRequestDto.builder()
+                    .username("username_1234")
+                    .password("pass4")
+                    .nickname("닉네임")
+                    .build();
 
-        // when
-        ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/members/register")
-                        .content(objectMapper.writeValueAsString(dto))
-                        .contentType(MediaType.APPLICATION_JSON));
+            // when
+            ResultActions resultActions = mockMvc.perform(
+                    MockMvcRequestBuilders.post("/members/register")
+                            .content(objectMapper.writeValueAsString(dto))
+                            .contentType(MediaType.APPLICATION_JSON));
 
-        // then
-        MvcResult mvcResult = resultActions
-                .andExpect(status().is4xxClientError())
-                .andDo(print())
-                .andReturn();
+            // then
+            MvcResult mvcResult = resultActions
+                    .andExpect(status().is4xxClientError())
+                    .andDo(print())
+                    .andReturn();
 
-        System.out.println(mvcResult.getResponse().getContentAsString());
-    }
+            System.out.println(mvcResult.getResponse().getContentAsString());
+        }
 
-    @Test
-    @DisplayName("로그인 DTO nickname 비정상 요청")
-    void registerNicknameNotOKMember() throws Exception {
-        // given
-        MemberRegisterDto dto = MemberRegisterDto.builder()
-                .username("username_1234")
-                .password("password!1234")
-                .nickname(" ")
-                .build();
+        @Test
+        @DisplayName("회원가입 DTO nickname 비정상 요청")
+        void registerNicknameNotOKMember() throws Exception {
+            // given
+            MemberRegisterRequestDto dto = MemberRegisterRequestDto.builder()
+                    .username("username_1234")
+                    .password("password!1234")
+                    .nickname(" ")
+                    .build();
 
-        // when
-        ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/members/register")
-                        .content(objectMapper.writeValueAsString(dto))
-                        .contentType(MediaType.APPLICATION_JSON));
+            // when
+            ResultActions resultActions = mockMvc.perform(
+                    MockMvcRequestBuilders.post("/members/register")
+                            .content(objectMapper.writeValueAsString(dto))
+                            .contentType(MediaType.APPLICATION_JSON));
 
-        // then
-        MvcResult mvcResult = resultActions
-                .andExpect(status().is4xxClientError())
-                .andDo(print())
-                .andReturn();
+            // then
+            MvcResult mvcResult = resultActions
+                    .andExpect(status().is4xxClientError())
+                    .andDo(print())
+                    .andReturn();
 
-        System.out.println(mvcResult.getResponse().getContentAsString());
+            System.out.println(mvcResult.getResponse().getContentAsString());
+        }
     }
 }
