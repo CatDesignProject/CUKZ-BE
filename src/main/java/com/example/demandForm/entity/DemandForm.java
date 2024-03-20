@@ -1,13 +1,24 @@
 package com.example.demandForm.entity;
 
+import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.member.entity.Member;
 import com.example.product.entity.Product;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class DemandForm {
 
@@ -25,17 +36,25 @@ public class DemandForm {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    public DemandForm(int quantity, Member member, Product product) {
-        this.quantity = quantity;
-        this.memberId = member.getId();
-        this.product = product;
-        this.isMember = true;
+    public static DemandForm toMemberEntity(Member member, Product product,
+        DemandFormRequestDto requestDto) {
+
+        return DemandForm.builder()
+            .quantity(requestDto.getQuantity())
+            .memberId(member.getId())
+            .product(product)
+            .isMember(true)
+            .build();
     }
 
-    public DemandForm(int quantity, Long orderNumber, Product product) {
-        this.quantity = quantity;
-        this.memberId = orderNumber;
-        this.product = product;
-        this.isMember = false;
+    public static DemandForm toNonMemberEntity(Long orderNumber, Product product,
+        DemandFormRequestDto requestDto) {
+
+        return DemandForm.builder()
+            .quantity(requestDto.getQuantity())
+            .memberId(orderNumber)
+            .product(product)
+            .isMember(false)
+            .build();
     }
 }

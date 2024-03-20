@@ -7,11 +7,9 @@ import com.example.demandForm.repository.DemandFormRepository;
 import com.example.member.entity.Member;
 import com.example.product.entity.Product;
 import com.example.product.repository.ProductRepository;
-
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Random;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,18 +23,20 @@ public class DemandFormService {
     private static final long MAX_ORDER_NUMBER = 9999999999L;
 
     @Transactional
-    public DemandFormResponseDto demandMember(Long productId, DemandFormRequestDto requestDto, Member member) {
+    public DemandFormResponseDto demandMember(Long productId, DemandFormRequestDto requestDto,
+        Member member) {
 
-        Optional<DemandForm> demandFormExist = demandFormRepository.findByProductIdAndMemberId(productId, member.getId());
+        Optional<DemandForm> demandFormExist = demandFormRepository.findByProductIdAndMemberId(
+            productId, member.getId());
         if (demandFormExist.isPresent()) {
             throw new IllegalArgumentException("이미 수요조사에 참여하였습니다.");
         }
 
         Product product = findProduct(productId);
-        DemandForm demandForm = new DemandForm(requestDto.getQuantity(), member, product);
+        DemandForm demandForm = DemandForm.toMemberEntity(member, product, requestDto);
         demandFormRepository.save(demandForm);
 
-        return new DemandFormResponseDto(demandForm);
+        return DemandFormResponseDto.toResponseDto(demandForm);
     }
 
     @Transactional
@@ -44,10 +44,10 @@ public class DemandFormService {
 
         Product product = findProduct(productId);
         long orderNumber = generateOrderNumber();
-        DemandForm demandForm = new DemandForm(requestDto.getQuantity(), orderNumber, product);
+        DemandForm demandForm = DemandForm.toNonMemberEntity(orderNumber, product, requestDto);
         demandFormRepository.save(demandForm);
 
-        return new DemandFormResponseDto(demandForm);
+        return DemandFormResponseDto.toResponseDto(demandForm);
     }
 
     private Product findProduct(Long productId) {
