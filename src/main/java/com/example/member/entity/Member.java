@@ -35,12 +35,13 @@ public class Member {
 
     public static Member fromMemberRegisterRequestDto(MemberRegisterRequestDto memberRegisterRequestDto) {
         Member member = new Member();
-
         member.username = memberRegisterRequestDto.getUsername();
-        member.password = memberRegisterRequestDto.getPassword();
         member.nickname = memberRegisterRequestDto.getNickname();
-
         return member;
+    }
+
+    public void setEncodedPassword(String encodedPassword) {
+        this.password = encodedPassword;
     }
 
     public void changeNickname(String nickname) {
