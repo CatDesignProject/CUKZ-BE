@@ -1,10 +1,12 @@
 package com.example.demandForm.service;
 
+import com.example.common.exception.GlobalException;
 import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.repository.DemandFormRepository;
 import com.example.member.entity.Member;
+import com.example.member.repository.MemberRepository;
 import com.example.product.entity.Product;
 import com.example.product.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +23,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static com.example.common.exception.BaseErrorCode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,6 +38,9 @@ public class DemandFormServiceTest {
 
     @Mock
     ProductRepository productRepository;
+
+    @Mock
+    MemberRepository memberRepository;
 
     @InjectMocks
     DemandFormService demandFormService;
@@ -73,12 +79,13 @@ public class DemandFormServiceTest {
         @DisplayName("성공(일반 유저)")
         void demandMemberTest_success() {
             // given
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             when(demandFormRepository.findByProductIdAndMemberId(productId, memberId)).thenReturn(Optional.empty());
             when(productRepository.findById(productId)).thenReturn(Optional.of(product));
             when(demandFormRepository.save(any(DemandForm.class))).thenReturn(memberDemandForm);
 
             // when
-            DemandFormResponseDto responseDto = demandFormService.demandMember(productId, requestDto, member);
+            DemandFormResponseDto responseDto = demandFormService.demandMember(productId, requestDto, memberId);
 
             // then
             assertEquals(quantity, responseDto.getQuantity());
@@ -89,34 +96,37 @@ public class DemandFormServiceTest {
         @DisplayName("실패(일반 유저) - 중복 참여")
         void demandMemberTest_fail_duplicate() {
             // given
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             when(demandFormRepository.findByProductIdAndMemberId(productId, memberId))
                     .thenReturn(Optional.of(memberDemandForm));
 
             // when - then
-            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
-                demandFormService.demandMember(productId, requestDto, member);
+            GlobalException e = assertThrows(GlobalException.class, () -> {
+                demandFormService.demandMember(productId, requestDto, memberId);
             });
-            assertEquals("이미 수요조사에 참여하였습니다.", e.getMessage());
+            assertEquals(DUPLICATED_FORM, e.getErrorCode());
         }
 
         @Test
         @DisplayName("실패(일반 유저) - 없는 상품")
         void demandMemberTest_fail_NotFoundProduct() {
             // given
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             when(demandFormRepository.findByProductIdAndMemberId(productId, memberId)).thenReturn(Optional.empty());
             when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
             // when - then
-            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
-                demandFormService.demandMember(productId, requestDto, member);
+            GlobalException e = assertThrows(GlobalException.class, () -> {
+                demandFormService.demandMember(productId, requestDto, memberId);
             });
-            assertEquals("상품을 찾을 수 없습니다.", e.getMessage());
+            assertEquals(NOT_FOUND_PRODUCT, e.getErrorCode());
         }
 
         @Test
         @DisplayName("실패(일반 유저) - 참여 가능한 기간이 아님")
         void demandMemberTest_fail_isNotPeriod() {
             // given
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             LocalDateTime endDate = LocalDateTime.of(2000, 4, 1, 12, 0);
             ReflectionTestUtils.setField(product, "endDate", endDate);
 
@@ -124,10 +134,10 @@ public class DemandFormServiceTest {
             when(productRepository.findById(productId)).thenReturn(Optional.of(product));
 
             // when - then
-            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
-                demandFormService.demandMember(productId, requestDto, member);
+            GlobalException e = assertThrows(GlobalException.class, () -> {
+                demandFormService.demandMember(productId, requestDto, memberId);
             });
-            assertEquals("수요조사 참여 가능 기간이 아닙니다.", e.getMessage());
+            assertEquals(NOT_IN_PERIOD, e.getErrorCode());
         }
 
         @Test

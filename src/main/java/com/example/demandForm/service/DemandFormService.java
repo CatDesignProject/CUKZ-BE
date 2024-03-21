@@ -1,11 +1,13 @@
 package com.example.demandForm.service;
 
+import com.example.common.exception.GlobalException;
 import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
 import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.repository.DemandFormRepository;
 import com.example.member.entity.Member;
+import com.example.member.repository.MemberRepository;
 import com.example.product.entity.Product;
 import com.example.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,22 +23,24 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
 
+import static com.example.common.exception.BaseErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
 public class DemandFormService {
 
     private final DemandFormRepository demandFormRepository;
     private final ProductRepository productRepository;
+    private final MemberRepository memberRepository;
     private static final long MAX_ORDER_NUMBER = 9999999999L;
 
     @Transactional
-    public DemandFormResponseDto demandMember(Long productId, DemandFormRequestDto requestDto, Member member) {
+    public DemandFormResponseDto demandMember(Long productId, DemandFormRequestDto requestDto, Long memberId) {
 
-        // to-do : member role 검증
-
+        Member member = findMember(memberId);
         Optional<DemandForm> demandFormExist = demandFormRepository.findByProductIdAndMemberId(productId, member.getId());
         if (demandFormExist.isPresent()) {
-            throw new IllegalArgumentException("이미 수요조사에 참여하였습니다.");
+            throw new GlobalException(DUPLICATED_FORM);
         }
 
         Product product = findProduct(productId);
@@ -65,18 +69,19 @@ public class DemandFormService {
     public DemandFormResponseDto getDemandFormMember(Long demandFormId) {
 
         DemandForm demandForm = demandFormRepository.findById(demandFormId).orElseThrow(() ->
-                new IllegalArgumentException("폼을 찾을 수 없습니다.")
+                new GlobalException(NOT_FOUND_FORM)
         );
 
         return DemandFormResponseDto.toResponseDto(demandForm);
     }
 
     @Transactional(readOnly = true)
-    public Page<DemandFormResponseDto> getAllDemandFormsMember(int page, int size, Member member) {
+    public Page<DemandFormResponseDto> getAllDemandFormsMember(int page, int size, Long memberId) {
 
+        Member member = findMember(memberId);
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<DemandForm> demandFormList = demandFormRepository.findByMemberId(member.getId(), pageable);
+        Page<DemandForm> demandFormList = demandFormRepository.findByMemberId(memberId, pageable);
 
         return demandFormList.map(DemandFormResponseDto::toResponseDto);
     }
@@ -85,7 +90,7 @@ public class DemandFormService {
     public DemandFormResponseDto getDemandFormNonMember(DemandFormNonMemberRequestDto requestDto) {
 
         DemandForm demandForm = demandFormRepository.findByOrderNumber(requestDto.getOrderNumber()).orElseThrow(() ->
-                new IllegalArgumentException("폼을 찾을 수 없습니다.")
+                new GlobalException(NOT_FOUND_FORM)
         );
 
         return DemandFormResponseDto.toResponseDto(demandForm);
@@ -104,16 +109,22 @@ public class DemandFormService {
         return Long.parseLong(orderNumberStr);
     }
 
+    private Member findMember(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(() ->
+                new GlobalException(NOT_FOUND_MEMBER)
+        );
+    }
+
     private Product findProduct(Long productId) {
         return productRepository.findById(productId).orElseThrow(() ->
-                new IllegalArgumentException("상품을 찾을 수 없습니다.")
+                new GlobalException(NOT_FOUND_PRODUCT)
         );
     }
 
     public void checkPeriod(Product product) {
         LocalDateTime now = LocalDateTime.now();
         if (now.isAfter(product.getEndDate()) || now.isBefore(product.getStartDate())) {
-            throw new IllegalArgumentException("수요조사 참여 가능 기간이 아닙니다.");
+            throw new GlobalException(NOT_IN_PERIOD);
         }
     }
 }

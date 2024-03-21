@@ -4,7 +4,7 @@ import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
 import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
 import com.example.demandForm.service.DemandFormService;
-import com.example.member.entity.Member;
+import com.example.security.authentication.AuthenticatedMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,9 +23,9 @@ public class DemandFormController {
     public ResponseEntity<DemandFormResponseDto> demandMember(
             @PathVariable Long productId,
             @Valid @RequestBody DemandFormRequestDto requestDto,
-            @AuthenticationPrincipal Member member) {   // 로그인 구현 후 수정 예정
+            @AuthenticationPrincipal AuthenticatedMember member) {
 
-        DemandFormResponseDto responseDto = demandFormService.demandMember(productId, requestDto, member);
+        DemandFormResponseDto responseDto = demandFormService.demandMember(productId, requestDto, member.getMemberId());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
@@ -44,9 +44,10 @@ public class DemandFormController {
     public ResponseEntity<Page<DemandFormResponseDto>> getAllDemandFormsMember(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
-            @AuthenticationPrincipal Member member) {
+            @AuthenticationPrincipal AuthenticatedMember member) {
 
-        Page<DemandFormResponseDto> responseDtoList = demandFormService.getAllDemandFormsMember(page - 1, size, member);
+        Page<DemandFormResponseDto> responseDtoList = demandFormService.getAllDemandFormsMember(page - 1, size,
+                member.getMemberId());
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }
