@@ -23,8 +23,7 @@ public class DemandFormService {
     private static final long MAX_ORDER_NUMBER = 9999999999L;
 
     @Transactional
-    public DemandFormResponseDto demandMember(Long productId, DemandFormRequestDto requestDto,
-        Member member) {
+    public DemandFormResponseDto demandMember(Long productId, DemandFormRequestDto requestDto, Member member) {
 
         Optional<DemandForm> demandFormExist = demandFormRepository.findByProductIdAndMemberId(
             productId, member.getId());

@@ -36,8 +36,7 @@ public class DemandForm {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    public static DemandForm toMemberEntity(Member member, Product product,
-        DemandFormRequestDto requestDto) {
+    public static DemandForm toMemberEntity(Member member, Product product, DemandFormRequestDto requestDto) {
 
         return DemandForm.builder()
             .quantity(requestDto.getQuantity())
@@ -47,8 +46,7 @@ public class DemandForm {
             .build();
     }
 
-    public static DemandForm toNonMemberEntity(Long orderNumber, Product product,
-        DemandFormRequestDto requestDto) {
+    public static DemandForm toNonMemberEntity(Long orderNumber, Product product, DemandFormRequestDto requestDto) {
 
         return DemandForm.builder()
             .quantity(requestDto.getQuantity())

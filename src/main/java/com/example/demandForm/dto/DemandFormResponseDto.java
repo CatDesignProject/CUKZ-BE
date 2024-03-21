@@ -18,6 +18,7 @@ public class DemandFormResponseDto {
     private int quantity;
 
     public static DemandFormResponseDto toResponseDto(DemandForm demandForm) {
+
         return DemandFormResponseDto.builder()
             .id(demandForm.getId())
             .productId(demandForm.getProduct().getId())

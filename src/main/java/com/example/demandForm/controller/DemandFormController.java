@@ -26,8 +26,7 @@ public class DemandFormController {
         @Valid @RequestBody DemandFormRequestDto requestDto,
         @AuthenticationPrincipal Member member) {   // 로그인 구현 후 수정 예정
 
-        DemandFormResponseDto responseDto = demandFormService.demandMember(productId, requestDto,
-            member);
+        DemandFormResponseDto responseDto = demandFormService.demandMember(productId, requestDto, member);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
@@ -37,8 +36,7 @@ public class DemandFormController {
         @PathVariable Long productId,
         @Valid @RequestBody DemandFormRequestDto requestDto) {
 
-        DemandFormResponseDto responseDto = demandFormService.demandNonMember(productId,
-            requestDto);
+        DemandFormResponseDto responseDto = demandFormService.demandNonMember(productId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
