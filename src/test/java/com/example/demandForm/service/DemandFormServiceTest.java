@@ -53,8 +53,8 @@ public class DemandFormServiceTest {
         member = new Member();
         ReflectionTestUtils.setField(member, "id", 1L);
 
-        LocalDateTime endDate = LocalDateTime.of(2024, 3, 25, 12, 30);
-        product = new Product(1L, "상품", 10000, "정보", LocalDateTime.now(), endDate);
+        product = new Product();
+        ReflectionTestUtils.setField(product, "id", 1L);
 
         requestDto = new DemandFormRequestDto(quantity);
         memberDemandForm = DemandForm.toMemberEntity(member, product, requestDto);
@@ -85,7 +85,8 @@ public class DemandFormServiceTest {
         @DisplayName("실패(일반 유저) - 중복 참여")
         void demandMemberTest_fail_duplicate() {
             // given
-            when(demandFormRepository.findByProductIdAndMemberId(productId, memberId)).thenReturn(Optional.of(memberDemandForm));
+            when(demandFormRepository.findByProductIdAndMemberId(productId, memberId))
+                    .thenReturn(Optional.of(memberDemandForm));
 
             // when - then
             IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
