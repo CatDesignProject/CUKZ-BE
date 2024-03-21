@@ -26,9 +26,8 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
         MemberAuthenticationToken authenticationToken = (MemberAuthenticationToken) authentication;
         String username = String.valueOf(authenticationToken.getPrincipal());
 
-        Member findMember = memberRepository.findByUsername(username).orElseGet(()-> {
-                    throw new UsernameNotFoundException("아이디를 찾을 수 없습니다.");
-        });
+        Member findMember = memberRepository.findByUsername(username).orElseThrow(
+                ()-> new UsernameNotFoundException("아이디를 찾을 수 없습니다."));
 
         // 2. DB와 password가 일치하는지 검증
         String password = authenticationToken.getCredential();

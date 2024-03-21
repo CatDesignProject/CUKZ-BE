@@ -27,4 +27,10 @@ public class AuthenticatedMember {
         return Objects.hash(memberId, nickName);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("memberId: ").append(memberId).append(", nickname: ").append(nickName);
+        return sb.toString();
+    }
 }
