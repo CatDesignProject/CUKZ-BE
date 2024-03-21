@@ -54,6 +54,10 @@ public class DemandFormServiceTest {
         ReflectionTestUtils.setField(member, "id", 1L);
 
         product = new Product();
+        LocalDateTime startDate = LocalDateTime.of(2024, 3, 20, 12, 0);
+        LocalDateTime endDate = LocalDateTime.of(3024, 4, 1, 12, 0);
+        ReflectionTestUtils.setField(product, "startDate", startDate);
+        ReflectionTestUtils.setField(product, "endDate", endDate);
         ReflectionTestUtils.setField(product, "id", 1L);
 
         requestDto = new DemandFormRequestDto(quantity);
@@ -107,6 +111,23 @@ public class DemandFormServiceTest {
                 demandFormService.demandMember(productId, requestDto, member);
             });
             assertEquals("상품을 찾을 수 없습니다.", e.getMessage());
+        }
+
+        @Test
+        @DisplayName("실패(일반 유저) - 참여 가능한 기간이 아님")
+        void demandMemberTest_fail_isNotPeriod() {
+            // given
+            LocalDateTime endDate = LocalDateTime.of(2000, 4, 1, 12, 0);
+            ReflectionTestUtils.setField(product, "endDate", endDate);
+
+            when(demandFormRepository.findByProductIdAndMemberId(productId, memberId)).thenReturn(Optional.empty());
+            when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+
+            // when - then
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+                demandFormService.demandMember(productId, requestDto, member);
+            });
+            assertEquals("수요조사 참여 가능 기간이 아닙니다.", e.getMessage());
         }
 
         @Test
