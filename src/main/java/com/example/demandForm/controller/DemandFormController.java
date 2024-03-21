@@ -1,5 +1,6 @@
 package com.example.demandForm.controller;
 
+import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
 import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
 import com.example.demandForm.service.DemandFormService;
@@ -55,6 +56,15 @@ public class DemandFormController {
             @PathVariable Long demandFormId) {
 
         DemandFormResponseDto responseDto = demandFormService.getDemandFormMember(demandFormId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @GetMapping("/demand/non-member")
+    public ResponseEntity<DemandFormResponseDto> getDemandFormNonMember(
+            @RequestBody DemandFormNonMemberRequestDto requestDto) {
+
+        DemandFormResponseDto responseDto = demandFormService.getDemandFormNonMember(requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }

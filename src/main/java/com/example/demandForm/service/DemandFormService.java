@@ -1,5 +1,6 @@
 package com.example.demandForm.service;
 
+import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
 import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
 import com.example.demandForm.entity.DemandForm;
@@ -78,6 +79,16 @@ public class DemandFormService {
         Page<DemandForm> demandFormList = demandFormRepository.findByMemberId(member.getId(), pageable);
 
         return demandFormList.map(DemandFormResponseDto::toResponseDto);
+    }
+
+    @Transactional(readOnly = true)
+    public DemandFormResponseDto getDemandFormNonMember(DemandFormNonMemberRequestDto requestDto) {
+
+        DemandForm demandForm = demandFormRepository.findByOrderNumber(requestDto.getOrderNumber()).orElseThrow(() ->
+                new IllegalArgumentException("폼을 찾을 수 없습니다.")
+        );
+
+        return DemandFormResponseDto.toResponseDto(demandForm);
     }
 
     public long generateOrderNumber() {
