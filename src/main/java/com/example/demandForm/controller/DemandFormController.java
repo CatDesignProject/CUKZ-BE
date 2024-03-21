@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,19 +24,21 @@ public class DemandFormController {
     public ResponseEntity<DemandFormResponseDto> demandMember(
         @PathVariable Long productId,
         @Valid @RequestBody DemandFormRequestDto requestDto,
-        Member member) {
+        @AuthenticationPrincipal Member member) {   // 로그인 구현 후 수정 예정
 
-        DemandFormResponseDto responseDto = demandFormService.demandMember(productId, requestDto, member);
+        DemandFormResponseDto responseDto = demandFormService.demandMember(productId, requestDto,
+            member);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @PostMapping("/products/{productId}/demand/non-member")
     public ResponseEntity<DemandFormResponseDto> demandNonMember(
-            @PathVariable Long productId,
-            @Valid @RequestBody DemandFormRequestDto requestDto) {
+        @PathVariable Long productId,
+        @Valid @RequestBody DemandFormRequestDto requestDto) {
 
-        DemandFormResponseDto responseDto = demandFormService.demandNonMember(productId, requestDto);
+        DemandFormResponseDto responseDto = demandFormService.demandNonMember(productId,
+            requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
