@@ -63,4 +63,20 @@ public class ProductService {
         return ProductResponseDto.toResponseDto(product);
     }
 
+    @Transactional
+    public void modifyProduct(Long productId, ProductRequestDto productRequestDto) {
+        Product product = productRepository.findById(productId).orElseThrow();
+
+        if (productRequestDto.getType().equals(ProductType.잠바)) {
+            Jacket jacket = (Jacket) product;
+            jacket.modify(productRequestDto.getName(), productRequestDto.getPrice(), productRequestDto.getInfo()
+                    , productRequestDto.getType(), productRequestDto.getStatus(), productRequestDto.getStartDate()
+                    , productRequestDto.getEndDate(), productRequestDto.getColors(), productRequestDto.getSizes());
+        } else {
+            Goods goods = (Goods) product;
+            goods.modify(productRequestDto.getName(), productRequestDto.getPrice(), productRequestDto.getInfo()
+                    , productRequestDto.getType(), productRequestDto.getStatus(), productRequestDto.getStartDate()
+                    , productRequestDto.getEndDate(), productRequestDto.getColors());
+        }
+    }
 }

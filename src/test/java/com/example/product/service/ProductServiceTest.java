@@ -131,4 +131,85 @@ class ProductServiceTest {
         assertEquals(goods1.getColors(), responseDto.getColors());
         assertEquals(goods1.getMember().getNickname(), responseDto.getNickname());
     }
+
+    @DisplayName("상품 수정(잠바)")
+    @Test
+    void modify_jacket() {
+        //given
+        Long productId = 1L;
+        Product product = new Jacket();
+        given(productRepository.findById(productId)).willReturn(Optional.of(product));
+
+        List<String> colors = new ArrayList<>();
+        colors.add("NAVY");
+
+        List<Size> sizes = new ArrayList<>();
+        sizes.add(Size.S);
+        sizes.add(Size.L);
+
+        ProductRequestDto requestDto = ProductRequestDto.builder()
+                .name("컴공 과잠")
+                .price(50000)
+                .info("가톨릭대학교 컴퓨터정보공학부 19학번 과잠입니다.")
+                .type(ProductType.잠바)
+                .status(SaleStatus.ON_SALE)
+                .startDate(startDate)
+                .endDate(endDate)
+                .colors(colors)
+                .sizes(sizes)
+                .build();
+
+        //when
+        productService.modifyProduct(productId, requestDto);
+
+        //then
+        Jacket jacket = (Jacket) product;
+        assertEquals("컴공 과잠", jacket.getName());
+        assertEquals(50000, jacket.getPrice());
+        assertEquals("가톨릭대학교 컴퓨터정보공학부 19학번 과잠입니다.", jacket.getInfo());
+        assertEquals(ProductType.잠바, jacket.getType());
+        assertEquals(SaleStatus.ON_SALE, jacket.getStatus());
+        assertEquals(startDate, jacket.getStartDate());
+        assertEquals(endDate, jacket.getEndDate());
+        assertEquals(colors, jacket.getColors());
+        assertEquals(sizes, jacket.getAvailableSizes());
+    }
+
+    @DisplayName("상품 수정(굿즈)")
+    @Test
+    void modify_goods() {
+        //given
+        Long productId = 1L;
+        Product product = new Goods();
+        given(productRepository.findById(productId)).willReturn(Optional.of(product));
+
+        List<String> colors = new ArrayList<>();
+        colors.add("YELLOW");
+        colors.add("WHITE");
+
+        ProductRequestDto requestDto = ProductRequestDto.builder()
+                .name("치삼이 키링")
+                .price(10000)
+                .info("치삼이 키링 공구 진행합니다.")
+                .type(ProductType.굿즈)
+                .status(SaleStatus.ON_SALE)
+                .startDate(startDate)
+                .endDate(endDate)
+                .colors(colors)
+                .build();
+
+        //when
+        productService.modifyProduct(productId, requestDto);
+
+        //then
+        Goods goods = (Goods) product;
+        assertEquals("치삼이 키링", goods.getName());
+        assertEquals(10000, goods.getPrice());
+        assertEquals("치삼이 키링 공구 진행합니다.", goods.getInfo());
+        assertEquals(ProductType.굿즈, goods.getType());
+        assertEquals(SaleStatus.ON_SALE, goods.getStatus());
+        assertEquals(startDate, goods.getStartDate());
+        assertEquals(endDate, goods.getEndDate());
+        assertEquals(colors, goods.getColors());
+    }
 }

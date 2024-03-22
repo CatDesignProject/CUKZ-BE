@@ -31,4 +31,10 @@ public class ProductController {
     public ResponseEntity<BaseResponse<ProductResponseDto>> findProduct(@PathVariable Long productId) {
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, productService.findProduct(productId)));
     }
+
+    @PatchMapping("/{productId}")
+    public ResponseEntity<BaseResponse<String>> modifyProduct(@PathVariable Long productId, @RequestBody ProductRequestDto productRequestDto) {
+        productService.modifyProduct(productId, productRequestDto);
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, "수정 완료"));
+    }
 }
