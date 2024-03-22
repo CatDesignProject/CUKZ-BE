@@ -1,6 +1,7 @@
 package com.example.demandForm.service;
 
 import com.example.common.exception.GlobalException;
+import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
 import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
 import com.example.demandForm.entity.DemandForm;
@@ -17,16 +18,23 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.common.exception.BaseErrorCode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ActiveProfiles("test")
@@ -52,6 +60,7 @@ public class DemandFormServiceTest {
     DemandFormRequestDto requestDto;
     Long productId = 1L;
     Long memberId = 1L;
+    Long formId = 1L;
     int quantity = 3;
 
     @BeforeEach
@@ -154,6 +163,66 @@ public class DemandFormServiceTest {
             assertEquals(quantity, responseDto.getQuantity());
             assertEquals(productId, responseDto.getProductId());
             System.out.println("responseDto.orderNumber = " + responseDto.getMemberId());
+        }
+    }
+
+    @Nested
+    @DisplayName("수요조사 참여 폼 조회 테스트")
+    class getDemandTest {
+        @Test
+        @DisplayName("성공(일반 유저)")
+        void getMemberDemandFormTest_success() {
+            //given
+            when(demandFormRepository.findById(formId)).thenReturn(Optional.of(memberDemandForm));
+
+            //when
+            DemandFormResponseDto responseDto = demandFormService.getDemandFormMember(formId);
+
+            //then
+            assertEquals(quantity, responseDto.getQuantity());
+            assertEquals(productId, responseDto.getProductId());
+            assertEquals(memberId, responseDto.getMemberId());
+        }
+
+        @Test
+        @DisplayName("성공(일반 유저)")
+        void getAllDemandFormsMemberTest_success() {
+            // given
+            int page = 1;
+            int size = 10;
+            Pageable pageable = PageRequest.of(page, size);
+            DemandForm memberDemandForm2 = DemandForm.toMemberEntity(member, product, requestDto);
+            List<DemandForm> demandFormList = Arrays.asList(memberDemandForm, memberDemandForm2);
+            Page<DemandForm> demandFormPage = new PageImpl<>(demandFormList, pageable, demandFormList.size());
+
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+            when(demandFormRepository.findByMemberId(eq(memberId), any(Pageable.class))).thenReturn(demandFormPage);
+
+            // when
+            Page<DemandFormResponseDto> responseDtoList = demandFormService.getAllDemandFormsMember(page, size, memberId);
+
+            // then
+            assertEquals(demandFormList.size(), responseDtoList.getContent().size());
+            assertEquals(demandFormPage.getTotalPages(), responseDtoList.getTotalPages());
+            assertEquals(demandFormList.get(0).getId(), responseDtoList.getContent().get(0).getId());
+        }
+
+        @Test
+        @DisplayName("성공(비회원)")
+        void getNonMemberDemandFormTest_success() {
+            //given
+            Long orderNumber = 12345L;
+            DemandFormNonMemberRequestDto requestDto1 = new DemandFormNonMemberRequestDto(orderNumber);
+            when(demandFormRepository.findByOrderNumber(orderNumber)).thenReturn(Optional.of(nonMemberDemandForm));
+            ReflectionTestUtils.setField(nonMemberDemandForm, "memberId", orderNumber);
+
+            //when
+            DemandFormResponseDto responseDto = demandFormService.getDemandFormNonMember(requestDto1);
+
+            //then
+            assertEquals(quantity, responseDto.getQuantity());
+            assertEquals(productId, responseDto.getProductId());
+            assertEquals(requestDto1.getOrderNumber(), responseDto.getMemberId());
         }
     }
 }
