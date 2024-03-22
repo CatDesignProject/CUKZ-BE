@@ -1,6 +1,7 @@
 package com.example.demandForm.controller;
 
 import com.example.common.global.BaseResponse;
+import com.example.common.global.PageResponseDto;
 import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
 import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
@@ -42,7 +43,7 @@ public class DemandFormController {
     }
 
     @GetMapping("/members/demand")
-    public ResponseEntity<BaseResponse<Page<DemandFormResponseDto>>> getAllDemandFormsMember(
+    public ResponseEntity<BaseResponse<PageResponseDto<DemandFormResponseDto>>> getAllDemandFormsMember(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
             @AuthenticationPrincipal AuthenticatedMember member) {
@@ -50,7 +51,7 @@ public class DemandFormController {
         Page<DemandFormResponseDto> responseDtoList = demandFormService.getAllDemandFormsMember(page - 1, size,
                 member.getMemberId());
 
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDtoList));
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, PageResponseDto.toResponseDto(responseDtoList)));
     }
 
     @GetMapping("/members/demand/{demandFormId}")
