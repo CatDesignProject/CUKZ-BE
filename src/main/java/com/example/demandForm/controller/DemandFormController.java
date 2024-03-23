@@ -21,7 +21,7 @@ public class DemandFormController {
 
     private final DemandFormService demandFormService;
 
-    @PostMapping("/products/{productId}/demand/member")
+    @PostMapping("/products/{productId}/demand/members")
     public ResponseEntity<BaseResponse<DemandFormResponseDto>> demandMember(
             @PathVariable Long productId,
             @Valid @RequestBody DemandFormRequestDto requestDto,
@@ -32,7 +32,7 @@ public class DemandFormController {
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.CREATED, responseDto));
     }
 
-    @PostMapping("/products/{productId}/demand/non-member")
+    @PostMapping("/products/{productId}/demand/non-members")
     public ResponseEntity<BaseResponse<DemandFormResponseDto>> demandNonMember(
             @PathVariable Long productId,
             @Valid @RequestBody DemandFormRequestDto requestDto) {
@@ -64,7 +64,7 @@ public class DemandFormController {
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
     }
 
-    @GetMapping("/demand/non-member")
+    @GetMapping("/demand/non-members")
     public ResponseEntity<BaseResponse<DemandFormResponseDto>> getDemandFormNonMember(
             @RequestBody DemandFormNonMemberRequestDto requestDto) {
 
