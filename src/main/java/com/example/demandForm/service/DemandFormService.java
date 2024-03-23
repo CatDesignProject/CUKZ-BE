@@ -77,7 +77,6 @@ public class DemandFormService {
     @Transactional(readOnly = true)
     public Page<DemandFormResponseDto> getAllDemandFormsMember(int page, int size, Long memberId) {
 
-        Member member = findMember(memberId);
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<DemandForm> demandFormList = demandFormRepository.findByMemberId(memberId, pageable);
