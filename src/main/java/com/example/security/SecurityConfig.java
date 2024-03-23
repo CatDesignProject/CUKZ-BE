@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -29,6 +30,7 @@ public class SecurityConfig {
                 .formLogin(login -> login.disable()) // 폼로그인 비허용
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/members/login", "members/register").permitAll() // 로그인, 회원가입 url만 허용
+                        .requestMatchers(new AntPathRequestMatcher("/**/non-members/**")).permitAll()   // 비회원 요청 허용
                         .anyRequest().authenticated())
                 .securityContext(securityContext -> new HttpSessionSecurityContextRepository());
 
