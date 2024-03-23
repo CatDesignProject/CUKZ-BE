@@ -68,10 +68,8 @@ public class DemandFormService {
     @Transactional(readOnly = true)
     public DemandFormResponseDto getDemandFormMember(Long demandFormId, Long memberId) {
 
-        DemandForm demandForm = demandFormRepository.findById(demandFormId).orElseThrow(() ->
-                new GlobalException(NOT_FOUND_FORM)
-        );
-        checkMember(demandFormId, memberId);
+        DemandForm demandForm = demandFormRepository.findByIdAndMemberId(demandFormId, memberId)
+                .orElseThrow(() -> new GlobalException(NOT_FOUND_FORM));
 
         return DemandFormResponseDto.toResponseDto(demandForm);
     }
@@ -120,12 +118,6 @@ public class DemandFormService {
         return productRepository.findById(productId).orElseThrow(() ->
                 new GlobalException(NOT_FOUND_PRODUCT)
         );
-    }
-
-    private void checkMember(Long demandFormId, Long memberId) {
-        if (!demandFormId.equals(memberId)) {
-            throw new GlobalException(MISMATCHED_MEMBER);
-        }
     }
 
     public void checkPeriod(Product product) {

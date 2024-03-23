@@ -173,7 +173,7 @@ public class DemandFormServiceTest {
         @DisplayName("성공(일반 유저)")
         void getMemberDemandFormTest_success() {
             //given
-            when(demandFormRepository.findById(formId)).thenReturn(Optional.of(memberDemandForm));
+            when(demandFormRepository.findByIdAndMemberId(formId, memberId)).thenReturn(Optional.of(memberDemandForm));
 
             //when
             DemandFormResponseDto responseDto = demandFormService.getDemandFormMember(formId, memberId);
@@ -188,13 +188,13 @@ public class DemandFormServiceTest {
         @DisplayName("실패(일반 유저) - 작성자와 불일치")
         void getMemberDemandFormTest_fail_misMatched() {
             //given
-            when(demandFormRepository.findById(formId)).thenReturn(Optional.of(memberDemandForm));
+            when(demandFormRepository.findByIdAndMemberId(formId, 2L)).thenReturn(Optional.empty());
 
             //when - then
             GlobalException e = assertThrows(GlobalException.class, () -> {
                 demandFormService.getDemandFormMember(formId, 2L);
             });
-            assertEquals(MISMATCHED_MEMBER, e.getErrorCode());
+            assertEquals(NOT_FOUND_FORM, e.getErrorCode());
         }
 
         @Test
