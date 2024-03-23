@@ -4,6 +4,7 @@ import com.example.common.exception.GlobalException;
 import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
 import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
+import com.example.demandForm.dto.UpdateDemandFormRequestDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.repository.DemandFormRepository;
 import com.example.member.entity.Member;
@@ -94,6 +95,15 @@ public class DemandFormService {
         return DemandFormResponseDto.toResponseDto(demandForm);
     }
 
+    @Transactional
+    public void startDemandForm(Long productId, Long memberId, UpdateDemandFormRequestDto requestDto) {
+
+        Product product = findProduct(productId);
+        checkMember(product, memberId);
+        product.updateDate(requestDto.getStartDate(), requestDto.getEndDate());
+        product.startDemandForm();
+    }
+
     public long generateOrderNumber() {
         // 비회원 주문 번호 = 현재 날짜 + 랜덤 숫자 (16자리)
         LocalDate today = LocalDate.now();
@@ -117,6 +127,12 @@ public class DemandFormService {
         return productRepository.findById(productId).orElseThrow(() ->
                 new GlobalException(NOT_FOUND_PRODUCT)
         );
+    }
+
+    public void checkMember(Product product, Long memberId) {
+        if (!product.getMember().getId().equals(memberId)) {
+            throw new GlobalException(UNAUTHORIZED_MEMBER);
+        }
     }
 
     public void checkPeriod(Product product) {

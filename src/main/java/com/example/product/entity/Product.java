@@ -5,15 +5,13 @@ import com.example.product.enums.ProductType;
 import com.example.product.enums.SaleStatus;
 import com.example.product_image.entity.ProductImage;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -64,5 +62,14 @@ public class Product {
         this.status = status;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public void updateDate(LocalDateTime startDate, LocalDateTime endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    public void startDemandForm() {
+        this.status = SaleStatus.ON_DEMAND;
     }
 }

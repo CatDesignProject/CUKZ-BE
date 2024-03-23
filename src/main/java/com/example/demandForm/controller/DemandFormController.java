@@ -5,6 +5,7 @@ import com.example.common.global.PageResponseDto;
 import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
 import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
+import com.example.demandForm.dto.UpdateDemandFormRequestDto;
 import com.example.demandForm.service.DemandFormService;
 import com.example.security.authentication.AuthenticatedMember;
 import jakarta.validation.Valid;
@@ -21,6 +22,7 @@ public class DemandFormController {
 
     private final DemandFormService demandFormService;
 
+    // 유저
     @PostMapping("/products/{productId}/demand/members")
     public ResponseEntity<BaseResponse<DemandFormResponseDto>> demandMember(
             @PathVariable Long productId,
@@ -71,5 +73,17 @@ public class DemandFormController {
         DemandFormResponseDto responseDto = demandFormService.getDemandFormNonMember(requestDto);
 
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
+    }
+
+    // 총대
+    @PatchMapping("/products/{productId}/demand/open")
+    public ResponseEntity<BaseResponse<Void>> startDemandForm(
+            @PathVariable Long productId,
+            @AuthenticationPrincipal AuthenticatedMember member,
+            @RequestBody UpdateDemandFormRequestDto requestDto) {
+
+        demandFormService.startDemandForm(productId, member.getMemberId(), requestDto);
+
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, null));
     }
 }
