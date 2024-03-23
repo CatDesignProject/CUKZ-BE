@@ -132,7 +132,7 @@ public class DemandFormServiceTest {
         }
 
         @Test
-        @DisplayName("실패(일반 유저) - 참여 가능한 기간이 아님")
+        @DisplayName("실패(일반 유저) - 참여 기간이 아님")
         void demandMemberTest_fail_isNotPeriod() {
             // given
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
@@ -176,12 +176,25 @@ public class DemandFormServiceTest {
             when(demandFormRepository.findById(formId)).thenReturn(Optional.of(memberDemandForm));
 
             //when
-            DemandFormResponseDto responseDto = demandFormService.getDemandFormMember(formId);
+            DemandFormResponseDto responseDto = demandFormService.getDemandFormMember(formId, memberId);
 
             //then
             assertEquals(quantity, responseDto.getQuantity());
             assertEquals(productId, responseDto.getProductId());
             assertEquals(memberId, responseDto.getMemberId());
+        }
+
+        @Test
+        @DisplayName("실패(일반 유저) - 작성자와 불일치")
+        void getMemberDemandFormTest_fail_misMatched() {
+            //given
+            when(demandFormRepository.findById(formId)).thenReturn(Optional.of(memberDemandForm));
+
+            //when - then
+            GlobalException e = assertThrows(GlobalException.class, () -> {
+                demandFormService.getDemandFormMember(formId, 2L);
+            });
+            assertEquals(MISMATCHED_MEMBER, e.getErrorCode());
         }
 
         @Test
