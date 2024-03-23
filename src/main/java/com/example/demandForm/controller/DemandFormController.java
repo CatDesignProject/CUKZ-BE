@@ -56,9 +56,10 @@ public class DemandFormController {
 
     @GetMapping("/members/demand/{demandFormId}")
     public ResponseEntity<BaseResponse<DemandFormResponseDto>> getDemandFormMember(
-            @PathVariable Long demandFormId) {
+            @PathVariable Long demandFormId,
+            @AuthenticationPrincipal AuthenticatedMember member) {
 
-        DemandFormResponseDto responseDto = demandFormService.getDemandFormMember(demandFormId);
+        DemandFormResponseDto responseDto = demandFormService.getDemandFormMember(demandFormId, member.getMemberId());
 
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
     }
