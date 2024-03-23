@@ -17,7 +17,10 @@ public enum BaseErrorCode {
     NOT_FOUND_FORM(HttpStatus.BAD_REQUEST, "해당 폼을 찾을 수 없습니다."),
 
     // Product
-    NOT_FOUND_PRODUCT(HttpStatus.BAD_REQUEST, "해당 상품을 찾을 수 없습니다.");
+    NOT_FOUND_PRODUCT(HttpStatus.BAD_REQUEST, "해당 상품을 찾을 수 없습니다."),
+
+    //Image
+    NOT_FOUND_IMAGE(HttpStatus.BAD_REQUEST, "해당 이미지를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String msg;
