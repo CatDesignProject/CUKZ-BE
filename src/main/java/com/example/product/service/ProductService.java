@@ -102,4 +102,21 @@ public class ProductService {
             return ProductResponseDto.toResponseDto(goods);
         }
     }
+
+    @Transactional
+    public String deleteProduct(Long productId, Long memberId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(
+                        () -> new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT)
+                );
+
+        if (!product.getMember().getId().equals(memberId)) {
+            throw new GlobalException(BaseErrorCode.UNAUTHORIZED_DELETE_PRODUCT);
+        }
+
+        productImageRepository.deleteAllByProductId(productId);
+        productRepository.deleteById(productId);
+
+        return product.getName();
+    }
 }

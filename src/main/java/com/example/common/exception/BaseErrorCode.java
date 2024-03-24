@@ -26,6 +26,7 @@ public enum BaseErrorCode {
     // Product
     NOT_FOUND_PRODUCT(NOT_FOUND, "해당 상품을 찾을 수 없습니다."),
     UNAUTHORIZED_MODIFY_PRODUCT(FORBIDDEN, "해당 상품을 수정할 권한이 없습니다."),
+    UNAUTHORIZED_DELETE_PRODUCT(FORBIDDEN, "해당 상품을 삭제할 권한이 없습니다."),
 
     //Image
     NOT_FOUND_IMAGE(BAD_REQUEST, "해당 이미지를 찾을 수 없습니다.");
