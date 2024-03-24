@@ -64,9 +64,6 @@ class ProductServiceTest {
             List<Long> imageUrls = new ArrayList<>();
             imageUrls.add(1L);
 
-            Member member = new Member();
-            member.changeNickname("닉네임");
-
             ProductRequestDto requestDto = ProductRequestDto.builder()
                     .name("A")
                     .price(1)
@@ -79,8 +76,11 @@ class ProductServiceTest {
                     .status(SaleStatus.ON_SALE)
                     .productImageIds(imageUrls)
                     .build();
-            Jacket jacket = requestDto.toJacket();
 
+            Member member = new Member();
+            member.changeNickname("닉네임");
+
+            Jacket jacket = requestDto.toJacket();
             jacket.addMember(member);
 
             ProductImage productImage = ProductImage.builder()
@@ -133,6 +133,7 @@ class ProductServiceTest {
                     .status(SaleStatus.ON_SALE)
                     .productImageIds(imageUrls)
                     .build();
+
             Goods goods = requestDto.toGoods();
             goods.addMember(member);
 
@@ -205,6 +206,7 @@ class ProductServiceTest {
             Member member = new Member();
             Goods goods = requestDto.toGoods();
             goods.addMember(member);
+
             given(memberRepository.findById(1L)).willReturn(Optional.of(member));
             given(productImageRepository.findById(1L)).willReturn(Optional.empty());
 
@@ -231,11 +233,12 @@ class ProductServiceTest {
 
             Jacket jacket = new Jacket();
             jacket.modify("A", 1, "B", ProductType.잠바, SaleStatus.ON_SALE, startDate, endDate, colors, sizes);
-
             Product product = jacket;
+
             Member member = new Member();
             member.changeNickname("닉네임");
             product.addMember(member);
+
             ProductImage productImage = ProductImage.builder()
                     .id(1L)
                     .product(product)
@@ -272,11 +275,12 @@ class ProductServiceTest {
 
             Goods goods = new Goods();
             goods.modify("A", 1, "B", ProductType.굿즈, SaleStatus.ON_SALE, startDate, endDate, colors);
-
             Product product = goods;
+
             Member member = new Member();
             member.changeNickname("닉네임");
             product.addMember(member);
+
             ProductImage productImage = ProductImage.builder()
                     .id(1L)
                     .product(product)
@@ -345,6 +349,7 @@ class ProductServiceTest {
                     .colors(colors)
                     .sizes(sizes)
                     .build();
+
             Member member = new Member(1L, "username", "password1234@"
                     , "닉네임", "email@naver.com", MemberRole.manager);
 
@@ -388,8 +393,10 @@ class ProductServiceTest {
 
             Member member = new Member(1L, "username", "password1234@"
                     , "닉네임", "email@naver.com", MemberRole.manager);
+
             Goods goods = requestDto.toGoods();
             goods.addMember(member);
+
             given(productRepository.findById(1L)).willReturn(Optional.of(goods));
 
             //when
@@ -452,6 +459,7 @@ class ProductServiceTest {
                     .colors(colors)
                     .sizes(sizes)
                     .build();
+
             Member member = new Member(1L, "username", "password1234@"
                     , "닉네임", "email@naver.com", MemberRole.manager);
 
@@ -464,6 +472,80 @@ class ProductServiceTest {
             assertThatThrownBy(() -> productService.modifyProduct(1L, requestDto, 2L))
                     .isInstanceOf(GlobalException.class)
                     .hasMessage("해당 상품을 수정할 권한이 없습니다.");
+        }
+    }
+
+    @Nested
+    @DisplayName("상품 삭제")
+    class DeleteProduct {
+        @DisplayName("성공")
+        @Test
+        void delete_product_success() {
+            //given
+            List<String> colors = new ArrayList<>();
+            colors.add("NAVY");
+
+            List<Size> sizes = new ArrayList<>();
+            sizes.add(Size.S);
+            sizes.add(Size.L);
+
+            ProductRequestDto requestDto = ProductRequestDto.builder()
+                    .name("컴공 과잠")
+                    .price(50000)
+                    .info("가톨릭대학교 컴퓨터정보공학부 19학번 과잠입니다.")
+                    .type(ProductType.잠바)
+                    .status(SaleStatus.ON_SALE)
+                    .startDate(startDate)
+                    .endDate(endDate)
+                    .colors(colors)
+                    .sizes(sizes)
+                    .build();
+
+            Member member = new Member(1L, "username", "password1234@"
+                    , "닉네임", "email@naver.com", MemberRole.manager);
+
+            Jacket jacket = requestDto.toJacket();
+            jacket.addMember(member);
+            Long productId = 1L;
+
+            given(productRepository.findById(productId)).willReturn(Optional.of(jacket));
+            doNothing().when(productImageRepository).deleteAllByProductId(productId);
+            doNothing().when(productRepository).deleteById(productId);
+
+            //when
+            String result = productService.deleteProduct(productId, member.getId());
+
+            //then
+            assertEquals("컴공 과잠", result);
+        }
+
+        @DisplayName("실패 - 삭제할 상품이 존재하지 않는 경우")
+        @Test
+        void not_found_product() {
+            //given
+            given(productRepository.findById(1L)).willReturn(Optional.empty());
+
+            //when-then
+            assertThatThrownBy(() -> productService.deleteProduct(1L, 1L))
+                    .isInstanceOf(GlobalException.class)
+                    .hasMessage("해당 상품을 찾을 수 없습니다.");
+        }
+
+        @DisplayName("실패 - 삭제 권한 없는 경우")
+        @Test
+        void unauthorized_delete_product() {
+            //given
+            Product product = new Product();
+            Member member = new Member(1L, "username", "password1234@"
+                    , "닉네임", "email@naver.com", MemberRole.manager);
+            product.addMember(member);
+            Long productId = 1L;
+
+            given(productRepository.findById(productId)).willReturn(Optional.of(product));
+            //when-then
+            assertThatThrownBy(() -> productService.deleteProduct(productId, 2L))
+                    .isInstanceOf(GlobalException.class)
+                    .hasMessage("해당 상품을 삭제할 권한이 없습니다.");
         }
     }
 }
