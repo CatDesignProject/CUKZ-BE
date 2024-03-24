@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 @Getter
 @RequiredArgsConstructor
@@ -23,7 +24,11 @@ public enum BaseErrorCode {
     NOT_IN_PERIOD(BAD_REQUEST, "참여 가능한 기간이 아닙니다."),
 
     // Product
-    NOT_FOUND_PRODUCT(NOT_FOUND, "해당 상품을 찾을 수 없습니다.");
+    NOT_FOUND_PRODUCT(NOT_FOUND, "해당 상품을 찾을 수 없습니다."),
+    UNAUTHORIZED_MODIFY_PRODUCT(FORBIDDEN, "해당 상품을 수정할 권한이 없습니다."),
+
+    //Image
+    NOT_FOUND_IMAGE(BAD_REQUEST, "해당 이미지를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String msg;

@@ -6,7 +6,11 @@ import com.example.product.entity.Jacket;
 import com.example.product.enums.ProductType;
 import com.example.product.enums.SaleStatus;
 import com.example.product.enums.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -14,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
+@Builder
 @AllArgsConstructor
 @EqualsAndHashCode
 public class ProductRequestDto {
@@ -27,12 +32,13 @@ public class ProductRequestDto {
     private LocalDateTime endDate;
     private List<String> colors;
     private List<Size> sizes;
+    @NotEmpty(message = "상품 이미지를 선택해주세요.")
     private List<Long> productImageIds;
 
     public Jacket toJacket() {
         Jacket jacket = new Jacket();
         jacket.updateProductPart(name, price, info, type, status, startDate, endDate);
-        jacket.updateJacketPart(String.valueOf(colors.get(0)), sizes);
+        jacket.updateJacketPart(colors, sizes);
 
         return jacket;
     }

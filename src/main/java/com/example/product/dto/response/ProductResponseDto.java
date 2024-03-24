@@ -27,22 +27,16 @@ public class ProductResponseDto {
     private List<String> colors;
     private List<Size> sizes;
     private List<String> imageUrls;
+    private String nickname; //총대 닉네임
 
     public static ProductResponseDto toResponseDto(Product product) {
         if (product.getType() == ProductType.잠바) {
             Jacket jacket = (Jacket) product;
 
-            String color = jacket.getColor();
-            List<String> colorList = new ArrayList<>();
-            colorList.add(color);
-
             List<ProductImage> productImages = jacket.getProductImages();
             List<String> imageUrls = new ArrayList<>();
 
-            for (ProductImage productImage : productImages) {
-                String imageUrl = productImage.getImageUrl();
-                imageUrls.add(imageUrl);
-            }
+            addToImageUrls(productImages, imageUrls);
 
             return ProductResponseDto.builder()
                     .name(jacket.getName())
@@ -50,9 +44,10 @@ public class ProductResponseDto {
                     .info(jacket.getInfo())
                     .startDate(jacket.getStartDate())
                     .endDate(jacket.getEndDate())
-                    .colors(colorList)
+                    .colors(jacket.getColors())
                     .sizes(jacket.getAvailableSizes())
                     .imageUrls(imageUrls)
+                    .nickname(product.getMember().getNickname())
                     .build();
         } else {
             Goods goods = (Goods) product;
@@ -60,10 +55,7 @@ public class ProductResponseDto {
             List<ProductImage> productImages = goods.getProductImages();
             List<String> imageUrls = new ArrayList<>();
 
-            for (ProductImage productImage : productImages) {
-                String imageUrl = productImage.getImageUrl();
-                imageUrls.add(imageUrl);
-            }
+            addToImageUrls(productImages, imageUrls);
 
             return ProductResponseDto.builder()
                     .name(goods.getName())
@@ -73,7 +65,15 @@ public class ProductResponseDto {
                     .endDate(goods.getEndDate())
                     .colors(goods.getColors())
                     .imageUrls(imageUrls)
+                    .nickname(product.getMember().getNickname())
                     .build();
+        }
+    }
+
+    private static void addToImageUrls (List<ProductImage> productImages, List<String> imageUrls) {
+        for (ProductImage productImage : productImages) {
+            String imageUrl = productImage.getImageUrl();
+            imageUrls.add(imageUrl);
         }
     }
 }
