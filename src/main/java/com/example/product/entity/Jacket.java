@@ -4,10 +4,7 @@ import com.example.product.enums.ProductType;
 import com.example.product.enums.SaleStatus;
 import com.example.product.enums.Size;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,9 +14,6 @@ import java.util.List;
 @Getter
 @DiscriminatorValue("J")
 public class Jacket extends Product {
-
-//    // 과잠 색상은 하나임.
-//    private String color;
 
     @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
     private List<String> colors = new ArrayList<>();
