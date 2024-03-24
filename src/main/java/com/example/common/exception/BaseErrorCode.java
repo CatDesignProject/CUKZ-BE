@@ -18,6 +18,7 @@ public enum BaseErrorCode {
 
     // Product
     NOT_FOUND_PRODUCT(HttpStatus.BAD_REQUEST, "해당 상품을 찾을 수 없습니다."),
+    UNAUTHORIZED_MODIFY_PRODUCT(HttpStatus.FORBIDDEN, "해당 상품을 수정할 권한이 없습니다."),
 
     //Image
     NOT_FOUND_IMAGE(HttpStatus.BAD_REQUEST, "해당 이미지를 찾을 수 없습니다.");

@@ -14,13 +14,11 @@ import com.example.product.repository.ProductRepository;
 import com.example.product_image.entity.ProductImage;
 import com.example.product_image.repository.ProductImageRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -39,13 +37,13 @@ public class ProductService {
                 );
 
         if (productRequestDto.getType().equals(ProductType.잠바)) {
-            Jacket jacket = productRequestDto.toJacket(); //Jacket엔티티 생성
+            Jacket jacket = productRequestDto.toJacket();
 
             for (Long productImageId : productImageIds) {
                 ProductImage productImage = productImageRepository.findById(productImageId)
                         .orElseThrow(
                                 () -> new GlobalException(BaseErrorCode.NOT_FOUND_IMAGE)
-                        ); //업로드한 이미지 엔티티
+                        );
                 jacket.addProductImage(productImage);
                 jacket.addMember(member);
             }
@@ -59,7 +57,7 @@ public class ProductService {
                 ProductImage productImage = productImageRepository.findById(productImageId)
                         .orElseThrow(
                                 () -> new GlobalException(BaseErrorCode.NOT_FOUND_IMAGE)
-                        ); //업로드한 이미지 엔티티
+                        );
                 goods.addProductImage(productImage);
                 goods.addMember(member);
             }
@@ -78,11 +76,15 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponseDto modifyProduct(Long productId, ProductRequestDto productRequestDto) {
+    public ProductResponseDto modifyProduct(Long productId, ProductRequestDto productRequestDto, Long memberId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(
                         () -> new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT)
                 );
+
+        if (!product.getMember().getId().equals(memberId)) {
+            throw new GlobalException(BaseErrorCode.UNAUTHORIZED_MODIFY_PRODUCT);
+        }
 
         if (productRequestDto.getType().equals(ProductType.잠바)) {
             Jacket jacket = (Jacket) product;

@@ -30,7 +30,7 @@ public class ProductController {
     }
 
     @PatchMapping("/{productId}")
-    public ResponseEntity<BaseResponse<ProductResponseDto>> modifyProduct(@PathVariable Long productId, @RequestBody ProductRequestDto productRequestDto) {
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, productService.modifyProduct(productId, productRequestDto)));
+    public ResponseEntity<BaseResponse<ProductResponseDto>> modifyProduct(@PathVariable Long productId, @RequestBody ProductRequestDto productRequestDto, @AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, productService.modifyProduct(productId, productRequestDto, authenticatedMember.getMemberId())));
     }
 }
