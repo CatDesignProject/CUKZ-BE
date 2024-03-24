@@ -2,6 +2,7 @@ package com.example.product.service;
 
 import com.example.common.exception.GlobalException;
 import com.example.member.entity.Member;
+import com.example.member.entity.MemberRole;
 import com.example.member.repository.MemberRepository;
 import com.example.product.dto.request.ProductRequestDto;
 import com.example.product.dto.response.ProductResponseDto;
@@ -344,15 +345,17 @@ class ProductServiceTest {
                     .colors(colors)
                     .sizes(sizes)
                     .build();
-            Member member = new Member();
-            member.changeNickname("닉네임");
+            Member member = new Member(1L, "username", "password1234@"
+                    , "닉네임", "email@naver.com", MemberRole.manager);
+
             Jacket jacket = requestDto.toJacket();
             jacket.addMember(member);
 
             given(productRepository.findById(1L)).willReturn(Optional.of(jacket));
 
+
             //when
-            ProductResponseDto result = productService.modifyProduct(1L, requestDto);
+            ProductResponseDto result = productService.modifyProduct(1L, requestDto, 1L);
 
             //then
             assertEquals(requestDto.getName(), result.getName());
@@ -383,14 +386,14 @@ class ProductServiceTest {
                     .colors(colors)
                     .build();
 
-            Member member = new Member();
-            member.changeNickname("닉네임");
+            Member member = new Member(1L, "username", "password1234@"
+                    , "닉네임", "email@naver.com", MemberRole.manager);
             Goods goods = requestDto.toGoods();
             goods.addMember(member);
             given(productRepository.findById(1L)).willReturn(Optional.of(goods));
 
             //when
-            ProductResponseDto result = productService.modifyProduct(1L, requestDto);
+            ProductResponseDto result = productService.modifyProduct(1L, requestDto, 1L);
 
             //then
             assertEquals(requestDto.getName(), result.getName());
@@ -422,9 +425,45 @@ class ProductServiceTest {
             given(productRepository.findById(1L)).willReturn(Optional.empty());
 
             //when-then
-            assertThatThrownBy(() -> productService.modifyProduct(1L, requestDto))
+            assertThatThrownBy(() -> productService.modifyProduct(1L, requestDto, 1L))
                     .isInstanceOf(GlobalException.class)
                     .hasMessage("해당 상품을 찾을 수 없습니다.");
+        }
+
+        @DisplayName("상품을 등록한 자가 아닌 경우")
+        @Test
+        void unauthorized_modify_product() {
+            //given
+            List<String> colors = new ArrayList<>();
+            colors.add("NAVY");
+
+            List<Size> sizes = new ArrayList<>();
+            sizes.add(Size.S);
+            sizes.add(Size.L);
+
+            ProductRequestDto requestDto = ProductRequestDto.builder()
+                    .name("컴공 과잠")
+                    .price(50000)
+                    .info("가톨릭대학교 컴퓨터정보공학부 19학번 과잠입니다.")
+                    .type(ProductType.잠바)
+                    .status(SaleStatus.ON_SALE)
+                    .startDate(startDate)
+                    .endDate(endDate)
+                    .colors(colors)
+                    .sizes(sizes)
+                    .build();
+            Member member = new Member(1L, "username", "password1234@"
+                    , "닉네임", "email@naver.com", MemberRole.manager);
+
+            Jacket jacket = requestDto.toJacket();
+            jacket.addMember(member);
+
+            given(productRepository.findById(1L)).willReturn(Optional.of(jacket));
+
+            //when-then
+            assertThatThrownBy(() -> productService.modifyProduct(1L, requestDto, 2L))
+                    .isInstanceOf(GlobalException.class)
+                    .hasMessage("해당 상품을 수정할 권한이 없습니다.");
         }
     }
 }
