@@ -1,10 +1,13 @@
 package com.example.demandForm.service;
 
+import com.example.common.exception.GlobalException;
+import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
 import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.repository.DemandFormRepository;
 import com.example.member.entity.Member;
+import com.example.member.repository.MemberRepository;
 import com.example.product.entity.Product;
 import com.example.product.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,15 +18,23 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
+import static com.example.common.exception.BaseErrorCode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ActiveProfiles("test")
@@ -36,6 +47,9 @@ public class DemandFormServiceTest {
     @Mock
     ProductRepository productRepository;
 
+    @Mock
+    MemberRepository memberRepository;
+
     @InjectMocks
     DemandFormService demandFormService;
 
@@ -46,6 +60,7 @@ public class DemandFormServiceTest {
     DemandFormRequestDto requestDto;
     Long productId = 1L;
     Long memberId = 1L;
+    Long formId = 1L;
     int quantity = 3;
 
     @BeforeEach
@@ -73,12 +88,13 @@ public class DemandFormServiceTest {
         @DisplayName("성공(일반 유저)")
         void demandMemberTest_success() {
             // given
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             when(demandFormRepository.findByProductIdAndMemberId(productId, memberId)).thenReturn(Optional.empty());
             when(productRepository.findById(productId)).thenReturn(Optional.of(product));
             when(demandFormRepository.save(any(DemandForm.class))).thenReturn(memberDemandForm);
 
             // when
-            DemandFormResponseDto responseDto = demandFormService.demandMember(productId, requestDto, member);
+            DemandFormResponseDto responseDto = demandFormService.demandMember(productId, requestDto, memberId);
 
             // then
             assertEquals(quantity, responseDto.getQuantity());
@@ -89,34 +105,37 @@ public class DemandFormServiceTest {
         @DisplayName("실패(일반 유저) - 중복 참여")
         void demandMemberTest_fail_duplicate() {
             // given
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             when(demandFormRepository.findByProductIdAndMemberId(productId, memberId))
                     .thenReturn(Optional.of(memberDemandForm));
 
             // when - then
-            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
-                demandFormService.demandMember(productId, requestDto, member);
+            GlobalException e = assertThrows(GlobalException.class, () -> {
+                demandFormService.demandMember(productId, requestDto, memberId);
             });
-            assertEquals("이미 수요조사에 참여하였습니다.", e.getMessage());
+            assertEquals(DUPLICATED_FORM, e.getErrorCode());
         }
 
         @Test
         @DisplayName("실패(일반 유저) - 없는 상품")
         void demandMemberTest_fail_NotFoundProduct() {
             // given
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             when(demandFormRepository.findByProductIdAndMemberId(productId, memberId)).thenReturn(Optional.empty());
             when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
             // when - then
-            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
-                demandFormService.demandMember(productId, requestDto, member);
+            GlobalException e = assertThrows(GlobalException.class, () -> {
+                demandFormService.demandMember(productId, requestDto, memberId);
             });
-            assertEquals("상품을 찾을 수 없습니다.", e.getMessage());
+            assertEquals(NOT_FOUND_PRODUCT, e.getErrorCode());
         }
 
         @Test
-        @DisplayName("실패(일반 유저) - 참여 가능한 기간이 아님")
+        @DisplayName("실패(일반 유저) - 참여 기간이 아님")
         void demandMemberTest_fail_isNotPeriod() {
             // given
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             LocalDateTime endDate = LocalDateTime.of(2000, 4, 1, 12, 0);
             ReflectionTestUtils.setField(product, "endDate", endDate);
 
@@ -124,10 +143,10 @@ public class DemandFormServiceTest {
             when(productRepository.findById(productId)).thenReturn(Optional.of(product));
 
             // when - then
-            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
-                demandFormService.demandMember(productId, requestDto, member);
+            GlobalException e = assertThrows(GlobalException.class, () -> {
+                demandFormService.demandMember(productId, requestDto, memberId);
             });
-            assertEquals("수요조사 참여 가능 기간이 아닙니다.", e.getMessage());
+            assertEquals(NOT_IN_PERIOD, e.getErrorCode());
         }
 
         @Test
@@ -144,6 +163,79 @@ public class DemandFormServiceTest {
             assertEquals(quantity, responseDto.getQuantity());
             assertEquals(productId, responseDto.getProductId());
             System.out.println("responseDto.orderNumber = " + responseDto.getMemberId());
+        }
+    }
+
+    @Nested
+    @DisplayName("수요조사 참여 폼 조회 테스트")
+    class getDemandTest {
+        @Test
+        @DisplayName("성공(일반 유저)")
+        void getMemberDemandFormTest_success() {
+            //given
+            when(demandFormRepository.findByIdAndMemberId(formId, memberId)).thenReturn(Optional.of(memberDemandForm));
+
+            //when
+            DemandFormResponseDto responseDto = demandFormService.getDemandFormMember(formId, memberId);
+
+            //then
+            assertEquals(quantity, responseDto.getQuantity());
+            assertEquals(productId, responseDto.getProductId());
+            assertEquals(memberId, responseDto.getMemberId());
+        }
+
+        @Test
+        @DisplayName("실패(일반 유저) - 작성자와 불일치")
+        void getMemberDemandFormTest_fail_misMatched() {
+            //given
+            when(demandFormRepository.findByIdAndMemberId(formId, 2L)).thenReturn(Optional.empty());
+
+            //when - then
+            GlobalException e = assertThrows(GlobalException.class, () -> {
+                demandFormService.getDemandFormMember(formId, 2L);
+            });
+            assertEquals(NOT_FOUND_FORM, e.getErrorCode());
+        }
+
+        @Test
+        @DisplayName("성공(일반 유저)")
+        void getAllDemandFormsMemberTest_success() {
+            // given
+            int page = 1;
+            int size = 10;
+            Pageable pageable = PageRequest.of(page, size);
+            DemandForm memberDemandForm2 = DemandForm.toMemberEntity(member, product, requestDto);
+            List<DemandForm> demandFormList = Arrays.asList(memberDemandForm, memberDemandForm2);
+            Page<DemandForm> demandFormPage = new PageImpl<>(demandFormList, pageable, demandFormList.size());
+
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+            when(demandFormRepository.findByMemberId(eq(memberId), any(Pageable.class))).thenReturn(demandFormPage);
+
+            // when
+            Page<DemandFormResponseDto> responseDtoList = demandFormService.getAllDemandFormsMember(page, size, memberId);
+
+            // then
+            assertEquals(demandFormList.size(), responseDtoList.getContent().size());
+            assertEquals(demandFormPage.getTotalPages(), responseDtoList.getTotalPages());
+            assertEquals(demandFormList.get(0).getId(), responseDtoList.getContent().get(0).getId());
+        }
+
+        @Test
+        @DisplayName("성공(비회원)")
+        void getNonMemberDemandFormTest_success() {
+            //given
+            Long orderNumber = 12345L;
+            DemandFormNonMemberRequestDto requestDto1 = new DemandFormNonMemberRequestDto(orderNumber);
+            when(demandFormRepository.findByOrderNumber(orderNumber)).thenReturn(Optional.of(nonMemberDemandForm));
+            ReflectionTestUtils.setField(nonMemberDemandForm, "memberId", orderNumber);
+
+            //when
+            DemandFormResponseDto responseDto = demandFormService.getDemandFormNonMember(requestDto1);
+
+            //then
+            assertEquals(quantity, responseDto.getQuantity());
+            assertEquals(productId, responseDto.getProductId());
+            assertEquals(requestDto1.getOrderNumber(), responseDto.getMemberId());
         }
     }
 }
