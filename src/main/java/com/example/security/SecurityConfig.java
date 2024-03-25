@@ -1,6 +1,7 @@
 package com.example.security;
 
 import com.example.security.authentication.LoginProcessingFilter;
+import com.example.security.exception.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -30,7 +31,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/members/login", "/members/register", "/members/verify-username").permitAll()
                         .anyRequest().authenticated())
-                .securityContext(securityContext -> new HttpSessionSecurityContextRepository());
+                .securityContext(securityContext -> new HttpSessionSecurityContextRepository())
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                );
 
         return http.build();
     }
