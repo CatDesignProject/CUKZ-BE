@@ -1,5 +1,6 @@
 package com.example.member.dto;
 
+import com.example.member.entity.Member;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
@@ -22,5 +23,13 @@ public class MemberRegisterRequestDto {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
+    }
+
+    public Member toMember() {
+        return Member.builder()
+                .username(this.username)
+                .password(this.password)
+                .nickname(this.nickname)
+                .build();
     }
 }

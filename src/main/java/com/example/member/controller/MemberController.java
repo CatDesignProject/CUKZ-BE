@@ -1,6 +1,8 @@
 package com.example.member.controller;
 
+import com.example.common.global.BaseResponse;
 import com.example.member.dto.MemberRegisterRequestDto;
+import com.example.member.dto.VerifyUsernameDto;
 import com.example.member.service.MemberService;
 import com.example.security.authentication.AuthenticatedMember;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +23,26 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/register")
-    public ResponseEntity registerMember(@RequestBody @Validated MemberRegisterRequestDto memberRegisterRequestDto) {
+    public ResponseEntity<BaseResponse<String>> registerMember(@RequestBody @Validated MemberRegisterRequestDto memberRegisterRequestDto) {
         memberService.registerMember(memberRegisterRequestDto);
-        return new ResponseEntity(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.of(HttpStatus.CREATED, "회원가입 완료"));
+    }
+
+    @PostMapping("/verify-username")
+    public ResponseEntity<BaseResponse<String>> registerMember(@RequestBody VerifyUsernameDto verifyUsernameDto) {
+        memberService.verifyDuplicatedUsername(verifyUsernameDto.getUsername());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.of(HttpStatus.OK, "아이디 중복 체크 완료"));
     }
 
     @GetMapping("/info")
-    public void infoMember(@AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
+    public ResponseEntity<BaseResponse<String>> infoMember(@AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
         AuthenticatedMember member = (AuthenticatedMember) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("member -> {}", member.toString());
         log.info("authenticatedMember -> {}", authenticatedMember.toString());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.of(HttpStatus.OK, authenticatedMember.toString()));
     }
 
 }

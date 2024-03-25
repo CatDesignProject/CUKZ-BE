@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(login -> login.disable()) // 폼로그인 비허용
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/members/login", "members/register").permitAll() // 로그인, 회원가입 url만 허용
+                        .requestMatchers("/members/login", "/members/register", "/members/verify-username").permitAll()
                         .anyRequest().authenticated())
                 .securityContext(securityContext -> new HttpSessionSecurityContextRepository());
 
