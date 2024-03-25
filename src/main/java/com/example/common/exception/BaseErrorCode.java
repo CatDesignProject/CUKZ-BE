@@ -30,7 +30,8 @@ public enum BaseErrorCode {
     NOT_FOUND_IMAGE(BAD_REQUEST, "해당 이미지를 찾을 수 없습니다."),
 
     // Security
-    BASE_SECURITY_EXCEPTION(UNAUTHORIZED, "인증되지 않은 사용자입니다.");
+    BASE_SECURITY_EXCEPTION(UNAUTHORIZED, "인증되지 않은 사용자입니다."),
+    FORBIDDEN_REQUEST(FORBIDDEN, "접근 권한이 없습니다.");
 
     private final HttpStatus status;
     private final String msg;

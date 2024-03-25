@@ -1,6 +1,7 @@
 package com.example.security;
 
 import com.example.security.authentication.LoginProcessingFilter;
+import com.example.security.exception.CustomAccessDeniedHandler;
 import com.example.security.exception.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +36,7 @@ public class SecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 );
+                        .accessDeniedHandler(new CustomAccessDeniedHandler()));
 
         return http.build();
     }
