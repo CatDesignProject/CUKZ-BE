@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-//@RestController
+@RestController
 @RequiredArgsConstructor
 public class ProductImageController {
 
