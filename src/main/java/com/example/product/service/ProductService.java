@@ -6,6 +6,7 @@ import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
 import com.example.product.dto.request.ProductRequestDto;
 import com.example.product.dto.response.ProductResponseDto;
+import com.example.product.dto.response.ProductThumbNailDto;
 import com.example.product.entity.Goods;
 import com.example.product.entity.Jacket;
 import com.example.product.entity.Product;
@@ -14,6 +15,8 @@ import com.example.product.repository.ProductRepository;
 import com.example.product_image.entity.ProductImage;
 import com.example.product_image.repository.ProductImageRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,7 +107,7 @@ public class ProductService {
     }
 
     @Transactional
-    public String deleteProduct(Long productId, Long memberId) {
+    public void deleteProduct(Long productId, Long memberId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(
                         () -> new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT)
@@ -116,7 +119,5 @@ public class ProductService {
 
         productImageRepository.deleteAllByProductId(productId);
         productRepository.deleteById(productId);
-
-        return product.getName();
     }
 }

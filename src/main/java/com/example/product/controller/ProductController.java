@@ -36,6 +36,7 @@ public class ProductController {
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<BaseResponse<String>> deleteProduct(@PathVariable Long productId, @AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
-        return ResponseEntity.ok(BaseResponse.of(HttpStatus.OK, "<" + productService.deleteProduct(productId, authenticatedMember.getMemberId()) + ">" + " 상품을 삭제했습니다."));
+        productService.deleteProduct(productId, authenticatedMember.getMemberId());
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, " 상품 삭제 완료"));
     }
 }
