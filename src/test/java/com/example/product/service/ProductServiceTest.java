@@ -513,10 +513,12 @@ class ProductServiceTest {
             doNothing().when(productRepository).deleteById(productId);
 
             //when
-            String result = productService.deleteProduct(productId, member.getId());
+            productService.deleteProduct(productId, member.getId());
 
             //then
-            assertEquals("컴공 과잠", result);
+            then(productRepository).should(times(1)).findById(productId);
+            then(productImageRepository).should(times(1)).deleteAllByProductId(productId);
+            then(productRepository).should(times(1)).deleteById(productId);
         }
 
         @DisplayName("실패 - 삭제할 상품이 존재하지 않는 경우")
