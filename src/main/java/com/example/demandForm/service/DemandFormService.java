@@ -5,6 +5,7 @@ import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
 import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
 import com.example.demandForm.dto.UpdateDemandFormRequestDto;
+import com.example.demandForm.dto.UpdateDemandFormRequestDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.repository.DemandFormRepository;
 import com.example.member.entity.Member;
@@ -39,10 +40,9 @@ public class DemandFormService {
     public DemandFormResponseDto demandMember(Long productId, DemandFormRequestDto requestDto, Long memberId) {
 
         Member member = findMember(memberId);
-        Optional<DemandForm> demandFormExist = demandFormRepository.findByProductIdAndMemberId(productId, member.getId());
-        if (demandFormExist.isPresent()) {
+        demandFormRepository.findByProductIdAndMemberId(productId, member.getId()).ifPresent(demandForm -> {
             throw new GlobalException(DUPLICATED_FORM);
-        }
+        });
 
         Product product = findProduct(productId);
         checkPeriod(product);
@@ -93,6 +93,19 @@ public class DemandFormService {
         );
 
         return DemandFormResponseDto.toResponseDto(demandForm);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<DemandFormResponseDto> getAllDemandForms(int page, int size, Long productId, Long memberId) {
+
+        Product product = findProduct(productId);
+        // checkMember(product, memberId);
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<DemandForm> demandFormList = demandFormRepository.findByProductId(productId, pageable);
+
+        return demandFormList.map(DemandFormResponseDto::toResponseDto);
     }
 
     @Transactional

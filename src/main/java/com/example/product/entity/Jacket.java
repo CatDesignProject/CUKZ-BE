@@ -15,8 +15,8 @@ import java.util.List;
 @DiscriminatorValue("J")
 public class Jacket extends Product {
 
-    // 과잠 색상은 하나임.
-    private String color;
+    @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
+    private List<String> colors = new ArrayList<>();
 
     // 선택 가능한 사이즈 (사이즈 전용 테이블 생성됌), (클래스명+필드명)
     @ElementCollection(targetClass = Size.class, fetch = FetchType.LAZY)
@@ -24,16 +24,17 @@ public class Jacket extends Product {
     private List<Size> availableSizes = new ArrayList<>();
 
     //상품 정보 수정 -> 엔티티 수정(부모 엔티티까지)
-    public void modified(String name, int price, String info, ProductType type, SaleStatus status
+    public void modify(String name, int price, String info, ProductType type, SaleStatus status
             , LocalDateTime startDate, LocalDateTime endDate, List<String> colors, List<Size> sizes) {
         super.updateProductPart(name, price, info, type, status, startDate, endDate);
-        this.color = colors.get(0);
+        this.colors.clear();
+        this.colors.addAll(colors);
         availableSizes.clear();
         availableSizes.addAll(sizes);
     }
 
-    public void updateJacketPart(String color, List<Size> availableSizes) {
-        this.color = color;
+    public void updateJacketPart(List<String> color, List<Size> availableSizes) {
+        this.colors = color;
         this.availableSizes = availableSizes;
     }
 }

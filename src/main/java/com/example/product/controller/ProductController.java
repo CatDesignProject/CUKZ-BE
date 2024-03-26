@@ -1,14 +1,16 @@
 package com.example.product.controller;
 
+import com.example.common.global.BaseResponse;
 import com.example.product.dto.request.ProductRequestDto;
+import com.example.product.dto.response.ProductResponseDto;
 import com.example.product.service.ProductService;
+import com.example.security.authentication.AuthenticatedMember;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,9 +20,17 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<String> saveProduct(@RequestBody ProductRequestDto productRequestDto) {
-        Long resultId = productService.saveProduct(productRequestDto);
+    public ResponseEntity<BaseResponse<ProductResponseDto>> saveProduct(@Valid @RequestBody ProductRequestDto productRequestDto, @AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.CREATED, productService.saveProduct(productRequestDto, authenticatedMember.getMemberId())));
+    }
 
-        return ResponseEntity.ok("상품 ID : " + resultId + "번이 등록 되었습니다.");
+    @GetMapping("/{productId}")
+    public ResponseEntity<BaseResponse<ProductResponseDto>> findProduct(@PathVariable Long productId) {
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, productService.findProduct(productId)));
+    }
+
+    @PatchMapping("/{productId}")
+    public ResponseEntity<BaseResponse<ProductResponseDto>> modifyProduct(@PathVariable Long productId, @RequestBody ProductRequestDto productRequestDto, @AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, productService.modifyProduct(productId, productRequestDto, authenticatedMember.getMemberId())));
     }
 }

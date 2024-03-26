@@ -23,7 +23,7 @@ public class Goods extends Product {
     private List<String> colors = new ArrayList<>();
 
     //상품 정보 수정 -> 엔티티 수정(부모 엔티티까지)
-    public void modified(String name, int price, String info, ProductType type
+    public void modify(String name, int price, String info, ProductType type
             , SaleStatus status, LocalDateTime startDate, LocalDateTime endDate, List<String> colors) {
         super.updateProductPart(name, price, info, type, status, startDate, endDate);
         this.colors.clear();
@@ -33,4 +33,5 @@ public class Goods extends Product {
     public void updateGoodsPart(List<String> colors) {
         this.colors = colors;
     }
+
 }

@@ -6,6 +6,7 @@ import com.example.product.enums.SaleStatus;
 import com.example.product_image.entity.ProductImage;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -51,6 +53,10 @@ public class Product {
     public void addProductImage(ProductImage productImage) {
         this.productImages.add(productImage);
         productImage.setProduct(this);
+    }
+
+    public void addMember(Member member) {
+        this.member = member;
     }
 
     public void updateProductPart(String name, int price, String info, ProductType type
