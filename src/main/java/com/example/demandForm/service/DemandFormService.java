@@ -10,6 +10,7 @@ import com.example.demandForm.repository.DemandFormRepository;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
 import com.example.product.entity.Product;
+import com.example.product.enums.SaleStatus;
 import com.example.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -112,7 +113,7 @@ public class DemandFormService {
         Product product = findProduct(productId);
         checkMember(product, memberId);
         product.updateDate(requestDto.getStartDate(), requestDto.getEndDate());
-        product.startDemandForm();
+        product.updateStatus(SaleStatus.ON_DEMAND);
     }
 
     public long generateOrderNumber() {

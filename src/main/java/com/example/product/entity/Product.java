@@ -75,7 +75,7 @@ public class Product {
         this.endDate = endDate;
     }
 
-    public void startDemandForm() {
-        this.status = SaleStatus.ON_DEMAND;
+    public void updateStatus(SaleStatus status) {
+        this.status = status;
     }
 }
