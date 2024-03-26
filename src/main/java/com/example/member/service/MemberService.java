@@ -1,5 +1,7 @@
 package com.example.member.service;
 
+import com.example.common.exception.BaseErrorCode;
+import com.example.common.exception.GlobalException;
 import com.example.member.dto.MemberRegisterRequestDto;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
@@ -15,9 +17,18 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     public void registerMember(MemberRegisterRequestDto memberRegisterRequestDto) {
-        Member member = Member.fromMemberRegisterRequestDto(memberRegisterRequestDto);
+        String username = memberRegisterRequestDto.getUsername();
+        verifyDuplicatedUsername(username);
+
+        Member member = memberRegisterRequestDto.toMember();
         member.setEncodedPassword(passwordEncoder.encode(memberRegisterRequestDto.getPassword()));
         memberRepository.save(member);
+    }
+
+    public void verifyDuplicatedUsername(String username) {
+        memberRepository.findByUsername(username).ifPresent(member -> {
+            throw new GlobalException(BaseErrorCode.DUPLICATED_MEMBER);
+        });
     }
 
 }
