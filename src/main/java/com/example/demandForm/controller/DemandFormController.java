@@ -72,4 +72,17 @@ public class DemandFormController {
 
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
     }
+
+    @GetMapping("/products/{productId}/demand")
+    public ResponseEntity<BaseResponse<PageResponseDto<DemandFormResponseDto>>> getAllDemandForms(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @PathVariable Long productId,
+            @AuthenticationPrincipal AuthenticatedMember member) {
+
+        Page<DemandFormResponseDto> responseDtoList = demandFormService.getAllDemandForms(page - 1, size, productId,
+                member.getMemberId());
+
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, PageResponseDto.toResponseDto(responseDtoList)));
+    }
 }

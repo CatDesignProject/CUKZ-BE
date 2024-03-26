@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Random;
 
 import static com.example.common.exception.BaseErrorCode.*;
@@ -38,10 +37,9 @@ public class DemandFormService {
     public DemandFormResponseDto demandMember(Long productId, DemandFormRequestDto requestDto, Long memberId) {
 
         Member member = findMember(memberId);
-        Optional<DemandForm> demandFormExist = demandFormRepository.findByProductIdAndMemberId(productId, member.getId());
-        if (demandFormExist.isPresent()) {
+        demandFormRepository.findByProductIdAndMemberId(productId, member.getId()).ifPresent(demandForm -> {
             throw new GlobalException(DUPLICATED_FORM);
-        }
+        });
 
         Product product = findProduct(productId);
         checkPeriod(product);
@@ -92,6 +90,18 @@ public class DemandFormService {
         );
 
         return DemandFormResponseDto.toResponseDto(demandForm);
+    }
+
+    public Page<DemandFormResponseDto> getAllDemandForms(int page, int size, Long productId, Long memberId) {
+
+        Product product = findProduct(productId);
+        // checkMember(product, memberId);
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<DemandForm> demandFormList = demandFormRepository.findByProductId(productId, pageable);
+
+        return demandFormList.map(DemandFormResponseDto::toResponseDto);
     }
 
     public long generateOrderNumber() {
