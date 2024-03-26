@@ -5,7 +5,6 @@ import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
 import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
 import com.example.demandForm.dto.UpdateDemandFormRequestDto;
-import com.example.demandForm.dto.UpdateDemandFormRequestDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.repository.DemandFormRepository;
 import com.example.member.entity.Member;
@@ -22,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Random;
 
 import static com.example.common.exception.BaseErrorCode.*;
@@ -99,7 +97,7 @@ public class DemandFormService {
     public Page<DemandFormResponseDto> getAllDemandForms(int page, int size, Long productId, Long memberId) {
 
         Product product = findProduct(productId);
-        // checkMember(product, memberId);
+        checkMember(product, memberId);
 
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Pageable pageable = PageRequest.of(page, size, sort);

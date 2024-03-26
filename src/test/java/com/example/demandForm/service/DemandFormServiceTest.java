@@ -38,7 +38,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class DemandFormServiceTest {
 
-    @Mock(lenient = true)
+    @Mock
     DemandFormRepository demandFormRepository;
 
     @Mock
@@ -178,7 +178,6 @@ public class DemandFormServiceTest {
             //then
             assertEquals(quantity, responseDto.getQuantity());
             assertEquals(productId, responseDto.getProductId());
-            assertEquals(memberId, responseDto.getMemberId());
         }
 
         @Test

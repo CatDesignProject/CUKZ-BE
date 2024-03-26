@@ -14,6 +14,7 @@ public class DemandFormResponseDto {
 
     private Long id;
     private Long productId;
+    private Long memberId;
     private int quantity;
 
     public static DemandFormResponseDto toResponseDto(DemandForm demandForm) {
@@ -21,6 +22,7 @@ public class DemandFormResponseDto {
         return DemandFormResponseDto.builder()
                 .id(demandForm.getId())
                 .productId(demandForm.getProduct().getId())
+                .memberId(demandForm.getMemberId())
                 .quantity(demandForm.getQuantity())
                 .build();
     }
