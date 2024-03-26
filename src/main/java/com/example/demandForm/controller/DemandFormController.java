@@ -90,13 +90,13 @@ public class DemandFormController {
     }
 
     @PatchMapping("/products/{productId}/demand/open")
-    public ResponseEntity<BaseResponse<Void>> startDemandForm(
+    public ResponseEntity<BaseResponse<String>> startDemandForm(
             @PathVariable Long productId,
             @AuthenticationPrincipal AuthenticatedMember member,
             @RequestBody UpdateDemandFormRequestDto requestDto) {
 
         demandFormService.startDemandForm(productId, member.getMemberId(), requestDto);
 
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, null));
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, "수요조사를 시작합니다."));
     }
 }
