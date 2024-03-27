@@ -15,7 +15,7 @@ public enum BaseErrorCode {
     BAD_CREDENTIAL(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     DUPLICATED_MEMBER(BAD_REQUEST, "이미 등록된 아이디입니다."),
     MISMATCHED_MEMBER(BAD_REQUEST, "작성자와 일치하지 않는 유저입니다."),
-    UNAUTHORIZED_MEMBER(FORBIDDEN, "권한이 없습니다."),
+    UNAUTHORIZED_MEMBER(UNAUTHORIZED, "권한이 없는 유저입니다."),
 
     // Form
     NOT_FOUND_FORM(NOT_FOUND, "해당 폼을 찾을 수 없습니다."),

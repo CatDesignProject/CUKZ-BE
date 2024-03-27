@@ -1,13 +1,17 @@
 package com.example.common.global;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PageResponseDto<T> {
     private int listSize;
     private int totalPage;

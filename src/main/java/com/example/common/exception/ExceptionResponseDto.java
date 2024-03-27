@@ -13,4 +13,9 @@ public class ExceptionResponseDto {
         this.status = errorCode.getStatus();
         this.msg = errorCode.getMsg();
     }
+
+    public ExceptionResponseDto(HttpStatus status, String msg) {
+        this.status = status;
+        this.msg = msg;
+    }
 }

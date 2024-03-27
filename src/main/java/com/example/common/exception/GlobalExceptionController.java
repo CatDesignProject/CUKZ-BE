@@ -3,6 +3,8 @@ package com.example.common.exception;
 import com.example.common.global.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -17,5 +19,17 @@ public class GlobalExceptionController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(BaseResponse.of(e.getErrorCode().getStatus(), responseDto));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<BaseResponse<Object>> handleValidException(MethodArgumentNotValidException e) {
+
+        BindingResult bindingResult = e.getBindingResult();
+        String msg = bindingResult.getFieldErrors().get(0).getDefaultMessage();
+        ExceptionResponseDto responseDto = new ExceptionResponseDto(HttpStatus.BAD_REQUEST, msg);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(BaseResponse.of(HttpStatus.BAD_REQUEST, responseDto));
     }
 }
