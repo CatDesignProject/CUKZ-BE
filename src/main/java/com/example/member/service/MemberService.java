@@ -25,7 +25,11 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public void verifyDuplicatedUsername(String username) {
+    public boolean isUsernameDuplicated(String username) {
+        return memberRepository.findByUsername(username).isPresent();
+    }
+
+    private void verifyDuplicatedUsername(String username) {
         memberRepository.findByUsername(username).ifPresent(member -> {
             throw new GlobalException(BaseErrorCode.DUPLICATED_MEMBER);
         });
