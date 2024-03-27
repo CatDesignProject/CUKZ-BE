@@ -2,6 +2,7 @@ package com.example.security.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -52,14 +53,24 @@ public class LoginProcessingFilter extends AbstractAuthenticationProcessingFilte
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws ServletException, IOException {
         // 1. 비어있는 SecurityContext를 생성
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
         // 2. 인증처리 완료된 Authentication 객체를 SecurityContext에 등록
         context.setAuthentication(authResult);
 
+        // 3. Session 등록 및 성공 핸들러 호출
         this.securityContextRepository.saveContext(context, request, response);
+        this.getSuccessHandler().onAuthenticationSuccess(request,response,chain,authResult);
     }
 
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        // 1. SecurityContextHolder 비우기
+        SecurityContextHolder.clearContext();
+
+        // 2. 실패 핸들러 호출
+        this.getFailureHandler().onAuthenticationFailure(request, response, failed);
+    }
 }
