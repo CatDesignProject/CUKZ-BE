@@ -27,8 +27,12 @@ public enum BaseErrorCode {
     UNAUTHORIZED_MODIFY_PRODUCT(FORBIDDEN, "해당 상품을 수정할 권한이 없습니다."),
     UNAUTHORIZED_DELETE_PRODUCT(FORBIDDEN, "해당 상품을 삭제할 권한이 없습니다."),
 
-    // Image
-    NOT_FOUND_IMAGE(BAD_REQUEST, "해당 이미지를 찾을 수 없습니다.");
+    //Image
+    NOT_FOUND_IMAGE(BAD_REQUEST, "해당 이미지를 찾을 수 없습니다."),
+
+    // Security
+    BASE_SECURITY_EXCEPTION(UNAUTHORIZED, "인증되지 않은 사용자입니다."),
+    FORBIDDEN_REQUEST(FORBIDDEN, "접근 권한이 없습니다.");
 
     private final HttpStatus status;
     private final String msg;

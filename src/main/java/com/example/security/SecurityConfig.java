@@ -1,6 +1,8 @@
 package com.example.security;
 
 import com.example.security.authentication.LoginProcessingFilter;
+import com.example.security.exception.CustomAccessDeniedHandler;
+import com.example.security.exception.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -32,7 +34,11 @@ public class SecurityConfig {
                         .requestMatchers("/members/login", "members/register").permitAll() // 로그인, 회원가입 url만 허용
                         .requestMatchers(new AntPathRequestMatcher("/**/non-members/**")).permitAll()   // 비회원 요청 허용
                         .anyRequest().authenticated())
-                .securityContext(securityContext -> new HttpSessionSecurityContextRepository());
+                .securityContext(securityContext -> new HttpSessionSecurityContextRepository())
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                );
+                        .accessDeniedHandler(new CustomAccessDeniedHandler()));
 
         return http.build();
     }
