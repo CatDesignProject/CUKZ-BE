@@ -20,12 +20,22 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        BaseResponse<Boolean> loginSuccessResponseDto = BaseResponse.of(HttpStatus.OK, true);
 
+        // 1. 인증된 AuthenticatedMember 객체를 꺼낸다.
+        AuthenticatedMember authenticatedMember = (AuthenticatedMember) authentication.getPrincipal();
+
+        LoginSuccessResponseDto loginSuccessResponseDto = LoginSuccessResponseDto.builder()
+                .memberId(authenticatedMember.getMemberId())
+                .nickname(authenticatedMember.getNickName())
+                .role(authenticatedMember.getRole().name())
+                .build();
+
+        BaseResponse<LoginSuccessResponseDto> responseDto = BaseResponse.of(HttpStatus.OK, loginSuccessResponseDto);
+
+        // 2. 응답한다.
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
-
-        response.getWriter().write(objectMapper.writeValueAsString(loginSuccessResponseDto));
+        response.getWriter().write(objectMapper.writeValueAsString(responseDto));
         response.flushBuffer();
     }
 }

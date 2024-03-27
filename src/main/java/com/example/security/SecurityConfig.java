@@ -1,5 +1,7 @@
 package com.example.security;
 
+import com.example.security.authentication.CustomAuthenticationFailureHandler;
+import com.example.security.authentication.CustomAuthenticationSuccessHandler;
 import com.example.security.authentication.LoginProcessingFilter;
 import com.example.security.exception.CustomAccessDeniedHandler;
 import com.example.security.exception.CustomAuthenticationEntryPoint;
@@ -35,7 +37,6 @@ public class SecurityConfig {
                 .securityContext(securityContext -> new HttpSessionSecurityContextRepository())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                );
                         .accessDeniedHandler(new CustomAccessDeniedHandler()));
 
         return http.build();
@@ -55,6 +56,8 @@ public class SecurityConfig {
     public LoginProcessingFilter loginProcessingFilter(AuthenticationManager authenticationManager) {
         LoginProcessingFilter loginProcessingFilter = new LoginProcessingFilter();
         loginProcessingFilter.setAuthenticationManager(authenticationManager);
+        loginProcessingFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler());
+        loginProcessingFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
         return loginProcessingFilter;
     }
 
