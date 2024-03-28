@@ -26,4 +26,11 @@ public class Likes {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
+
+    public static Likes toEntity(Member member, Product product) {
+        return Likes.builder()
+                .member(member)
+                .product(product)
+                .build();
+    }
 }
