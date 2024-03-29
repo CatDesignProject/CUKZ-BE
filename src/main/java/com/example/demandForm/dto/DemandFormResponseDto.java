@@ -20,10 +20,10 @@ public class DemandFormResponseDto {
     public static DemandFormResponseDto toResponseDto(DemandForm demandForm) {
 
         return DemandFormResponseDto.builder()
-            .id(demandForm.getId())
-            .productId(demandForm.getProduct().getId())
-            .memberId(demandForm.getMemberId())
-            .quantity(demandForm.getQuantity())
-            .build();
+                .id(demandForm.getId())
+                .productId(demandForm.getProduct().getId())
+                .memberId(demandForm.getMemberId())
+                .quantity(demandForm.getQuantity())
+                .build();
     }
 }

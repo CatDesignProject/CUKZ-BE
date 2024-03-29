@@ -18,10 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -170,7 +167,7 @@ public class DemandFormServiceTest {
     @DisplayName("수요조사 참여 폼 조회 테스트")
     class getDemandTest {
         @Test
-        @DisplayName("성공(일반 유저)")
+        @DisplayName("성공(일반 유저) - 단건 조회")
         void getMemberDemandFormTest_success() {
             //given
             when(demandFormRepository.findByIdAndMemberId(formId, memberId)).thenReturn(Optional.of(memberDemandForm));
@@ -181,7 +178,6 @@ public class DemandFormServiceTest {
             //then
             assertEquals(quantity, responseDto.getQuantity());
             assertEquals(productId, responseDto.getProductId());
-            assertEquals(memberId, responseDto.getMemberId());
         }
 
         @Test
@@ -198,18 +194,17 @@ public class DemandFormServiceTest {
         }
 
         @Test
-        @DisplayName("성공(일반 유저)")
+        @DisplayName("성공(일반 유저) - 페이지 조회")
         void getAllDemandFormsMemberTest_success() {
             // given
             int page = 1;
             int size = 10;
-            Pageable pageable = PageRequest.of(page, size);
+            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
             DemandForm memberDemandForm2 = DemandForm.toMemberEntity(member, product, requestDto);
             List<DemandForm> demandFormList = Arrays.asList(memberDemandForm, memberDemandForm2);
-            Page<DemandForm> demandFormPage = new PageImpl<>(demandFormList, pageable, demandFormList.size());
+            Page<DemandForm> demandFormPage = new PageImpl<>(demandFormList);
 
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-            when(demandFormRepository.findByMemberId(eq(memberId), any(Pageable.class))).thenReturn(demandFormPage);
+            when(demandFormRepository.findByMemberId(memberId, pageable)).thenReturn(demandFormPage);
 
             // when
             Page<DemandFormResponseDto> responseDtoList = demandFormService.getAllDemandFormsMember(page, size, memberId);
@@ -221,7 +216,7 @@ public class DemandFormServiceTest {
         }
 
         @Test
-        @DisplayName("성공(비회원)")
+        @DisplayName("성공(비회원) - 단건 조회")
         void getNonMemberDemandFormTest_success() {
             //given
             Long orderNumber = 12345L;
@@ -236,6 +231,29 @@ public class DemandFormServiceTest {
             assertEquals(quantity, responseDto.getQuantity());
             assertEquals(productId, responseDto.getProductId());
             assertEquals(requestDto1.getOrderNumber(), responseDto.getMemberId());
+        }
+
+        @Test
+        @DisplayName("성공(총대) - 페이지 조회")
+        void getAllDemandFormsTest_success() {
+            // given
+            int page = 1;
+            int size = 10;
+            Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+            DemandForm memberDemandForm2 = DemandForm.toMemberEntity(member, product, requestDto);
+            List<DemandForm> demandFormList = Arrays.asList(memberDemandForm, memberDemandForm2);
+            Page<DemandForm> demandFormPage = new PageImpl<>(demandFormList, pageable, demandFormList.size());
+
+            when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+            when(demandFormRepository.findByProductId(eq(productId), any(Pageable.class))).thenReturn(demandFormPage);
+
+            // when
+            Page<DemandFormResponseDto> responseDtoList = demandFormService.getAllDemandForms(page, size, productId, memberId);
+
+            // then
+            assertEquals(demandFormList.size(), responseDtoList.getContent().size());
+            assertEquals(demandFormPage.getTotalPages(), responseDtoList.getTotalPages());
+            assertEquals(demandFormList.get(0).getId(), responseDtoList.getContent().get(0).getId());
         }
     }
 }

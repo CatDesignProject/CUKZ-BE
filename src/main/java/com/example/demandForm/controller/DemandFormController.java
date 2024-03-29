@@ -5,6 +5,7 @@ import com.example.common.global.PageResponseDto;
 import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
 import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
+import com.example.demandForm.dto.UpdateDemandFormRequestDto;
 import com.example.demandForm.service.DemandFormService;
 import com.example.security.authentication.AuthenticatedMember;
 import jakarta.validation.Valid;
@@ -21,7 +22,8 @@ public class DemandFormController {
 
     private final DemandFormService demandFormService;
 
-    @PostMapping("/products/{productId}/demand/member")
+    // 유저
+    @PostMapping("/products/{productId}/demand/members")
     public ResponseEntity<BaseResponse<DemandFormResponseDto>> demandMember(
             @PathVariable Long productId,
             @Valid @RequestBody DemandFormRequestDto requestDto,
@@ -32,7 +34,7 @@ public class DemandFormController {
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.CREATED, responseDto));
     }
 
-    @PostMapping("/products/{productId}/demand/non-member")
+    @PostMapping("/products/{productId}/demand/non-members")
     public ResponseEntity<BaseResponse<DemandFormResponseDto>> demandNonMember(
             @PathVariable Long productId,
             @Valid @RequestBody DemandFormRequestDto requestDto) {
@@ -64,12 +66,37 @@ public class DemandFormController {
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
     }
 
-    @GetMapping("/demand/non-member")
+    @GetMapping("/demand/non-members")
     public ResponseEntity<BaseResponse<DemandFormResponseDto>> getDemandFormNonMember(
             @RequestBody DemandFormNonMemberRequestDto requestDto) {
 
         DemandFormResponseDto responseDto = demandFormService.getDemandFormNonMember(requestDto);
 
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
+    }
+
+    // 총대
+    @GetMapping("/products/{productId}/demand")
+    public ResponseEntity<BaseResponse<PageResponseDto<DemandFormResponseDto>>> getAllDemandForms(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @PathVariable Long productId,
+            @AuthenticationPrincipal AuthenticatedMember member) {
+
+        Page<DemandFormResponseDto> responseDtoList = demandFormService.getAllDemandForms(page - 1, size, productId,
+                member.getMemberId());
+
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, PageResponseDto.toResponseDto(responseDtoList)));
+    }
+
+    @PatchMapping("/products/{productId}/demand/open")
+    public ResponseEntity<BaseResponse<String>> startDemandForm(
+            @PathVariable Long productId,
+            @AuthenticationPrincipal AuthenticatedMember member,
+            @RequestBody UpdateDemandFormRequestDto requestDto) {
+
+        demandFormService.startDemandForm(productId, member.getMemberId(), requestDto);
+
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, "수요조사를 시작합니다."));
     }
 }
