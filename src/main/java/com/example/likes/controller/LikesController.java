@@ -10,22 +10,30 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/products/{productId}")
 public class LikesController {
 
     private final LikesService likesService;
 
-    @PostMapping("/likes")
+    @PostMapping("/products/{productId}/likes")
     public ResponseEntity<BaseResponse<LikesResponseDto>> likeProduct(
             @PathVariable Long productId,
             @AuthenticationPrincipal AuthenticatedMember member) {
 
         LikesResponseDto responseDto = likesService.likeProduct(productId, member.getMemberId());
+
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
+    }
+
+    @PostMapping("/products/{productId}/unlikes")
+    public ResponseEntity<BaseResponse<LikesResponseDto>> unlikeProduct(
+            @PathVariable Long productId,
+            @AuthenticationPrincipal AuthenticatedMember member) {
+
+        LikesResponseDto responseDto = likesService.unlikeProduct(productId, member.getMemberId());
 
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
     }

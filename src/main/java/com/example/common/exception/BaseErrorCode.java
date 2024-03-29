@@ -35,7 +35,8 @@ public enum BaseErrorCode {
     FORBIDDEN_REQUEST(FORBIDDEN, "접근 권한이 없습니다."),
 
     // Likes
-    DUPLICATED_LIKES(BAD_REQUEST, "이미 좋아요를 누른 상품입니다.");
+    DUPLICATED_LIKES(BAD_REQUEST, "이미 좋아요를 누른 상품입니다."),
+    NOT_FOUND_LIKES(NOT_FOUND, "해당 좋아요를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String msg;

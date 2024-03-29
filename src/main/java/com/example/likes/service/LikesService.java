@@ -36,6 +36,19 @@ public class LikesService {
         return LikesResponseDto.toResponseDto(product.getLikesCount());
     }
 
+    @Transactional
+    public LikesResponseDto unlikeProduct(Long productId, Long memberId) {
+
+        Member member = findMember(memberId);
+        Product product = findProduct(productId);
+        Likes likes = findLikes(productId, memberId);
+
+        likesRepository.delete(likes);
+        product.updateLikesCount(-1);
+
+        return LikesResponseDto.toResponseDto(product.getLikesCount());
+    }
+
     private Member findMember(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() ->
                 new GlobalException(NOT_FOUND_MEMBER));
@@ -44,6 +57,11 @@ public class LikesService {
     private Product findProduct(Long productId) {
         return productRepository.findById(productId).orElseThrow(() ->
                 new GlobalException(NOT_FOUND_PRODUCT));
+    }
+
+    private Likes findLikes(Long productId, Long memberId) {
+        return likesRepository.findByProductIdAndMemberId(productId, memberId).orElseThrow(() ->
+                new GlobalException(NOT_FOUND_LIKES));
     }
 
     private void isAlreadyLiked(Long productId, Long memberId) {
