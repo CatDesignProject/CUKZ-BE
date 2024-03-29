@@ -45,6 +45,7 @@ class LikesServiceTest {
 
     Member member;
     Product product;
+    Likes likes;
     LikesResponseDto responseDto;
 
     @BeforeEach
@@ -55,6 +56,7 @@ class LikesServiceTest {
         product = new Product();
         ReflectionTestUtils.setField(product, "id", 1L);
 
+        likes = Likes.toEntity(member, product);
         responseDto = LikesResponseDto.toResponseDto(product.getLikesCount());
     }
 
@@ -73,15 +75,13 @@ class LikesServiceTest {
             responseDto = likesService.likeProduct(1L, 1L);
 
             //then
-            assertEquals(1, responseDto.getLikesCount());
+            assertEquals(product.getLikesCount(), responseDto.getLikesCount());
         }
 
         @Test
         @DisplayName("좋아요 실패 - 존재하지 않는 상품")
         void LikeProductTest_fail_NotfoundProduct() {
             //given
-            Likes likes = Likes.toEntity(member, product);
-
             when(memberRepository.findById(any())).thenReturn(Optional.of(member));
             when(productRepository.findById(any())).thenReturn(Optional.empty());
 
@@ -96,8 +96,6 @@ class LikesServiceTest {
         @DisplayName("좋아요 실패 - 이미 좋아요를 누름")
         void LikeProductTest_fail_DuplicatedLikes() {
             //given
-            Likes likes = Likes.toEntity(member, product);
-
             when(memberRepository.findById(any())).thenReturn(Optional.of(member));
             when(productRepository.findById(any())).thenReturn(Optional.of(product));
             when(likesRepository.findByProductIdAndMemberId(any(), any())).thenReturn(Optional.of(likes));
@@ -107,6 +105,40 @@ class LikesServiceTest {
                 likesService.likeProduct(1L, 1L);
             });
             assertEquals(BaseErrorCode.DUPLICATED_LIKES, e.getErrorCode());
+        }
+    }
+
+    @Nested
+    @DisplayName("좋아요 취소 테스트")
+    class unLikeProductTest {
+        @Test
+        @DisplayName("좋아요 취소 성공")
+        void unLikeProductTest_success() {
+            //given
+            when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+            when(productRepository.findById(any())).thenReturn(Optional.of(product));
+            when(likesRepository.findByProductIdAndMemberId(any(), any())).thenReturn(Optional.of(likes));
+
+            //when
+            responseDto = likesService.unlikeProduct(1L, 1L);
+
+            //then
+            assertEquals(product.getLikesCount(), responseDto.getLikesCount());
+        }
+
+        @Test
+        @DisplayName("좋아요 취소 실패 - 존재하지 않는 좋아요")
+        void unLikeProductTest_fail_NotfoundLikes() {
+            //given
+            when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+            when(productRepository.findById(any())).thenReturn(Optional.of(product));
+            when(likesRepository.findByProductIdAndMemberId(any(), any())).thenReturn(Optional.empty());
+
+            //when - then
+            GlobalException e = assertThrows(GlobalException.class, () -> {
+                likesService.unlikeProduct(1L, 1L);
+            });
+            assertEquals(BaseErrorCode.NOT_FOUND_LIKES, e.getErrorCode());
         }
     }
 }
