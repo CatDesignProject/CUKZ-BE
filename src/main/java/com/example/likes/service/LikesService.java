@@ -6,9 +6,14 @@ import com.example.likes.entity.Likes;
 import com.example.likes.repository.LikesRepository;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
+import com.example.product.dto.response.ProductResponseDto;
 import com.example.product.entity.Product;
 import com.example.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +52,18 @@ public class LikesService {
         product.updateLikesCount(-1);
 
         return LikesResponseDto.toResponseDto(product.getLikesCount());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProductResponseDto> getLikedProducts(int page, int size, Long memberId) {
+
+        Member member = findMember(memberId);
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Likes> likes = likesRepository.findByMemberId(member.getId(), pageable);
+
+        return likes.map(like -> ProductResponseDto.toResponseDto(like.getProduct()));
     }
 
     private Member findMember(Long memberId) {
