@@ -36,7 +36,7 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
         }
 
         // 3. 인증 성공 시 Authentication 토큰 생성
-        AuthenticatedMember authenticatedMember = new AuthenticatedMember(findMember.getId(), findMember.getNickname());
+        AuthenticatedMember authenticatedMember = new AuthenticatedMember(findMember.getId(), findMember.getNickname(), findMember.getRole());
         return MemberAuthenticationToken.authenticated(authenticatedMember);
     }
 
