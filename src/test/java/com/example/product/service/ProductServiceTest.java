@@ -48,13 +48,15 @@ class ProductServiceTest {
     @InjectMocks
     ProductService productService;
 
+    Product product;
+    Member member;
+    Member member2;
+    ProductRequestDto requestDto;
+    ProductResponseDto responseDto;
+
     @Nested
     @DisplayName("saveProduct 메서드는")
     class Describe_saveProduct {
-        ProductRequestDto requestDto;
-        ProductResponseDto responseDto;
-        Member member;
-        Product product;
         @Nested
         @DisplayName("올바른 productRequestDto이고, 멤버 권한이 manager라면")
         class Context_with_dto_authorized_member_role {
@@ -110,9 +112,6 @@ class ProductServiceTest {
     @Nested
     @DisplayName("findProduct 메서드는")
     class Describe_findProduct {
-        Product product;
-        Member member;
-        ProductResponseDto responseDto;
         @Nested
         @DisplayName("존재하는 상품일 경우")
         class Context_with_exist_product {
@@ -161,11 +160,6 @@ class ProductServiceTest {
     @Nested
     @DisplayName("modifyProduct 메서드는")
     class Describe_modifyProduct {
-        Product product;
-        Member member;
-        Member member2;
-        ProductRequestDto requestDto;
-        ProductResponseDto responseDto;
         @Nested
         @DisplayName("존재하는 상품, 올바른 productRequestDto, 해당 상품의 memberId일 경우")
         class Context_with_productId_productRequestDto_memberId {
@@ -236,10 +230,6 @@ class ProductServiceTest {
     @Nested
     @DisplayName("deleteProduct 메서드는")
     class Describe_deleteProduct {
-        Product product;
-        ProductRequestDto requestDto;
-        Member member;
-        Member member2;
         @Nested
         @DisplayName("존재하는 상품이고 해당 상품에 권한이 있는 member인 경우")
         class Context_with_productId_authorized_member {
