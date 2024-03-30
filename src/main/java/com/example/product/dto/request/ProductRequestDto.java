@@ -28,7 +28,7 @@ public class ProductRequestDto {
 
     public Product toProduct() {
         Product product = new Product();
-        product.updateProductPart(name, price, info, status, startDate, endDate);
+        product.createProductPart(name, price, info, status, startDate, endDate);
         return product;
     }
 }

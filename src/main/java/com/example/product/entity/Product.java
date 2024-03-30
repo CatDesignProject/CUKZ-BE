@@ -56,7 +56,7 @@ public class Product {
         this.member = member;
     }
 
-    public void updateProductPart(String name, int price, String info
+    public void createProductPart(String name, int price, String info
             , SaleStatus status, LocalDateTime startDate, LocalDateTime endDate) {
         this.name = name;
         this.price = price;
