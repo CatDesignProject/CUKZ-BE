@@ -202,7 +202,6 @@ class ProductServiceTest {
             @BeforeEach
             void setUp() {
                 product = TestBuilder.testProductBuild();
-                requestDto = TestBuilder.testProductRequestDtoBuild();
                 member = product.getMember();
             }
             @Test
@@ -219,7 +218,6 @@ class ProductServiceTest {
             @BeforeEach
             void setUp() {
                 product = TestBuilder.testProductBuild();
-                requestDto = TestBuilder.testProductRequestDtoBuild();
                 member2 = new Member(2L, "username2", "password1234@", "nickname2"
                         , "member2@naver.com", MemberRole.manager);
 
@@ -248,7 +246,6 @@ class ProductServiceTest {
             @BeforeEach
             void setUp() {
                 product = TestBuilder.testProductBuild();
-                requestDto = TestBuilder.testProductRequestDtoBuild();
                 member = product.getMember();
 
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
@@ -287,7 +284,6 @@ class ProductServiceTest {
             @BeforeEach
             void setUp() {
                 product = TestBuilder.testProductBuild();
-                requestDto = TestBuilder.testProductRequestDtoBuild();
                 member = product.getMember();
                 member2 = new Member(2L, "username2", "password1234@", "nickname2"
                         , "member2@naver.com", MemberRole.manager);
