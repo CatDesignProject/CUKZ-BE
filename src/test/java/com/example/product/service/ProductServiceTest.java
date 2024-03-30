@@ -58,8 +58,8 @@ class ProductServiceTest {
     @DisplayName("saveProduct 메서드는")
     class Describe_saveProduct {
         @Nested
-        @DisplayName("올바른 productRequestDto이고, 멤버 권한이 manager라면")
-        class Context_with_dto_authorized_member_role {
+        @DisplayName("올바른 productRequestDto이고, 유효한 memberId 경우")
+        class Context_with_dto_exist_member {
             @BeforeEach
             void setUp() {
                 requestDto = TestBuilder.testProductRequestDtoBuild();
@@ -92,7 +92,7 @@ class ProductServiceTest {
             }
         }
         @Nested
-        @DisplayName("올바른 productRequestDto이고, 유효하지 않은 memberId일 경우")
+        @DisplayName("올바른 productRequestDto이고, 유효하지 않은 memberId인 경우")
         class Context_with_dto_un_authorized_member_role {
             @BeforeEach
             void setUp() {
@@ -100,8 +100,8 @@ class ProductServiceTest {
                 given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
             }
             @Test
-            @DisplayName("권환 없음 예외를 발생시킨다.")
-            void it_returns_un_authorized_exception() {
+            @DisplayName("해당 유저를 찾을 수 없다는 예외를 발생시킨다.")
+            void it_returns_not_found_member_exception() {
                 assertThatThrownBy(() -> productService.saveProduct(requestDto, member.getId()))
                         .isInstanceOf(GlobalException.class)
                         .hasMessage("아이디가 일치하지 않습니다.");
@@ -113,7 +113,7 @@ class ProductServiceTest {
     @DisplayName("findProduct 메서드는")
     class Describe_findProduct {
         @Nested
-        @DisplayName("존재하는 상품일 경우")
+        @DisplayName("유효햔 productId인 경우")
         class Context_with_exist_product {
             @BeforeEach
             void setUp() {
@@ -140,7 +140,7 @@ class ProductServiceTest {
             }
         }
         @Nested
-        @DisplayName("존재하지 않는 상품일 경우")
+        @DisplayName("유효하지 않은 productId인 경우")
         class Context_with_not_exist_product {
             @BeforeEach
             void setUp() {
@@ -149,7 +149,7 @@ class ProductServiceTest {
             }
             @Test
             @DisplayName("존재하지 않는 상품 예외를 발생시킨다.")
-            void it_returns_not_found_exception() {
+            void it_returns_not_found_product_exception() {
                 assertThatThrownBy(() -> productService.findProduct(product.getId()))
                         .isInstanceOf(GlobalException.class)
                         .hasMessage("해당 상품을 찾을 수 없습니다.");
@@ -161,7 +161,7 @@ class ProductServiceTest {
     @DisplayName("modifyProduct 메서드는")
     class Describe_modifyProduct {
         @Nested
-        @DisplayName("존재하는 상품, 올바른 productRequestDto, 해당 상품의 memberId일 경우")
+        @DisplayName("유효하는 productId, 올바른 productRequestDto, 해당 상품이 memberId가 등록한 상품인 경우")
         class Context_with_productId_productRequestDto_memberId {
             @BeforeEach
             void setUp() {
@@ -191,7 +191,7 @@ class ProductServiceTest {
             }
         }
         @Nested
-        @DisplayName("존재하지 않는 상품일 경우")
+        @DisplayName("유효하지 않은 productId인 경우")
         class Context_with_not_found_product {
             @BeforeEach
             void setUp() {
@@ -200,14 +200,14 @@ class ProductServiceTest {
             }
             @Test
             @DisplayName("존재하지 않는 상품 예외를 발생시킨다.")
-            void it_returns_not_found_exception() {
+            void it_returns_not_found_product_exception() {
                 assertThatThrownBy(() -> productService.modifyProduct(product.getId(), requestDto, member.getId()))
                         .isInstanceOf(GlobalException.class)
                         .hasMessage("해당 상품을 찾을 수 없습니다.");
             }
         }
         @Nested
-        @DisplayName("해당 상품에 대한 권한이 없는 memberId일 경우")
+        @DisplayName("해당 상품을 등록하지 않은 memberId인 경우")
         class Context_with_un_authorized {
             @BeforeEach
             void setUp() {
@@ -218,7 +218,7 @@ class ProductServiceTest {
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
             }
             @Test
-            @DisplayName("권한 없음 예외를 발생시킨다.")
+            @DisplayName("해당 상품을 수정할 권한 없음 예외를 발생시킨다.")
             void it_returns_un_authorized_exception() {
                 assertThatThrownBy(() -> productService.modifyProduct(product.getId(), requestDto, member2.getId()))
                         .isInstanceOf(GlobalException.class)
@@ -231,7 +231,7 @@ class ProductServiceTest {
     @DisplayName("deleteProduct 메서드는")
     class Describe_deleteProduct {
         @Nested
-        @DisplayName("존재하는 상품이고 해당 상품에 권한이 있는 member인 경우")
+        @DisplayName("유효한 productId이고 해당 상품을 등록한 memberId인 경우")
         class Context_with_productId_authorized_member {
             @BeforeEach
             void setUp() {
@@ -254,7 +254,7 @@ class ProductServiceTest {
             }
         }
         @Nested
-        @DisplayName("존재하지 않은 상품일 경우")
+        @DisplayName("유효하지 않은 productId인 경우")
         class Context_with_not_found_product {
             @BeforeEach
             void setUp() {
@@ -262,14 +262,14 @@ class ProductServiceTest {
             }
             @Test
             @DisplayName("존재하지 않는 상품 예외를 발생시킨다.")
-            void it_returns_not_found_exception() {
+            void it_returns_not_found_product_exception() {
                 assertThatThrownBy(() -> productService.deleteProduct(1L, 1L))
                         .isInstanceOf(GlobalException.class)
                         .hasMessage("해당 상품을 찾을 수 없습니다.");
             }
         }
         @Nested
-        @DisplayName("해당 상품에 대한 권한이 없는 memberId일 경우")
+        @DisplayName("해당 상품을 등록하지 않은 memberId인 경우")
         class Context_with_un_authorized {
             @BeforeEach
             void setUp() {
@@ -281,7 +281,7 @@ class ProductServiceTest {
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
             }
             @Test
-            @DisplayName("권한 없음 예외를 발생시킨다.")
+            @DisplayName("해당 상품을 삭제할 권한 없음 예외를 발생시킨다.")
             void it_returns_un_authorized_exception() {
                 assertThatThrownBy(() -> productService.deleteProduct(product.getId(), member2.getId()))
                         .isInstanceOf(GlobalException.class)
