@@ -2,19 +2,17 @@ package com.example.product.service;
 
 import com.example.common.exception.GlobalException;
 import com.example.member.entity.Member;
-import com.example.member.entity.MemberRole;
 import com.example.member.repository.MemberRepository;
+import com.example.product.TestBuilder;
 import com.example.product.dto.request.ProductRequestDto;
 import com.example.product.dto.response.ProductResponseDto;
-import com.example.product.entity.Goods;
-import com.example.product.entity.Jacket;
+import com.example.product.entity.Option;
 import com.example.product.entity.Product;
-import com.example.product.enums.ProductType;
-import com.example.product.enums.SaleStatus;
-import com.example.product.enums.Size;
+import com.example.product.repository.OptionRepository;
 import com.example.product.repository.ProductRepository;
 import com.example.product_image.entity.ProductImage;
 import com.example.product_image.repository.ProductImageRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,20 +21,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("ProductService 클래스의")
 class ProductServiceTest {
 
     @Mock
     ProductRepository productRepository;
+
+    @Mock
+    OptionRepository optionRepository;
 
     @Mock
     ProductImageRepository productImageRepository;
@@ -47,507 +46,289 @@ class ProductServiceTest {
     @InjectMocks
     ProductService productService;
 
-    LocalDateTime startDate = LocalDateTime.of(2024, 3, 18, 15, 30, 0);
-    LocalDateTime endDate = LocalDateTime.of(2024, 3, 19, 15, 30, 0);
-
     @Nested
-    @DisplayName("상품 등록(성공)")
-    class SaveProductSuccess {
-        @DisplayName("잠바")
-        @Test
-        void save_jacket() {
-            //given
-            List<String> colors = new ArrayList<>();
-            colors.add("NAVY");
-            List<Size> sizes = new ArrayList<>();
-            sizes.add(Size.S);
-            List<Long> imageUrls = new ArrayList<>();
-            imageUrls.add(1L);
+    @DisplayName("saveProduct 메서드는")
+    class Describe_saveProduct {
+        ProductRequestDto requestDto;
+        ProductResponseDto responseDto;
+        Member member;
+        @Nested
+        @DisplayName("올바른 productRequestDto이고, 멤버 권한이 manager라면")
+        class Context_with_dto_authorized_member_role {
+            @BeforeEach
+            void setUp() {
+                requestDto = TestBuilder.testProductRequestDtoBuild();
+                Product product = requestDto.toProduct();
 
-            ProductRequestDto requestDto = ProductRequestDto.builder()
-                    .name("A")
-                    .price(1)
-                    .info("B")
-                    .startDate(startDate)
-                    .endDate(endDate)
-                    .colors(colors)
-                    .sizes(sizes)
-                    .type(ProductType.잠바)
-                    .status(SaleStatus.ON_SALE)
-                    .productImageIds(imageUrls)
-                    .build();
+                member = TestBuilder.testMemberBuild();
 
-            Member member = new Member();
-            member.changeNickname("닉네임");
+                ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
+                ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
 
-            Jacket jacket = requestDto.toJacket();
-            jacket.addMember(member);
+                given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+                given(productImageRepository.findById(1L)).willReturn(Optional.of(productImage1));
+                given(productImageRepository.findById(2L)).willReturn(Optional.of(productImage2));
+                given(productRepository.save(any(Product.class))).willReturn(product);
+                given(optionRepository.save(any(Option.class))).willReturn(any(Option.class));
 
-            ProductImage productImage = ProductImage.builder()
-                    .id(1L)
-                    .storeFileName("A")
-                    .uploadFileName("B")
-                    .imageUrl("www")
-                    .build();
-
-            given(memberRepository.findById(1L)).willReturn(Optional.of(member));
-            given(productImageRepository.findById(1L)).willReturn(Optional.of(productImage));
-            given(productRepository.save(any(Product.class))).willReturn(jacket);
-
-
-            //when
-            ProductResponseDto result = productService.saveProduct(requestDto, 1L);
-
-            //then
-            assertEquals(requestDto.getName(), result.getName());
-            assertEquals(requestDto.getPrice(), result.getPrice());
-            assertEquals(requestDto.getInfo(), result.getInfo());
-            assertEquals(requestDto.getSizes(), result.getSizes());
-            assertEquals(requestDto.getColors(), result.getColors());
-            assertEquals(requestDto.getStartDate(), result.getStartDate());
-            assertEquals(requestDto.getEndDate(), result.getEndDate());
+                responseDto = productService.saveProduct(requestDto, member.getId());
+            }
+            @Test
+            @DisplayName("상품 등록에 성공하고, 해당 상품 응답 dto를 반환한다.")
+            void it_returns_product_response_dto() {
+                assertEquals(requestDto.getStatus(), responseDto.getStatus());
+                assertEquals(requestDto.getName(), responseDto.getName());
+                assertEquals(requestDto.getPrice(), responseDto.getPrice());
+                assertEquals(requestDto.getInfo(), responseDto.getInfo());
+                assertEquals(0, responseDto.getLikesCount());
+                assertEquals(member.getNickname(), responseDto.getNickname());
+                assertEquals(requestDto.getStartDate(), responseDto.getStartDate());
+                assertEquals(requestDto.getEndDate(), responseDto.getEndDate());
+                assertEquals("www.s3v1.png", responseDto.getImageUrls().get(0));
+                assertEquals("www.s3v2.png", responseDto.getImageUrls().get(1));
+                assertEquals(requestDto.getOptions(), responseDto.getOptions());
+            }
         }
+        @Nested
+        @DisplayName("올바른 productRequestDto이고, 멤버 권한이 manger가 아니라면")
+        class Context_with_dto_un_authorized_member_role {
+            @BeforeEach
+            void setUp() {
+                requestDto = TestBuilder.testProductRequestDtoBuild();
+                Product product = requestDto.toProduct();
 
-        @DisplayName("굿즈")
-        @Test
-        void save_goods() {
-            //given
-            List<String> colors = new ArrayList<>();
-            colors.add("NAVY");
-            List<Size> sizes = new ArrayList<>();
-            sizes.add(Size.S);
-            List<Long> imageUrls = new ArrayList<>();
-            imageUrls.add(1L);
+                member = TestBuilder.testMemberBuild();
 
-            Member member = new Member();
-            member.changeNickname("닉네임");
+                ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
+                ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
 
-            ProductRequestDto requestDto = ProductRequestDto.builder()
-                    .name("A")
-                    .price(1)
-                    .info("B")
-                    .startDate(startDate)
-                    .endDate(endDate)
-                    .colors(colors)
-                    .type(ProductType.굿즈)
-                    .status(SaleStatus.ON_SALE)
-                    .productImageIds(imageUrls)
-                    .build();
-
-            Goods goods = requestDto.toGoods();
-            goods.addMember(member);
-
-            ProductImage productImage = ProductImage.builder()
-                    .id(1L)
-                    .storeFileName("A")
-                    .uploadFileName("B")
-                    .imageUrl("www")
-                    .build();
-
-            given(memberRepository.findById(1L)).willReturn(Optional.of(member));
-            given(productImageRepository.findById(1L)).willReturn(Optional.of(productImage));
-            given(productRepository.save(any(Product.class))).willReturn(goods);
-
-            //when
-            ProductResponseDto result = productService.saveProduct(requestDto, 1L);
-
-            //then
-            assertEquals(requestDto.getName(), result.getName());
-            assertEquals(requestDto.getPrice(), result.getPrice());
-            assertEquals(requestDto.getInfo(), result.getInfo());
-            assertEquals(requestDto.getColors(), result.getColors());
-            assertEquals(requestDto.getStartDate(), result.getStartDate());
-            assertEquals(requestDto.getEndDate(), result.getEndDate());
+                given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
+            }
+            @Test
+            @DisplayName("권환 없음 예외를 발생시킨다.")
+            void it_returns_un_authorized_exception() {
+                assertThatThrownBy(() -> productService.saveProduct(requestDto, member.getId()))
+                        .isInstanceOf(GlobalException.class)
+                        .hasMessage("아이디가 일치하지 않습니다.");
+            }
         }
     }
 
     @Nested
-    @DisplayName("상품 등록(실패)")
-    class SaveProductFail {
-        @DisplayName("해당 유저를 찾지 못한 경우")
-        @Test
-        void not_found_user() {
-            //given
-            ProductRequestDto requestDto = ProductRequestDto.builder()
-                    .name("A")
-                    .price(1)
-                    .info("B")
-                    .startDate(startDate)
-                    .endDate(endDate)
-                    .type(ProductType.굿즈)
-                    .status(SaleStatus.ON_SALE)
-                    .build();
-            given(memberRepository.findById(1L)).willReturn(Optional.empty());
+    @DisplayName("findProduct 메서드는")
+    class Describe_findProduct {
+        Product product;
+        Member member;
+        ProductResponseDto responseDto;
+        @Nested
+        @DisplayName("존재하는 상품일 경우")
+        class Context_with_exist_product {
+            @BeforeEach
+            void setUp() {
+                product = TestBuilder.testProductBuild();
+                member = TestBuilder.testMemberBuild();
+                ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
+                ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
+                product.addMember(member);
+                product.addProductImage(productImage1);
+                product.addProductImage(productImage2);
+                given(productRepository.findFetchById(product.getId())).willReturn(Optional.of(product));
 
-            //when-then
-            assertThatThrownBy(() -> productService.saveProduct(requestDto, 1L))
-                    .isInstanceOf(GlobalException.class)
-                    .hasMessage("아이디가 일치하지 않습니다.");
+                responseDto = productService.findProduct(product.getId());
+            }
+            @Test
+            @DisplayName("상품 정보를 반환한다.")
+            void it_returns_product_response_dto() {
+                assertEquals(product.getStatus(), responseDto.getStatus());
+                assertEquals(product.getName(), responseDto.getName());
+                assertEquals(product.getPrice(), responseDto.getPrice());
+                assertEquals(product.getInfo(), responseDto.getInfo());
+                assertEquals(0, responseDto.getLikesCount());
+                assertEquals(product.getMember().getNickname(), responseDto.getNickname());
+                assertEquals(product.getStartDate(), responseDto.getStartDate());
+                assertEquals(product.getEndDate(), responseDto.getEndDate());
+                assertEquals("www.s3v1.png", responseDto.getImageUrls().get(0));
+                assertEquals("www.s3v2.png", responseDto.getImageUrls().get(1));
+                assertEquals(product.getOptions(), responseDto.getOptions());
+            }
         }
+        @Nested
+        @DisplayName("존재하지 않는 상품일 경우")
+        class Context_with_not_exist_product {
+            @BeforeEach
+            void setUp() {
+                product = TestBuilder.testProductBuild();
 
-        @DisplayName("해당 이미지를 찾지 못한 경우")
-        @Test
-        void not_found_image() {
-            //given
-            List<Long> imageUrls = new ArrayList<>();
-            imageUrls.add(1L);
-
-            ProductRequestDto requestDto = ProductRequestDto.builder()
-                    .name("A")
-                    .price(1)
-                    .info("B")
-                    .startDate(startDate)
-                    .endDate(endDate)
-                    .type(ProductType.굿즈)
-                    .status(SaleStatus.ON_SALE)
-                    .productImageIds(imageUrls)
-                    .build();
-
-            Member member = new Member();
-            Goods goods = requestDto.toGoods();
-            goods.addMember(member);
-
-            given(memberRepository.findById(1L)).willReturn(Optional.of(member));
-            given(productImageRepository.findById(1L)).willReturn(Optional.empty());
-
-            //when-then
-            assertThatThrownBy(() -> productService.saveProduct(requestDto, 1L))
-                    .isInstanceOf(GlobalException.class)
-                    .hasMessage("해당 이미지를 찾을 수 없습니다.");
-        }
-    }
-
-    @Nested
-    @DisplayName("상품 단건 조회(성공)")
-    class FindProductSuccess {
-        @DisplayName("잠바")
-        @Test
-        void find_jacket() {
-            //given
-            Long productId = 1L;
-            List<String> colors = new ArrayList<>();
-            colors.add("NAVY");
-
-            List<Size> sizes = new ArrayList<>();
-            sizes.add(Size.S);
-
-            Jacket jacket = new Jacket();
-            jacket.modify("A", 1, "B", ProductType.잠바, SaleStatus.ON_SALE, startDate, endDate, colors, sizes);
-            Product product = jacket;
-
-            Member member = new Member();
-            member.changeNickname("닉네임");
-            product.addMember(member);
-
-            ProductImage productImage = ProductImage.builder()
-                    .id(1L)
-                    .product(product)
-                    .storeFileName("A")
-                    .uploadFileName("B")
-                    .imageUrl("www")
-                    .build();
-
-            product.addProductImage(productImage);
-
-            given(productRepository.findFetchById(productId)).willReturn(Optional.of(product));
-
-            //when
-            ProductResponseDto responseDto = productService.findProduct(productId);
-
-            //then
-            Jacket jacket1 = (Jacket) product;
-            assertEquals(jacket1.getName(), responseDto.getName());
-            assertEquals(jacket1.getPrice(), responseDto.getPrice());
-            assertEquals(jacket1.getInfo(), responseDto.getInfo());
-            assertEquals(jacket1.getStartDate(), responseDto.getStartDate());
-            assertEquals(jacket1.getEndDate(), responseDto.getEndDate());
-            assertEquals(jacket1.getColors(), responseDto.getColors());
-            assertEquals(jacket1.getMember().getNickname(), responseDto.getNickname());
-        }
-
-        @DisplayName("굿즈")
-        @Test
-        void find_goods() {
-            //given
-            Long productId = 1L;
-            List<String> colors = new ArrayList<>();
-            colors.add("NAVY");
-
-            Goods goods = new Goods();
-            goods.modify("A", 1, "B", ProductType.굿즈, SaleStatus.ON_SALE, startDate, endDate, colors);
-            Product product = goods;
-
-            Member member = new Member();
-            member.changeNickname("닉네임");
-            product.addMember(member);
-
-            ProductImage productImage = ProductImage.builder()
-                    .id(1L)
-                    .product(product)
-                    .storeFileName("A")
-                    .uploadFileName("B")
-                    .imageUrl("www")
-                    .build();
-
-            product.addProductImage(productImage);
-
-            given(productRepository.findFetchById(productId)).willReturn(Optional.of(product));
-
-            //when
-            ProductResponseDto responseDto = productService.findProduct(productId);
-
-            //then
-            Goods goods1 = (Goods) product;
-            assertEquals(goods1.getName(), responseDto.getName());
-            assertEquals(goods1.getPrice(), responseDto.getPrice());
-            assertEquals(goods1.getInfo(), responseDto.getInfo());
-            assertEquals(goods1.getStartDate(), responseDto.getStartDate());
-            assertEquals(goods1.getEndDate(), responseDto.getEndDate());
-            assertEquals(goods1.getColors(), responseDto.getColors());
-            assertEquals(goods1.getMember().getNickname(), responseDto.getNickname());
+                given(productRepository.findFetchById(product.getId())).willReturn(Optional.empty());
+            }
+            @Test
+            @DisplayName("존재하지 않는 상품 예외를 발생시킨다.")
+            void it_returns_not_found_exception() {
+                assertThatThrownBy(() -> productService.findProduct(product.getId()))
+                        .isInstanceOf(GlobalException.class)
+                        .hasMessage("해당 상품을 찾을 수 없습니다.");
+            }
         }
     }
 
     @Nested
-    @DisplayName("상품 단건 조회(실패)")
-    class FindProductFail {
-        @DisplayName("상품을 찾지 못한 경우")
-        @Test
-        void not_found_product() {
-            //given
-            given(productRepository.findFetchById(1L)).willReturn(Optional.empty());
+    @DisplayName("modifyProduct 메서드는")
+    class Describe_modifyProduct {
+        Product product;
+        Member member;
+        ProductRequestDto requestDto;
+        ProductResponseDto responseDto;
+        @Nested
+        @DisplayName("존재하는 상품, 올바른 productRequestDto, 해당 상품의 memberId일 경우")
+        class Context_with_productId_productRequestDto_memberId {
+            @BeforeEach
+            void setUp() {
+                product = TestBuilder.testProductBuild();
+                requestDto = TestBuilder.testProductRequestDtoBuild();
+                member = TestBuilder.testMemberBuild();
+                ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
+                ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
+                product.addMember(member);
+                product.addProductImage(productImage1);
+                product.addProductImage(productImage2);
+                given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
+                doNothing().when(optionRepository).deleteAllByProductId(product.getId());
+                given(optionRepository.save(any(Option.class))).willReturn(any(Option.class));
 
-            //when-then
-            assertThatThrownBy(() -> productService.findProduct(1L))
-                    .isInstanceOf(GlobalException.class)
-                    .hasMessage("해당 상품을 찾을 수 없습니다.");
+                responseDto = productService.modifyProduct(product.getId(), requestDto, member.getId());
+            }
+            @Test
+            @DisplayName("상품 수정에 성공하고, 수정된 상품 정보를 반환한다.")
+            void it_returns_modified_product_response() {
+                assertEquals(requestDto.getStatus(), responseDto.getStatus());
+                assertEquals(requestDto.getName(), responseDto.getName());
+                assertEquals(requestDto.getPrice(), responseDto.getPrice());
+                assertEquals(requestDto.getInfo(), responseDto.getInfo());
+                assertEquals(0, responseDto.getLikesCount());
+                assertEquals(member.getNickname(), responseDto.getNickname());
+                assertEquals(requestDto.getStartDate(), responseDto.getStartDate());
+                assertEquals(requestDto.getEndDate(), responseDto.getEndDate());
+                assertEquals("www.s3v1.png", responseDto.getImageUrls().get(0));
+                assertEquals("www.s3v2.png", responseDto.getImageUrls().get(1));
+                assertEquals(requestDto.getOptions(), responseDto.getOptions());
+            }
+        }
+        @Nested
+        @DisplayName("존재하지 않는 상품일 경우")
+        class Context_with_not_found_product {
+            @BeforeEach
+            void setUp() {
+                product = TestBuilder.testProductBuild();
+
+                given(productRepository.findFetchById(product.getId())).willReturn(Optional.empty());
+            }
+            @Test
+            @DisplayName("존재하지 않는 상품 예외를 발생시킨다.")
+            void it_returns_not_found_exception() {
+                assertThatThrownBy(() -> productService.findProduct(product.getId()))
+                        .isInstanceOf(GlobalException.class)
+                        .hasMessage("해당 상품을 찾을 수 없습니다.");
+            }
+        }
+        @Nested
+        @DisplayName("해당 상품에 대한 권한이 없는 memberId일 경우")
+        class Context_with_un_authorized {
+            @BeforeEach
+            void setUp() {
+                product = TestBuilder.testProductBuild();
+                requestDto = TestBuilder.testProductRequestDtoBuild();
+                member = TestBuilder.testMemberBuild();
+                ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
+                ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
+                product.addMember(member);
+            }
+            @Test
+            @DisplayName("권한 없음 예외를 발생시킨다.")
+            void it_returns_un_authorized_exception() {
+                assertThatThrownBy(() -> productService.saveProduct(requestDto, member.getId()))
+                        .isInstanceOf(GlobalException.class)
+                        .hasMessage("아이디가 일치하지 않습니다.");
+            }
         }
     }
 
     @Nested
-    @DisplayName("상품 수정(성공)")
-    class ModifyProductSuccess {
-        @DisplayName("잠바")
-        @Test
-        void modify_jacket() {
-            //given
-            List<String> colors = new ArrayList<>();
-            colors.add("NAVY");
+    @DisplayName("deleteProduct 메서드는")
+    class Describe_deleteProduct {
+        Product product;
+        ProductRequestDto requestDto;
+        Member member;
+        @Nested
+        @DisplayName("존재하는 상품이고 해당 상품에 권한이 있는 member인 경우")
+        class Context_with_productId_authorized_member {
+            @BeforeEach
+            void setUp() {
+                product = TestBuilder.testProductBuild();
+                requestDto = TestBuilder.testProductRequestDtoBuild();
+                member = TestBuilder.testMemberBuild();
+                ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
+                ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
+                product.addMember(member);
+                product.addProductImage(productImage1);
+                product.addProductImage(productImage2);
 
-            List<Size> sizes = new ArrayList<>();
-            sizes.add(Size.S);
-            sizes.add(Size.L);
+                given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
+                doNothing().when(optionRepository).deleteAllByProductId(product.getId());
+                doNothing().when(productImageRepository).deleteAllByProductId(product.getId());
+                doNothing().when(productRepository).deleteById(product.getId());
 
-            ProductRequestDto requestDto = ProductRequestDto.builder()
-                    .name("컴공 과잠")
-                    .price(50000)
-                    .info("가톨릭대학교 컴퓨터정보공학부 19학번 과잠입니다.")
-                    .type(ProductType.잠바)
-                    .status(SaleStatus.ON_SALE)
-                    .startDate(startDate)
-                    .endDate(endDate)
-                    .colors(colors)
-                    .sizes(sizes)
-                    .build();
-
-            Member member = new Member(1L, "username", "password1234@"
-                    , "닉네임", "email@naver.com", MemberRole.manager);
-
-            Jacket jacket = requestDto.toJacket();
-            jacket.addMember(member);
-
-            given(productRepository.findById(1L)).willReturn(Optional.of(jacket));
-
-
-            //when
-            ProductResponseDto result = productService.modifyProduct(1L, requestDto, 1L);
-
-            //then
-            assertEquals(requestDto.getName(), result.getName());
-            assertEquals(requestDto.getPrice(), result.getPrice());
-            assertEquals(requestDto.getInfo(), result.getInfo());
-            assertEquals(requestDto.getSizes(), result.getSizes());
-            assertEquals(requestDto.getColors(), result.getColors());
-            assertEquals(requestDto.getStartDate(), result.getStartDate());
-            assertEquals(requestDto.getEndDate(), result.getEndDate());
+                productService.deleteProduct(product.getId(), member.getId());
+            }
+            @Test
+            @DisplayName("상품 삭제에 성공한다.")
+            void it_returns_success_delete() {
+                then(optionRepository).should(times(1)).deleteAllByProductId(product.getId());
+                then(productImageRepository).should(times(1)).deleteAllByProductId(product.getId());
+                then(productRepository).should(times(1)).deleteById(product.getId());
+            }
         }
+        @Nested
+        @DisplayName("존재하지 않은 상품일 경우")
+        class Context_with_not_found_product {
+            @BeforeEach
+            void setUp() {
+                product = TestBuilder.testProductBuild();
+                member = TestBuilder.testMemberBuild();
+                ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
+                ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
+                product.addMember(member);
+                product.addProductImage(productImage1);
+                product.addProductImage(productImage2);
 
-        @DisplayName("굿즈")
-        @Test
-        void modify_goods() {
-            //given
-            List<String> colors = new ArrayList<>();
-            colors.add("YELLOW");
-            colors.add("WHITE");
-
-            ProductRequestDto requestDto = ProductRequestDto.builder()
-                    .name("치삼이 키링")
-                    .price(10000)
-                    .info("치삼이 키링 공구 진행합니다.")
-                    .type(ProductType.굿즈)
-                    .status(SaleStatus.ON_SALE)
-                    .startDate(startDate)
-                    .endDate(endDate)
-                    .colors(colors)
-                    .build();
-
-            Member member = new Member(1L, "username", "password1234@"
-                    , "닉네임", "email@naver.com", MemberRole.manager);
-
-            Goods goods = requestDto.toGoods();
-            goods.addMember(member);
-
-            given(productRepository.findById(1L)).willReturn(Optional.of(goods));
-
-            //when
-            ProductResponseDto result = productService.modifyProduct(1L, requestDto, 1L);
-
-            //then
-            assertEquals(requestDto.getName(), result.getName());
-            assertEquals(requestDto.getPrice(), result.getPrice());
-            assertEquals(requestDto.getInfo(), result.getInfo());
-            assertEquals(requestDto.getColors(), result.getColors());
-            assertEquals(requestDto.getStartDate(), result.getStartDate());
-            assertEquals(requestDto.getEndDate(), result.getEndDate());
+                given(productRepository.findById(product.getId())).willReturn(Optional.empty());
+            }
+            @Test
+            @DisplayName("존재하지 않는 상품 예외를 발생시킨다.")
+            void it_returns_not_found_exception() {
+                assertThatThrownBy(() -> productService.deleteProduct(product.getId(), member.getId()))
+                        .isInstanceOf(GlobalException.class)
+                        .hasMessage("해당 상품을 찾을 수 없습니다.");
+            }
         }
-    }
-
-    @Nested
-    @DisplayName("상품 수정(실패)")
-    class ModifyProductFail {
-        @DisplayName("수정할 대상 상품을 찾지 못한 경우")
-        @Test
-        void not_found_product() {
-            //given
-            ProductRequestDto requestDto = ProductRequestDto.builder()
-                    .name("치삼이 키링")
-                    .price(10000)
-                    .info("치삼이 키링 공구 진행합니다.")
-                    .type(ProductType.굿즈)
-                    .status(SaleStatus.ON_SALE)
-                    .startDate(startDate)
-                    .endDate(endDate)
-                    .build();
-
-            given(productRepository.findById(1L)).willReturn(Optional.empty());
-
-            //when-then
-            assertThatThrownBy(() -> productService.modifyProduct(1L, requestDto, 1L))
-                    .isInstanceOf(GlobalException.class)
-                    .hasMessage("해당 상품을 찾을 수 없습니다.");
-        }
-
-        @DisplayName("상품을 등록한 자가 아닌 경우")
-        @Test
-        void unauthorized_modify_product() {
-            //given
-            List<String> colors = new ArrayList<>();
-            colors.add("NAVY");
-
-            List<Size> sizes = new ArrayList<>();
-            sizes.add(Size.S);
-            sizes.add(Size.L);
-
-            ProductRequestDto requestDto = ProductRequestDto.builder()
-                    .name("컴공 과잠")
-                    .price(50000)
-                    .info("가톨릭대학교 컴퓨터정보공학부 19학번 과잠입니다.")
-                    .type(ProductType.잠바)
-                    .status(SaleStatus.ON_SALE)
-                    .startDate(startDate)
-                    .endDate(endDate)
-                    .colors(colors)
-                    .sizes(sizes)
-                    .build();
-
-            Member member = new Member(1L, "username", "password1234@"
-                    , "닉네임", "email@naver.com", MemberRole.manager);
-
-            Jacket jacket = requestDto.toJacket();
-            jacket.addMember(member);
-
-            given(productRepository.findById(1L)).willReturn(Optional.of(jacket));
-
-            //when-then
-            assertThatThrownBy(() -> productService.modifyProduct(1L, requestDto, 2L))
-                    .isInstanceOf(GlobalException.class)
-                    .hasMessage("해당 상품을 수정할 권한이 없습니다.");
-        }
-    }
-
-    @Nested
-    @DisplayName("상품 삭제")
-    class DeleteProduct {
-        @DisplayName("성공")
-        @Test
-        void delete_product_success() {
-            //given
-            List<String> colors = new ArrayList<>();
-            colors.add("NAVY");
-
-            List<Size> sizes = new ArrayList<>();
-            sizes.add(Size.S);
-            sizes.add(Size.L);
-
-            ProductRequestDto requestDto = ProductRequestDto.builder()
-                    .name("컴공 과잠")
-                    .price(50000)
-                    .info("가톨릭대학교 컴퓨터정보공학부 19학번 과잠입니다.")
-                    .type(ProductType.잠바)
-                    .status(SaleStatus.ON_SALE)
-                    .startDate(startDate)
-                    .endDate(endDate)
-                    .colors(colors)
-                    .sizes(sizes)
-                    .build();
-
-            Member member = new Member(1L, "username", "password1234@"
-                    , "닉네임", "email@naver.com", MemberRole.manager);
-
-            Jacket jacket = requestDto.toJacket();
-            jacket.addMember(member);
-            Long productId = 1L;
-
-            given(productRepository.findById(productId)).willReturn(Optional.of(jacket));
-            doNothing().when(productImageRepository).deleteAllByProductId(productId);
-            doNothing().when(productRepository).deleteById(productId);
-
-            //when
-            productService.deleteProduct(productId, member.getId());
-
-            //then
-            then(productRepository).should(times(1)).findById(productId);
-            then(productImageRepository).should(times(1)).deleteAllByProductId(productId);
-            then(productRepository).should(times(1)).deleteById(productId);
-        }
-
-        @DisplayName("실패 - 삭제할 상품이 존재하지 않는 경우")
-        @Test
-        void not_found_product() {
-            //given
-            given(productRepository.findById(1L)).willReturn(Optional.empty());
-
-            //when-then
-            assertThatThrownBy(() -> productService.deleteProduct(1L, 1L))
-                    .isInstanceOf(GlobalException.class)
-                    .hasMessage("해당 상품을 찾을 수 없습니다.");
-        }
-
-        @DisplayName("실패 - 삭제 권한 없는 경우")
-        @Test
-        void unauthorized_delete_product() {
-            //given
-            Product product = new Product();
-            Member member = new Member(1L, "username", "password1234@"
-                    , "닉네임", "email@naver.com", MemberRole.manager);
-            product.addMember(member);
-            Long productId = 1L;
-
-            given(productRepository.findById(productId)).willReturn(Optional.of(product));
-            //when-then
-            assertThatThrownBy(() -> productService.deleteProduct(productId, 2L))
-                    .isInstanceOf(GlobalException.class)
-                    .hasMessage("해당 상품을 삭제할 권한이 없습니다.");
+        @Nested
+        @DisplayName("해당 상품에 대한 권한이 없는 memberId일 경우")
+        class Context_with_un_authorized {
+            @BeforeEach
+            void setUp() {
+                product = TestBuilder.testProductBuild();
+                requestDto = TestBuilder.testProductRequestDtoBuild();
+                member = TestBuilder.testMemberBuild();
+                ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
+                ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
+                product.addMember(member);
+            }
+            @Test
+            @DisplayName("권한 없음 예외를 발생시킨다.")
+            void it_returns_un_authorized_exception() {
+                assertThatThrownBy(() -> productService.saveProduct(requestDto, member.getId()))
+                        .isInstanceOf(GlobalException.class)
+                        .hasMessage("아이디가 일치하지 않습니다.");
+            }
         }
     }
 }
