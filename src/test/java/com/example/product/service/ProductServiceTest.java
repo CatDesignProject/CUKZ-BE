@@ -5,7 +5,6 @@ import com.example.member.entity.Member;
 import com.example.member.entity.MemberRole;
 import com.example.member.repository.MemberRepository;
 import com.example.product.TestBuilder;
-import com.example.product.dto.ProductOption;
 import com.example.product.dto.request.ProductRequestDto;
 import com.example.product.dto.response.ProductResponseDto;
 import com.example.product.entity.Option;
@@ -23,7 +22,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
