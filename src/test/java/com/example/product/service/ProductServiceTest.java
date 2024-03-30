@@ -4,6 +4,7 @@ import com.example.common.exception.GlobalException;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
 import com.example.product.TestBuilder;
+import com.example.product.dto.ProductOption;
 import com.example.product.dto.request.ProductRequestDto;
 import com.example.product.dto.response.ProductResponseDto;
 import com.example.product.entity.Option;
@@ -21,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -126,12 +128,7 @@ class ProductServiceTest {
             @BeforeEach
             void setUp() {
                 product = TestBuilder.testProductBuild();
-                member = TestBuilder.testMemberBuild();
-                ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
-                ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
-                product.addMember(member);
-                product.addProductImage(productImage1);
-                product.addProductImage(productImage2);
+
                 given(productRepository.findFetchById(product.getId())).willReturn(Optional.of(product));
 
                 responseDto = productService.findProduct(product.getId());
@@ -149,7 +146,7 @@ class ProductServiceTest {
                 assertEquals(product.getEndDate(), responseDto.getEndDate());
                 assertEquals("www.s3v1.png", responseDto.getImageUrls().get(0));
                 assertEquals("www.s3v2.png", responseDto.getImageUrls().get(1));
-                assertEquals(product.getOptions(), responseDto.getOptions());
+                assertEquals(product.getOptions().get(0).getName(), responseDto.getOptions().get(0).getName());
             }
         }
         @Nested
@@ -219,13 +216,14 @@ class ProductServiceTest {
             @BeforeEach
             void setUp() {
                 product = TestBuilder.testProductBuild();
-
-                given(productRepository.findFetchById(product.getId())).willReturn(Optional.empty());
+                requestDto = TestBuilder.testProductRequestDtoBuild();
+                member = TestBuilder.testMemberBuild();
+                product.addMember(member);
             }
             @Test
             @DisplayName("존재하지 않는 상품 예외를 발생시킨다.")
             void it_returns_not_found_exception() {
-                assertThatThrownBy(() -> productService.findProduct(product.getId()))
+                assertThatThrownBy(() -> productService.modifyProduct(product.getId(), requestDto, member.getId()))
                         .isInstanceOf(GlobalException.class)
                         .hasMessage("해당 상품을 찾을 수 없습니다.");
             }
@@ -240,14 +238,16 @@ class ProductServiceTest {
                 member = TestBuilder.testMemberBuild();
                 ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
                 ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
-                product.addMember(member);
+                product.addProductImage(productImage1);
+                product.addProductImage(productImage2);
+                given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
             }
             @Test
             @DisplayName("권한 없음 예외를 발생시킨다.")
             void it_returns_un_authorized_exception() {
-                assertThatThrownBy(() -> productService.saveProduct(requestDto, member.getId()))
+                assertThatThrownBy(() -> productService.modifyProduct(product.getId(), requestDto, 2L))
                         .isInstanceOf(GlobalException.class)
-                        .hasMessage("아이디가 일치하지 않습니다.");
+                        .hasMessage("해당 상품을 수정할 권한이 없습니다.");
             }
         }
     }
@@ -292,20 +292,12 @@ class ProductServiceTest {
         class Context_with_not_found_product {
             @BeforeEach
             void setUp() {
-                product = TestBuilder.testProductBuild();
-                member = TestBuilder.testMemberBuild();
-                ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
-                ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
-                product.addMember(member);
-                product.addProductImage(productImage1);
-                product.addProductImage(productImage2);
-
-                given(productRepository.findById(product.getId())).willReturn(Optional.empty());
+                given(productRepository.findById(1L)).willReturn(Optional.empty());
             }
             @Test
             @DisplayName("존재하지 않는 상품 예외를 발생시킨다.")
             void it_returns_not_found_exception() {
-                assertThatThrownBy(() -> productService.deleteProduct(product.getId(), member.getId()))
+                assertThatThrownBy(() -> productService.deleteProduct(1L, 1L))
                         .isInstanceOf(GlobalException.class)
                         .hasMessage("해당 상품을 찾을 수 없습니다.");
             }
@@ -321,13 +313,14 @@ class ProductServiceTest {
                 ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
                 ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
                 product.addMember(member);
+                given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
             }
             @Test
             @DisplayName("권한 없음 예외를 발생시킨다.")
             void it_returns_un_authorized_exception() {
-                assertThatThrownBy(() -> productService.saveProduct(requestDto, member.getId()))
+                assertThatThrownBy(() -> productService.deleteProduct(product.getId(), 2L))
                         .isInstanceOf(GlobalException.class)
-                        .hasMessage("아이디가 일치하지 않습니다.");
+                        .hasMessage("해당 상품을 삭제할 권한이 없습니다.");
             }
         }
     }
