@@ -85,12 +85,4 @@ public class Product {
     public void updateStatus(SaleStatus status) {
         this.status = status;
     }
-
-
-    public void increaseLikes() {
-        this.likesCount++;
-    }
-    public void decreaseLikes() {
-        this.likesCount--;
-    }
 }
