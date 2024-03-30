@@ -31,32 +31,34 @@ public class TestBuilder {
                 .build();
     }
 
+    public static Member testMemberBuild() {
+        return new Member(1L, "username1", "password1234!", "nickname1"
+                , "email@naver.com", MemberRole.manager);
+    }
+
     public static Product testProductBuild() {
         ProductRequestDto requestDto = TestBuilder.testProductRequestDtoBuild();
         Member member = TestBuilder.testMemberBuild();
         List<ProductOption> productOptions = requestDto.getOptions();
         List<Option> options = new ArrayList<>();
-        for (ProductOption option : productOptions) {
-            Option toEntity = option.toOption();
-            options.add(toEntity);
+        for (ProductOption productOption : productOptions) {
+            Option option = productOption.toOption();
+            options.add(option);
         }
 
         List<ProductImage> productImages = new ArrayList<>();
-
         ProductImage productImage1 = ProductImage.builder()
-                .imageUrl("www.s3v1.png")
                 .id(1L)
+                .imageUrl("www.s3v1.png")
                 .uploadFileName("A")
                 .storeFileName("B")
                 .build();
-
         ProductImage productImage2 = ProductImage.builder()
-                .imageUrl("www.s3v2.png")
                 .id(2L)
+                .imageUrl("www.s3v2.png")
                 .uploadFileName("C")
                 .storeFileName("D")
                 .build();
-
         productImages.add(productImage1);
         productImages.add(productImage2);
 
@@ -65,10 +67,4 @@ public class TestBuilder {
 
         return product;
     }
-
-    public static Member testMemberBuild() {
-        return new Member(1L, "username1", "password1234!", "nickname1"
-                , "email@naver.com", MemberRole.manager);
-    }
-
 }

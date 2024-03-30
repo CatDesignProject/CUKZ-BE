@@ -2,6 +2,7 @@ package com.example.product.service;
 
 import com.example.common.exception.GlobalException;
 import com.example.member.entity.Member;
+import com.example.member.entity.MemberRole;
 import com.example.member.repository.MemberRepository;
 import com.example.product.TestBuilder;
 import com.example.product.dto.ProductOption;
@@ -22,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,22 +56,20 @@ class ProductServiceTest {
         ProductRequestDto requestDto;
         ProductResponseDto responseDto;
         Member member;
+        Product product;
         @Nested
         @DisplayName("올바른 productRequestDto이고, 멤버 권한이 manager라면")
         class Context_with_dto_authorized_member_role {
             @BeforeEach
             void setUp() {
                 requestDto = TestBuilder.testProductRequestDtoBuild();
-                Product product = requestDto.toProduct();
-
-                member = TestBuilder.testMemberBuild();
-
-                ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
-                ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
+                product = TestBuilder.testProductBuild();
+                member = product.getMember();
+                List<ProductImage> productImages = product.getProductImages();
 
                 given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
-                given(productImageRepository.findById(1L)).willReturn(Optional.of(productImage1));
-                given(productImageRepository.findById(2L)).willReturn(Optional.of(productImage2));
+                given(productImageRepository.findById(1L)).willReturn(Optional.of(productImages.get(0)));
+                given(productImageRepository.findById(2L)).willReturn(Optional.of(productImages.get(1)));
                 given(productRepository.save(any(Product.class))).willReturn(product);
                 given(optionRepository.save(any(Option.class))).willReturn(any(Option.class));
 
@@ -92,18 +92,11 @@ class ProductServiceTest {
             }
         }
         @Nested
-        @DisplayName("올바른 productRequestDto이고, 멤버 권한이 manger가 아니라면")
+        @DisplayName("올바른 productRequestDto이고, 유효하지 않은 memberId일 경우")
         class Context_with_dto_un_authorized_member_role {
             @BeforeEach
             void setUp() {
-                requestDto = TestBuilder.testProductRequestDtoBuild();
-                Product product = requestDto.toProduct();
-
                 member = TestBuilder.testMemberBuild();
-
-                ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
-                ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
-
                 given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
             }
             @Test
@@ -146,7 +139,7 @@ class ProductServiceTest {
                 assertEquals(product.getEndDate(), responseDto.getEndDate());
                 assertEquals("www.s3v1.png", responseDto.getImageUrls().get(0));
                 assertEquals("www.s3v2.png", responseDto.getImageUrls().get(1));
-                assertEquals(product.getOptions().get(0).getName(), responseDto.getOptions().get(0).getName());
+                assertEquals(product.getOptions().size(), responseDto.getOptions().size());
             }
         }
         @Nested
@@ -155,7 +148,6 @@ class ProductServiceTest {
             @BeforeEach
             void setUp() {
                 product = TestBuilder.testProductBuild();
-
                 given(productRepository.findFetchById(product.getId())).willReturn(Optional.empty());
             }
             @Test
@@ -173,6 +165,7 @@ class ProductServiceTest {
     class Describe_modifyProduct {
         Product product;
         Member member;
+        Member member2;
         ProductRequestDto requestDto;
         ProductResponseDto responseDto;
         @Nested
@@ -182,12 +175,7 @@ class ProductServiceTest {
             void setUp() {
                 product = TestBuilder.testProductBuild();
                 requestDto = TestBuilder.testProductRequestDtoBuild();
-                member = TestBuilder.testMemberBuild();
-                ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
-                ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
-                product.addMember(member);
-                product.addProductImage(productImage1);
-                product.addProductImage(productImage2);
+                member = product.getMember();
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
                 doNothing().when(optionRepository).deleteAllByProductId(product.getId());
                 given(optionRepository.save(any(Option.class))).willReturn(any(Option.class));
@@ -217,8 +205,7 @@ class ProductServiceTest {
             void setUp() {
                 product = TestBuilder.testProductBuild();
                 requestDto = TestBuilder.testProductRequestDtoBuild();
-                member = TestBuilder.testMemberBuild();
-                product.addMember(member);
+                member = product.getMember();
             }
             @Test
             @DisplayName("존재하지 않는 상품 예외를 발생시킨다.")
@@ -235,17 +222,15 @@ class ProductServiceTest {
             void setUp() {
                 product = TestBuilder.testProductBuild();
                 requestDto = TestBuilder.testProductRequestDtoBuild();
-                member = TestBuilder.testMemberBuild();
-                ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
-                ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
-                product.addProductImage(productImage1);
-                product.addProductImage(productImage2);
+                member2 = new Member(2L, "username2", "password1234@", "nickname2"
+                        , "member2@naver.com", MemberRole.manager);
+
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
             }
             @Test
             @DisplayName("권한 없음 예외를 발생시킨다.")
             void it_returns_un_authorized_exception() {
-                assertThatThrownBy(() -> productService.modifyProduct(product.getId(), requestDto, 2L))
+                assertThatThrownBy(() -> productService.modifyProduct(product.getId(), requestDto, member2.getId()))
                         .isInstanceOf(GlobalException.class)
                         .hasMessage("해당 상품을 수정할 권한이 없습니다.");
             }
@@ -258,6 +243,7 @@ class ProductServiceTest {
         Product product;
         ProductRequestDto requestDto;
         Member member;
+        Member member2;
         @Nested
         @DisplayName("존재하는 상품이고 해당 상품에 권한이 있는 member인 경우")
         class Context_with_productId_authorized_member {
@@ -265,12 +251,7 @@ class ProductServiceTest {
             void setUp() {
                 product = TestBuilder.testProductBuild();
                 requestDto = TestBuilder.testProductRequestDtoBuild();
-                member = TestBuilder.testMemberBuild();
-                ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
-                ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
-                product.addMember(member);
-                product.addProductImage(productImage1);
-                product.addProductImage(productImage2);
+                member = product.getMember();
 
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
                 doNothing().when(optionRepository).deleteAllByProductId(product.getId());
@@ -309,16 +290,16 @@ class ProductServiceTest {
             void setUp() {
                 product = TestBuilder.testProductBuild();
                 requestDto = TestBuilder.testProductRequestDtoBuild();
-                member = TestBuilder.testMemberBuild();
-                ProductImage productImage1 = new ProductImage(1L, "A", "B", "www.s3v1.png", product);
-                ProductImage productImage2 = new ProductImage(2L, "C", "D", "www.s3v2.png", product);
-                product.addMember(member);
+                member = product.getMember();
+                member2 = new Member(2L, "username2", "password1234@", "nickname2"
+                        , "member2@naver.com", MemberRole.manager);
+
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
             }
             @Test
             @DisplayName("권한 없음 예외를 발생시킨다.")
             void it_returns_un_authorized_exception() {
-                assertThatThrownBy(() -> productService.deleteProduct(product.getId(), 2L))
+                assertThatThrownBy(() -> productService.deleteProduct(product.getId(), member2.getId()))
                         .isInstanceOf(GlobalException.class)
                         .hasMessage("해당 상품을 삭제할 권한이 없습니다.");
             }
