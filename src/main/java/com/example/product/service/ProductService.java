@@ -119,32 +119,4 @@ public class ProductService {
 
         return ProductResponseDto.toResponseDto(product, productOptions);
     }
-
-    public PageResponseDto<ProductThumbNailDto> search(String keyword, Pageable pageable) {
-        Page<Product> result = productRepository.findSearchByKeyword(keyword, pageable)
-                .orElseThrow(
-                        () -> new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT)
-                );
-        return toProductThumbNailDto(result);
-    }
-
-    public PageResponseDto<ProductThumbNailDto> paging(Pageable pageable) {
-        return toProductThumbNailDto(productRepository.findAll(pageable));
-    }
-
-    private PageResponseDto<ProductThumbNailDto> toProductThumbNailDto(Page<Product> result) {
-        Page<ProductThumbNailDto> productThumbNailDtos = result.map(
-                product ->
-                        new ProductThumbNailDto(
-                                product.getName(), product.getPrice(), product.getLikesCount()
-                                , productImageRepository.findById(product.getId())
-                                .orElseThrow(
-                                        () -> new GlobalException(BaseErrorCode.NOT_FOUND_IMAGE)
-                                )
-                                .getImageUrl()
-                                , product.getMember().getNickname()
-                        )
-        );
-        return PageResponseDto.toResponseDto(productThumbNailDtos);
-    }
 }
