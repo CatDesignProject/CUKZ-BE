@@ -23,13 +23,4 @@ public class ProductOption {
                 .salesQuantity(this.salesQuantity)
                 .build();
     }
-
-    public static Option testBuild() {
-        return Option.builder()
-                .name("블랙 S")
-                .additionalPrice(3000)
-                .salesQuantity(100)
-                .build();
-
-    }
 }
