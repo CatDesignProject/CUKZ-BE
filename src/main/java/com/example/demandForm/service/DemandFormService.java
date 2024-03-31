@@ -1,8 +1,8 @@
 package com.example.demandForm.service;
 
 import com.example.common.exception.GlobalException;
+import com.example.demandForm.dto.CreateDemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
-import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
 import com.example.demandForm.dto.UpdateDemandFormRequestDto;
 import com.example.demandForm.entity.DemandForm;
@@ -36,7 +36,7 @@ public class DemandFormService {
     private static final long MAX_ORDER_NUMBER = 9999999999L;
 
     @Transactional
-    public DemandFormResponseDto demandMember(Long productId, DemandFormRequestDto requestDto, Long memberId) {
+    public DemandFormResponseDto demandMember(Long productId, CreateDemandFormRequestDto requestDto, Long memberId) {
 
         Member member = findMember(memberId);
         demandFormRepository.findByProductIdAndMemberId(productId, member.getId()).ifPresent(demandForm -> {
@@ -53,7 +53,7 @@ public class DemandFormService {
     }
 
     @Transactional
-    public DemandFormResponseDto demandNonMember(Long productId, DemandFormRequestDto requestDto) {
+    public DemandFormResponseDto demandNonMember(Long productId, CreateDemandFormRequestDto requestDto) {
 
         Product product = findProduct(productId);
         checkPeriod(product);

@@ -2,8 +2,8 @@ package com.example.demandForm.controller;
 
 import com.example.common.global.BaseResponse;
 import com.example.common.global.PageResponseDto;
+import com.example.demandForm.dto.CreateDemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
-import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
 import com.example.demandForm.dto.UpdateDemandFormRequestDto;
 import com.example.demandForm.service.DemandFormService;
@@ -26,7 +26,7 @@ public class DemandFormController {
     @PostMapping("/products/{productId}/demand/members")
     public ResponseEntity<BaseResponse<DemandFormResponseDto>> demandMember(
             @PathVariable Long productId,
-            @Valid @RequestBody DemandFormRequestDto requestDto,
+            @Valid @RequestBody CreateDemandFormRequestDto requestDto,
             @AuthenticationPrincipal AuthenticatedMember member) {
 
         DemandFormResponseDto responseDto = demandFormService.demandMember(productId, requestDto, member.getMemberId());
@@ -37,7 +37,7 @@ public class DemandFormController {
     @PostMapping("/products/{productId}/demand/non-members")
     public ResponseEntity<BaseResponse<DemandFormResponseDto>> demandNonMember(
             @PathVariable Long productId,
-            @Valid @RequestBody DemandFormRequestDto requestDto) {
+            @Valid @RequestBody CreateDemandFormRequestDto requestDto) {
 
         DemandFormResponseDto responseDto = demandFormService.demandNonMember(productId, requestDto);
 

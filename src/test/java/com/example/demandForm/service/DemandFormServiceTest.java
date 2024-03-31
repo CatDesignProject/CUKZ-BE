@@ -1,8 +1,8 @@
 package com.example.demandForm.service;
 
 import com.example.common.exception.GlobalException;
+import com.example.demandForm.dto.CreateDemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
-import com.example.demandForm.dto.DemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.repository.DemandFormRepository;
@@ -54,7 +54,7 @@ public class DemandFormServiceTest {
     Product product;
     DemandForm memberDemandForm;
     DemandForm nonMemberDemandForm;
-    DemandFormRequestDto requestDto;
+    CreateDemandFormRequestDto requestDto;
     Long productId = 1L;
     Long memberId = 1L;
     Long formId = 1L;
@@ -72,7 +72,7 @@ public class DemandFormServiceTest {
         ReflectionTestUtils.setField(product, "endDate", endDate);
         ReflectionTestUtils.setField(product, "id", 1L);
 
-        requestDto = new DemandFormRequestDto(quantity);
+        requestDto = new CreateDemandFormRequestDto();
         memberDemandForm = DemandForm.toMemberEntity(member, product, requestDto);
         nonMemberDemandForm = DemandForm.toNonMemberEntity(1L, product, requestDto);
     }
@@ -94,7 +94,6 @@ public class DemandFormServiceTest {
             DemandFormResponseDto responseDto = demandFormService.demandMember(productId, requestDto, memberId);
 
             // then
-            assertEquals(quantity, responseDto.getQuantity());
             assertEquals(productId, responseDto.getProductId());
         }
 
@@ -157,7 +156,6 @@ public class DemandFormServiceTest {
             DemandFormResponseDto responseDto = demandFormService.demandNonMember(productId, requestDto);
 
             // then
-            assertEquals(quantity, responseDto.getQuantity());
             assertEquals(productId, responseDto.getProductId());
             System.out.println("responseDto.orderNumber = " + responseDto.getMemberId());
         }
@@ -176,7 +174,6 @@ public class DemandFormServiceTest {
             DemandFormResponseDto responseDto = demandFormService.getDemandFormMember(formId, memberId);
 
             //then
-            assertEquals(quantity, responseDto.getQuantity());
             assertEquals(productId, responseDto.getProductId());
         }
 
@@ -228,7 +225,6 @@ public class DemandFormServiceTest {
             DemandFormResponseDto responseDto = demandFormService.getDemandFormNonMember(requestDto1);
 
             //then
-            assertEquals(quantity, responseDto.getQuantity());
             assertEquals(productId, responseDto.getProductId());
             assertEquals(requestDto1.getOrderNumber(), responseDto.getMemberId());
         }
