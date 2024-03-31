@@ -59,8 +59,8 @@ public class TestBuilder {
     }
 
     public static Product testProductBuild() {
-        ProductRequestDto requestDto = TestBuilder.testProductRequestDtoBuild();
-        Member member = TestBuilder.testMemberBuild();
+        ProductRequestDto requestDto = testProductRequestDtoBuild();
+        Member member = testMemberBuild();
         List<ProductOption> productOptions = requestDto.getOptions();
         List<Option> options = new ArrayList<>();
         for (ProductOption productOption : productOptions) {
@@ -91,8 +91,8 @@ public class TestBuilder {
     }
 
     public static Product testProduct2Build() {
-        ProductRequestDto requestDto = TestBuilder.testProductRequestDto2Build();
-        Member member = TestBuilder.testMember2Build();
+        ProductRequestDto requestDto = testProductRequestDto2Build();
+        Member member = testMember2Build();
         List<ProductOption> productOptions = requestDto.getOptions();
         List<Option> options = new ArrayList<>();
         for (ProductOption productOption : productOptions) {
