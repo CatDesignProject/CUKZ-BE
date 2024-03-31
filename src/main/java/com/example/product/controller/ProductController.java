@@ -10,6 +10,7 @@ import com.example.security.authentication.AuthenticatedMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,12 +46,12 @@ public class ProductController {
     }
 
     @GetMapping("/paging")
-    public ResponseEntity<BaseResponse<PageResponseDto<ProductThumbNailDto>>> pagingProductThumbNail(@PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<BaseResponse<PageResponseDto<ProductThumbNailDto>>> pagingProductThumbNail(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, productService.pagingProduct(pageable)));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<BaseResponse<PageResponseDto<ProductThumbNailDto>>> searchProduct(@RequestParam String keyword, @PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<BaseResponse<PageResponseDto<ProductThumbNailDto>>> searchProduct(@RequestParam String keyword, @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, productService.searchProduct(keyword, pageable)));
     }
 }
