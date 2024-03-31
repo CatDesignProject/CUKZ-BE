@@ -45,6 +45,8 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private SaleStatus status;
 
+    private int likesCount;
+
     @OneToMany(mappedBy = "product")
     private List<ProductImage> productImages = new ArrayList<>();
 
@@ -77,5 +79,10 @@ public class Product {
 
     public void updateStatus(SaleStatus status) {
         this.status = status;
+    }
+
+    public int updateLikesCount(int cal) {
+        this.likesCount += cal;
+        return this.likesCount;
     }
 }
