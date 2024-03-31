@@ -28,7 +28,7 @@ public class ProductResponseDto {
     private int likesCount;
     private List<ProductOptionDto> options;
 
-    public static ProductResponseDto toResponseDto(Product product, List<ProductOptionDto> productOptions) {
+    public static ProductResponseDto toResponseDto(Product product, List<ProductOptionDto> productOptionDtos) {
         List<ProductImage> productImages = product.getProductImages();
 
         List<String> imageUrls = new ArrayList<>();
@@ -46,7 +46,7 @@ public class ProductResponseDto {
                 .imageUrls(imageUrls)
                 .nickname(product.getMember().getNickname())
                 .likesCount(product.getLikesCount())
-                .options(productOptions)
+                .options(productOptionDtos)
                 .build();
     }
 }

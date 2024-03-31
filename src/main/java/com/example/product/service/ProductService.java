@@ -54,14 +54,14 @@ public class ProductService {
         product.addMember(member);
         productRepository.save(product);
 
-        List<ProductOptionDto> productOptions = productRequestDto.getOptions();
-        for (ProductOptionDto productOption : productOptions) {
-            Option option = productOption.toOption();
+        List<ProductOptionDto> productOptionDtos = productRequestDto.getOptions();
+        for (ProductOptionDto productOptionDto : productOptionDtos) {
+            Option option = productOptionDto.toOption();
             option.addProduct(product);
             optionRepository.save(option);
         }
 
-        return ProductResponseDto.toResponseDto(product, productOptions);
+        return ProductResponseDto.toResponseDto(product, productOptionDtos);
     }
 
     public ProductResponseDto findProduct(Long productId) {
@@ -70,14 +70,14 @@ public class ProductService {
                         () -> new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT)
                 );
 
-        List<ProductOptionDto> productOptions = new ArrayList<>();
+        List<ProductOptionDto> productOptionDtos = new ArrayList<>();
 
         List<Option> options = product.getOptions();
         for (Option option : options) {
-            productOptions.add(new ProductOptionDto(option.getName(), option.getAdditionalPrice(), option.getSalesQuantity()));
+            productOptionDtos.add(new ProductOptionDto(option.getName(), option.getAdditionalPrice(), option.getSalesQuantity()));
         }
 
-        return ProductResponseDto.toResponseDto(product, productOptions);
+        return ProductResponseDto.toResponseDto(product, productOptionDtos);
     }
 
     @Transactional
@@ -110,14 +110,14 @@ public class ProductService {
                 productRequestDto.getStartDate(), productRequestDto.getEndDate());
 
         optionRepository.deleteAllByProductId(productId);
-        List<ProductOptionDto> productOptions = productRequestDto.getOptions();
-        for (ProductOptionDto productOption : productOptions) {
-            Option option = productOption.toOption();
+        List<ProductOptionDto> productOptionDtos = productRequestDto.getOptions();
+        for (ProductOptionDto productOptionDto : productOptionDtos) {
+            Option option = productOptionDto.toOption();
             option.addProduct(product);
             optionRepository.save(option);
         }
 
-        return ProductResponseDto.toResponseDto(product, productOptions);
+        return ProductResponseDto.toResponseDto(product, productOptionDtos);
     }
 
     public PageResponseDto<ProductThumbNailDto> pagingProduct(Pageable pageable) {
