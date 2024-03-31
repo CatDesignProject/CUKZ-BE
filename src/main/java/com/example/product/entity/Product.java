@@ -38,9 +38,6 @@ public class Product {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Enumerated(EnumType.STRING)
-    private SaleStatus status;
-
     private int likesCount;
 
     @OneToMany(mappedBy = "product")
