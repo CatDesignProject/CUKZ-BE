@@ -34,11 +34,14 @@ public class Product {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 
-    private int likesCount;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Enumerated(EnumType.STRING)
+    private SaleStatus status;
+
+    private int likesCount;
 
     @OneToMany(mappedBy = "product")
     private List<ProductImage> productImages = new ArrayList<>();
@@ -84,5 +87,10 @@ public class Product {
 
     public void updateStatus(SaleStatus status) {
         this.status = status;
+    }
+
+    public int updateLikesCount(int cal) {
+        this.likesCount += cal;
+        return this.likesCount;
     }
 }
