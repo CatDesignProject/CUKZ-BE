@@ -322,7 +322,6 @@ class ProductServiceTest {
                 assertEquals(products.isLast(), pageResponseDto.isLast());
             }
         }
-
         @Nested
         @DisplayName("결과가 존재하지 않는 경우")
         class Context_with_empty_paging_result {
