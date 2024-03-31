@@ -40,7 +40,6 @@ public class ProductResponseDto {
                 .status(product.getStatus())
                 .name(product.getName())
                 .price(product.getPrice())
-                .price(product.getPrice())
                 .info(product.getInfo())
                 .startDate(product.getStartDate())
                 .endDate(product.getEndDate())
