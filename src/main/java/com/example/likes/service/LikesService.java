@@ -36,9 +36,9 @@ public class LikesService {
 
         Likes likes = Likes.toEntity(member, product);
         likesRepository.save(likes);
-        product.updateLikesCount(1);
+        int likesCount = product.updateLikesCount(1);
 
-        return LikesResponseDto.toResponseDto(product.getLikesCount());
+        return LikesResponseDto.toResponseDto(likesCount);
     }
 
     @Transactional
@@ -49,9 +49,9 @@ public class LikesService {
         Likes likes = findLikes(productId, memberId);
 
         likesRepository.delete(likes);
-        product.updateLikesCount(-1);
+        int likesCount = product.updateLikesCount(-1);
 
-        return LikesResponseDto.toResponseDto(product.getLikesCount());
+        return LikesResponseDto.toResponseDto(likesCount);
     }
 
     @Transactional(readOnly = true)
