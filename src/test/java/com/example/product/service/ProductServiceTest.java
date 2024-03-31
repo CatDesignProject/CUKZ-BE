@@ -1,12 +1,13 @@
 package com.example.product.service;
 
 import com.example.common.exception.GlobalException;
+import com.example.common.global.PageResponseDto;
 import com.example.member.entity.Member;
-import com.example.member.entity.MemberRole;
 import com.example.member.repository.MemberRepository;
 import com.example.product.TestBuilder;
 import com.example.product.dto.request.ProductRequestDto;
 import com.example.product.dto.response.ProductResponseDto;
+import com.example.product.dto.response.ProductThumbNailDto;
 import com.example.product.entity.Option;
 import com.example.product.entity.Product;
 import com.example.product.repository.OptionRepository;
@@ -21,6 +22,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +56,10 @@ class ProductServiceTest {
     Member member2;
     ProductRequestDto requestDto;
     ProductResponseDto responseDto;
+    Page<Product> products;
+    PageResponseDto<ProductThumbNailDto> pageResponseDto;
+    Pageable pageable;
+    String keyword = "가톨릭";
 
     @Nested
     @DisplayName("saveProduct 메서드는")
@@ -212,14 +219,13 @@ class ProductServiceTest {
             @BeforeEach
             void setUp() {
                 product = TestBuilder.testProductBuild();
-                member2 = new Member(2L, "username2", "password1234@", "nickname2"
-                        , "member2@naver.com", MemberRole.manager);
+                member2 = TestBuilder.testMember2Build();
 
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
             }
             @Test
             @DisplayName("해당 상품을 수정할 권한 없음 예외를 발생시킨다.")
-            void it_returns_un_authorized_exception() {
+            void it_returns_unauthorized_modify_product_exception() {
                 assertThatThrownBy(() -> productService.modifyProduct(product.getId(), requestDto, member2.getId()))
                         .isInstanceOf(GlobalException.class)
                         .hasMessage("해당 상품을 수정할 권한이 없습니다.");
@@ -275,17 +281,108 @@ class ProductServiceTest {
             void setUp() {
                 product = TestBuilder.testProductBuild();
                 member = product.getMember();
-                member2 = new Member(2L, "username2", "password1234@", "nickname2"
-                        , "member2@naver.com", MemberRole.manager);
+                member2 = TestBuilder.testMember2Build();
 
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
             }
             @Test
             @DisplayName("해당 상품을 삭제할 권한 없음 예외를 발생시킨다.")
-            void it_returns_un_authorized_exception() {
+            void it_returns_unauthorized_delete_product_exception() {
                 assertThatThrownBy(() -> productService.deleteProduct(product.getId(), member2.getId()))
                         .isInstanceOf(GlobalException.class)
                         .hasMessage("해당 상품을 삭제할 권한이 없습니다.");
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("pagingProduct 메서드는")
+    class Describe_pagingProduct {
+        @Nested
+        @DisplayName("페이지 번호로 조회 후, 결과가 존재하는 경우")
+        class Context_with_page_num {
+            @BeforeEach
+            void setUp() {
+                products = TestBuilder.testPageProductBuild();
+                for (Product product : products) {
+                    given(productImageRepository.findFirstByProductId(product.getId()))
+                            .willReturn(Optional.of(product.getProductImages().get(0)));
+                }
+                given(productRepository.findAll(any(Pageable.class))).willReturn(products);
+                pageResponseDto = productService.pagingProduct(TestBuilder.testPageableBuild());
+            }
+            @Test
+            @DisplayName("해당 페이지 번호의 결과를 반환한다.")
+            void it_returns_products_in_page_num() {
+                assertEquals(products.getTotalPages(), pageResponseDto.getTotalPage());
+                assertEquals(products.getTotalElements(), pageResponseDto.getTotalElements());
+                assertEquals(products.getContent().size() , pageResponseDto.getListSize());
+                assertEquals(products.getContent().get(0).getName(), pageResponseDto.getContent().get(0).getProductName());
+                assertEquals(products.isFirst(), pageResponseDto.isFirst());
+                assertEquals(products.isLast(), pageResponseDto.isLast());
+            }
+        }
+
+        @Nested
+        @DisplayName("결과가 존재하지 않는 경우")
+        class Context_with_empty_paging_result {
+            @BeforeEach
+            void setUp() {
+                pageable = TestBuilder.testPageableBuild();
+                given(productRepository.findAll(pageable)).willReturn(Page.empty());
+            }
+            @Test
+            @DisplayName("상품을 찾을 수 없다는 예외를 발생시킨다.")
+            void it_returns_not_found_paging_product_exception() {
+                assertThatThrownBy(() -> productService.pagingProduct(pageable))
+                        .isInstanceOf(GlobalException.class)
+                        .hasMessage("목록에 상품이 없습니다.");
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("searchProduct 메서드는")
+    class Describe_searchProduct {
+        @Nested
+        @DisplayName("keyword로 검색한 결과가 존재하는 경우")
+        class Context_with_keyword_page_num {
+            @BeforeEach
+            void setUp() {
+                products = TestBuilder.testPageProductBuild();
+                for (Product product : products) {
+                    given(productImageRepository.findFirstByProductId(product.getId()))
+                            .willReturn(Optional.of(product.getProductImages().get(0)));
+                }
+
+                given(productRepository.findSearchByKeyword(keyword, pageable)).willReturn(products);
+                pageResponseDto = productService.searchProduct(keyword, pageable);
+            }
+            @Test
+            @DisplayName("해당 페이지 번호의 결과를 반환한다.")
+            void it_returns_products_in_page_num() {
+                assertEquals(products.getTotalPages(), pageResponseDto.getTotalPage());
+                assertEquals(products.getTotalElements(), pageResponseDto.getTotalElements());
+                assertEquals(products.getContent().size() , pageResponseDto.getListSize());
+                assertEquals(products.getContent().get(0).getName(), pageResponseDto.getContent().get(0).getProductName());
+                assertEquals(products.isFirst(), pageResponseDto.isFirst());
+                assertEquals(products.isLast(), pageResponseDto.isLast());
+            }
+        }
+        @Nested
+        @DisplayName("검색 결과가 존재하지 않는 경우")
+        class Context_with_empty_paging_result {
+            @BeforeEach
+            void setUp() {
+                pageable = TestBuilder.testPageableBuild();
+                given(productRepository.findSearchByKeyword(keyword, pageable)).willReturn(Page.empty());
+            }
+            @Test
+            @DisplayName("상품을 찾을 수 없다는 예외를 발생시킨다.")
+            void it_returns_not_found_search_product_exception() {
+                assertThatThrownBy(() -> productService.searchProduct(keyword, pageable))
+                        .isInstanceOf(GlobalException.class)
+                        .hasMessage("검색 결과 해당 상품이 없습니다.");
             }
         }
     }
