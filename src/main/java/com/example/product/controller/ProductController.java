@@ -43,4 +43,14 @@ public class ProductController {
         productService.deleteProduct(productId, authenticatedMember.getMemberId());
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, " 상품 삭제 완료"));
     }
+
+    @GetMapping("/paging")
+    public ResponseEntity<BaseResponse<PageResponseDto<ProductThumbNailDto>>> pagingProductThumbNail(@PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, productService.pagingProduct(pageable)));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<BaseResponse<PageResponseDto<ProductThumbNailDto>>> searchProduct(@RequestParam String keyword, @PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, productService.searchProduct(keyword, pageable)));
+    }
 }

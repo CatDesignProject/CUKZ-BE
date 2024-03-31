@@ -14,5 +14,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findFetchById(@Param("productId") Long productId);
 
     @Query("select p from Product p where p.name like %:keyword%")
-    Optional<Page<Product>> findSearchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+    Page<Product> findSearchByKeyword(@Param("keyword") String keyword, Pageable pageable);
 }
