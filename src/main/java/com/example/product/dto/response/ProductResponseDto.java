@@ -1,6 +1,6 @@
 package com.example.product.dto.response;
 
-import com.example.product.dto.ProductOption;
+import com.example.product.dto.ProductOptionDto;
 import com.example.product.entity.Product;
 import com.example.product.enums.SaleStatus;
 import com.example.product_image.entity.ProductImage;
@@ -26,9 +26,9 @@ public class ProductResponseDto {
     private List<String> imageUrls;
     private String nickname; //총대 닉네임
     private int likesCount;
-    private List<ProductOption> options;
+    private List<ProductOptionDto> options;
 
-    public static ProductResponseDto toResponseDto(Product product, List<ProductOption> productOptions) {
+    public static ProductResponseDto toResponseDto(Product product, List<ProductOptionDto> productOptions) {
         List<ProductImage> productImages = product.getProductImages();
 
         List<String> imageUrls = new ArrayList<>();

@@ -1,6 +1,6 @@
 package com.example.product.dto.request;
 
-import com.example.product.dto.ProductOption;
+import com.example.product.dto.ProductOptionDto;
 import com.example.product.entity.Product;
 import com.example.product.enums.SaleStatus;
 import jakarta.validation.constraints.NotEmpty;
@@ -24,7 +24,7 @@ public class ProductRequestDto {
     private LocalDateTime endDate;
     @NotEmpty(message = "상품 이미지를 선택해주세요.")
     private List<Long> productImageIds;
-    private List<ProductOption> options;
+    private List<ProductOptionDto> options;
 
     public Product toProduct() {
         Product product = new Product();

@@ -4,12 +4,11 @@ import com.example.product.entity.Option;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductOption {
+public class ProductOptionDto {
 
     private String name;
     private int additionalPrice;

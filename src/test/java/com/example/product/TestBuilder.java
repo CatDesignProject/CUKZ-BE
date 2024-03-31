@@ -2,7 +2,7 @@ package com.example.product;
 
 import com.example.member.entity.Member;
 import com.example.member.entity.MemberRole;
-import com.example.product.dto.ProductOption;
+import com.example.product.dto.ProductOptionDto;
 import com.example.product.dto.request.ProductRequestDto;
 import com.example.product.entity.Option;
 import com.example.product.entity.Product;
@@ -17,8 +17,8 @@ import java.util.List;
 
 public class TestBuilder {
     public static ProductRequestDto testProductRequestDtoBuild() {
-        ProductOption option1 = new ProductOption("블랙 S", 3000, 100);
-        ProductOption option2 = new ProductOption("화이트 M", 0, 200);
+        ProductOptionDto option1 = new ProductOptionDto("블랙 S", 3000, 100);
+        ProductOptionDto option2 = new ProductOptionDto("화이트 M", 0, 200);
 
         return ProductRequestDto.builder()
                 .status(SaleStatus.ON_DEMAND)
@@ -33,8 +33,8 @@ public class TestBuilder {
     }
 
     public static ProductRequestDto testProductRequestDto2Build() {
-        ProductOption option1 = new ProductOption("블랙 L", 3000, 100);
-        ProductOption option2 = new ProductOption("화이트 XL", 0, 200);
+        ProductOptionDto option1 = new ProductOptionDto("블랙 L", 3000, 100);
+        ProductOptionDto option2 = new ProductOptionDto("화이트 XL", 0, 200);
 
         return ProductRequestDto.builder()
                 .status(SaleStatus.ON_DEMAND)
@@ -61,9 +61,9 @@ public class TestBuilder {
     public static Product testProductBuild() {
         ProductRequestDto requestDto = testProductRequestDtoBuild();
         Member member = testMemberBuild();
-        List<ProductOption> productOptions = requestDto.getOptions();
+        List<ProductOptionDto> productOptions = requestDto.getOptions();
         List<Option> options = new ArrayList<>();
-        for (ProductOption productOption : productOptions) {
+        for (ProductOptionDto productOption : productOptions) {
             Option option = productOption.toOption();
             options.add(option);
         }
@@ -93,9 +93,9 @@ public class TestBuilder {
     public static Product testProduct2Build() {
         ProductRequestDto requestDto = testProductRequestDto2Build();
         Member member = testMember2Build();
-        List<ProductOption> productOptions = requestDto.getOptions();
+        List<ProductOptionDto> productOptions = requestDto.getOptions();
         List<Option> options = new ArrayList<>();
-        for (ProductOption productOption : productOptions) {
+        for (ProductOptionDto productOption : productOptions) {
             Option option = productOption.toOption();
             options.add(option);
         }

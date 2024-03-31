@@ -5,7 +5,7 @@ import com.example.common.exception.GlobalException;
 import com.example.common.global.PageResponseDto;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
-import com.example.product.dto.ProductOption;
+import com.example.product.dto.ProductOptionDto;
 import com.example.product.dto.request.ProductRequestDto;
 import com.example.product.dto.response.ProductResponseDto;
 import com.example.product.dto.response.ProductThumbNailDto;
@@ -54,8 +54,8 @@ public class ProductService {
         product.addMember(member);
         productRepository.save(product);
 
-        List<ProductOption> productOptions = productRequestDto.getOptions();
-        for (ProductOption productOption : productOptions) {
+        List<ProductOptionDto> productOptions = productRequestDto.getOptions();
+        for (ProductOptionDto productOption : productOptions) {
             Option option = productOption.toOption();
             option.addProduct(product);
             optionRepository.save(option);
@@ -70,11 +70,11 @@ public class ProductService {
                         () -> new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT)
                 );
 
-        List<ProductOption> productOptions = new ArrayList<>();
+        List<ProductOptionDto> productOptions = new ArrayList<>();
 
         List<Option> options = product.getOptions();
         for (Option option : options) {
-            productOptions.add(new ProductOption(option.getName(), option.getAdditionalPrice(), option.getSalesQuantity()));
+            productOptions.add(new ProductOptionDto(option.getName(), option.getAdditionalPrice(), option.getSalesQuantity()));
         }
 
         return ProductResponseDto.toResponseDto(product, productOptions);
@@ -110,8 +110,8 @@ public class ProductService {
                 productRequestDto.getStartDate(), productRequestDto.getEndDate());
 
         optionRepository.deleteAllByProductId(productId);
-        List<ProductOption> productOptions = productRequestDto.getOptions();
-        for (ProductOption productOption : productOptions) {
+        List<ProductOptionDto> productOptions = productRequestDto.getOptions();
+        for (ProductOptionDto productOption : productOptions) {
             Option option = productOption.toOption();
             option.addProduct(product);
             optionRepository.save(option);
