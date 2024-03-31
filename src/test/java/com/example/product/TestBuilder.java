@@ -17,8 +17,8 @@ import java.util.List;
 
 public class TestBuilder {
     public static ProductRequestDto testProductRequestDtoBuild() {
-        ProductOptionDto option1 = new ProductOptionDto("블랙 S", 3000, 100);
-        ProductOptionDto option2 = new ProductOptionDto("화이트 M", 0, 200);
+        ProductOptionDto option1 = new ProductOptionDto("블랙 S", 3000);
+        ProductOptionDto option2 = new ProductOptionDto("화이트 M", 0);
 
         return ProductRequestDto.builder()
                 .status(SaleStatus.ON_DEMAND)
@@ -33,8 +33,8 @@ public class TestBuilder {
     }
 
     public static ProductRequestDto testProductRequestDto2Build() {
-        ProductOptionDto option1 = new ProductOptionDto("블랙 L", 3000, 100);
-        ProductOptionDto option2 = new ProductOptionDto("화이트 XL", 0, 200);
+        ProductOptionDto option1 = new ProductOptionDto("블랙 L", 3000);
+        ProductOptionDto option2 = new ProductOptionDto("화이트 XL", 0);
 
         return ProductRequestDto.builder()
                 .status(SaleStatus.ON_DEMAND)

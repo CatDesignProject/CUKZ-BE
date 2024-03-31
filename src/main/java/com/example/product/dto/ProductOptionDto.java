@@ -12,13 +12,11 @@ public class ProductOptionDto {
 
     private String name;
     private int additionalPrice;
-    private int salesQuantity;
 
     public Option toOption() {
         return Option.builder()
                 .name(this.name)
                 .additionalPrice(this.additionalPrice)
-                .salesQuantity(this.salesQuantity)
                 .build();
     }
 }

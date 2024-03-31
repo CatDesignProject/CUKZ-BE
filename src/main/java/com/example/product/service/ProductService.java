@@ -74,7 +74,7 @@ public class ProductService {
 
         List<Option> options = product.getOptions();
         for (Option option : options) {
-            productOptionDtos.add(new ProductOptionDto(option.getName(), option.getAdditionalPrice(), option.getSalesQuantity()));
+            productOptionDtos.add(new ProductOptionDto(option.getName(), option.getAdditionalPrice()));
         }
 
         return ProductResponseDto.toResponseDto(product, productOptionDtos);
