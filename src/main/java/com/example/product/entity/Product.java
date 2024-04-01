@@ -90,4 +90,8 @@ public class Product {
         this.likesCount += cal;
         return this.likesCount;
     }
+
+    public void addOptions(Option option) {
+        this.options.add(option);
+    }
 }
