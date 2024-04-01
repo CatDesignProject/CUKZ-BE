@@ -85,7 +85,7 @@ public class TestBuilder {
         productImages.add(productImage2);
 
         Product product = new Product(1L, requestDto.getName(), requestDto.getPrice(), requestDto.getInfo(), requestDto.getStatus()
-        ,requestDto.getStartDate(), requestDto.getEndDate(), 0, member, productImages, options);
+        ,requestDto.getStartDate(), requestDto.getEndDate(), member, 0, productImages, options);
 
         return product;
     }
@@ -117,7 +117,7 @@ public class TestBuilder {
         productImages.add(productImage4);
 
         Product product = new Product(2L, requestDto.getName(), requestDto.getPrice(), requestDto.getInfo(), requestDto.getStatus()
-                ,requestDto.getStartDate(), requestDto.getEndDate(), 0, member, productImages, options);
+                ,requestDto.getStartDate(), requestDto.getEndDate(), member, 0, productImages, options);
 
         return product;
     }
