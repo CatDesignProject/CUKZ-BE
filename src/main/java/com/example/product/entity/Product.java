@@ -1,7 +1,6 @@
 package com.example.product.entity;
 
 import com.example.member.entity.Member;
-import com.example.product.enums.ProductType;
 import com.example.product.enums.SaleStatus;
 import com.example.product_image.entity.ProductImage;
 import jakarta.persistence.*;
@@ -19,13 +18,10 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
     private Long id;
 
     private String name;
@@ -33,7 +29,7 @@ public class Product {
     private String info;
 
     @Enumerated(EnumType.STRING)
-    private ProductType type;
+    private SaleStatus status;
 
     private LocalDateTime startDate;
     private LocalDateTime endDate;
@@ -42,31 +38,40 @@ public class Product {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Enumerated(EnumType.STRING)
-    private SaleStatus status;
-
     private int likesCount;
 
     @OneToMany(mappedBy = "product")
     private List<ProductImage> productImages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product")
+    private List<Option> options = new ArrayList<>();
 
     //== 편의 메서드 ==//
     public void addProductImage(ProductImage productImage) {
         this.productImages.add(productImage);
-        productImage.setProduct(this);
+        productImage.addProduct(this);
     }
 
     public void addMember(Member member) {
         this.member = member;
     }
 
-    public void updateProductPart(String name, int price, String info, ProductType type
+    public void createProductPart(String name, int price, String info
             , SaleStatus status, LocalDateTime startDate, LocalDateTime endDate) {
         this.name = name;
         this.price = price;
         this.info = info;
-        this.type = type;
+        this.status = status;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.likesCount = 0;
+    }
+
+    public void modifyProduct(String name, int price, String info
+            , SaleStatus status, LocalDateTime startDate, LocalDateTime endDate) {
+        this.name = name;
+        this.price = price;
+        this.info = info;
         this.status = status;
         this.startDate = startDate;
         this.endDate = endDate;
