@@ -1,6 +1,7 @@
 package com.example.product.dto.response;
 
 import com.example.product.dto.ProductOptionDto;
+import com.example.product.entity.Option;
 import com.example.product.entity.Product;
 import com.example.product.enums.SaleStatus;
 import com.example.product_image.entity.ProductImage;
@@ -28,13 +29,19 @@ public class ProductResponseDto {
     private int likesCount;
     private List<ProductOptionDto> options;
 
-    public static ProductResponseDto toResponseDto(Product product, List<ProductOptionDto> productOptionDtos) {
+    public static ProductResponseDto toResponseDto(Product product) {
         List<ProductImage> productImages = product.getProductImages();
-
         List<String> imageUrls = new ArrayList<>();
         for (ProductImage productImage : productImages) {
             imageUrls.add(productImage.getImageUrl());
         }
+
+        List<Option> optionList = product.getOptions();
+        List<ProductOptionDto> productOptionDtos = new ArrayList<>();
+        for (Option option : optionList) {
+            productOptionDtos.add(ProductOptionDto.toProductOptionDto(option));
+        }
+
 
         return ProductResponseDto.builder()
                 .status(product.getStatus())

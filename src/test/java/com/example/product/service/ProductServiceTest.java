@@ -95,7 +95,9 @@ class ProductServiceTest {
                 assertEquals(requestDto.getEndDate(), responseDto.getEndDate());
                 assertEquals("www.s3v1.png", responseDto.getImageUrls().get(0));
                 assertEquals("www.s3v2.png", responseDto.getImageUrls().get(1));
-                assertEquals(requestDto.getOptions(), responseDto.getOptions());
+                assertEquals(requestDto.getOptions().get(0).getName(), responseDto.getOptions().get(0).getName());
+                assertEquals(requestDto.getOptions().get(0).getAdditionalPrice()
+                        , responseDto.getOptions().get(0).getAdditionalPrice());
             }
         }
         @Nested
@@ -194,7 +196,9 @@ class ProductServiceTest {
                 assertEquals(requestDto.getEndDate(), responseDto.getEndDate());
                 assertEquals("www.s3v1.png", responseDto.getImageUrls().get(0));
                 assertEquals("www.s3v2.png", responseDto.getImageUrls().get(1));
-                assertEquals(requestDto.getOptions(), responseDto.getOptions());
+                assertEquals(requestDto.getOptions().get(0).getName(), responseDto.getOptions().get(0).getName());
+                assertEquals(requestDto.getOptions().get(0).getAdditionalPrice()
+                        , responseDto.getOptions().get(0).getAdditionalPrice());
             }
         }
         @Nested
