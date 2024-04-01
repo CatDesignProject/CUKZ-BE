@@ -2,6 +2,7 @@ package com.example.security;
 
 import com.example.security.authentication.CustomAuthenticationFailureHandler;
 import com.example.security.authentication.CustomAuthenticationSuccessHandler;
+import com.example.security.authentication.CustomLogoutSuccessHandler;
 import com.example.security.authentication.LoginProcessingFilter;
 import com.example.security.exception.CustomAccessDeniedHandler;
 import com.example.security.exception.CustomAuthenticationEntryPoint;
@@ -32,6 +33,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(login -> login.disable()) // 폼로그인 비허용
+                .logout(logout -> logout
+                        .logoutSuccessHandler(new CustomLogoutSuccessHandler())
+                        .deleteCookies("JSESSIONID")
+                        .logoutUrl("/members/logout"))
+                .requestCache(cache -> cache.disable()) // 요청 간 HttpSession 내 RequestCache 저장 비허용 (로그인 전 세션 생성 방지)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/members/login", "members/register").permitAll() // 로그인, 회원가입 url만 허용
                         .requestMatchers(new AntPathRequestMatcher("/**/non-members/**")).permitAll()   // 비회원 요청 허용
