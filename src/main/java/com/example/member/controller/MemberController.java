@@ -30,10 +30,10 @@ public class MemberController {
     }
 
     @PostMapping("/verify-username")
-    public ResponseEntity<BaseResponse<String>> registerMember(@RequestBody VerifyUsernameDto verifyUsernameDto) {
-        memberService.verifyDuplicatedUsername(verifyUsernameDto.getUsername());
+    public ResponseEntity<BaseResponse<Boolean>> registerMember(@RequestBody VerifyUsernameDto verifyUsernameDto) {
+        boolean isUsernameDuplicated = memberService.isUsernameDuplicated(verifyUsernameDto.getUsername());
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.of(HttpStatus.OK, "아이디 중복 체크 완료"));
+                .body(BaseResponse.of(HttpStatus.OK, isUsernameDuplicated));
     }
 
     @GetMapping("/info")
@@ -41,6 +41,7 @@ public class MemberController {
         AuthenticatedMember member = (AuthenticatedMember) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         log.info("member -> {}", member.toString());
         log.info("authenticatedMember -> {}", authenticatedMember.toString());
+        log.info("authorities -> {}", SecurityContextHolder.getContext().getAuthentication().getAuthorities());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.of(HttpStatus.OK, authenticatedMember.toString()));
     }
