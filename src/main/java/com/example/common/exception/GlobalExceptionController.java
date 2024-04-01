@@ -3,10 +3,12 @@ package com.example.common.exception;
 import com.example.common.global.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionController {
@@ -24,9 +26,11 @@ public class GlobalExceptionController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<BaseResponse<Object>> handleValidException(MethodArgumentNotValidException e) {
 
-        BindingResult bindingResult = e.getBindingResult();
-        String msg = bindingResult.getFieldErrors().get(0).getDefaultMessage();
-        ExceptionResponseDto responseDto = new ExceptionResponseDto(HttpStatus.BAD_REQUEST, msg);
+        List<ValidationErrorResponseDto> validationErrorResponseDtos = e.getAllErrors().stream().map
+                (objectError -> new ValidationErrorResponseDto(objectError))
+                .collect(Collectors.toList());
+
+        ExceptionResponseDto responseDto = new ExceptionResponseDto(HttpStatus.BAD_REQUEST, validationErrorResponseDtos);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
