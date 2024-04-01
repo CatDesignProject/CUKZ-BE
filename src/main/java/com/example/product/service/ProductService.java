@@ -61,7 +61,7 @@ public class ProductService {
             optionRepository.save(option);
         }
 
-        return ProductResponseDto.toResponseDto(product, productOptionDtos);
+        return ProductResponseDto.toResponseDto(product);
     }
 
     public ProductResponseDto findProduct(Long productId) {
@@ -70,14 +70,7 @@ public class ProductService {
                         () -> new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT)
                 );
 
-        List<ProductOptionDto> productOptionDtos = new ArrayList<>();
-
-        List<Option> options = product.getOptions();
-        for (Option option : options) {
-            productOptionDtos.add(new ProductOptionDto(option.getName(), option.getAdditionalPrice()));
-        }
-
-        return ProductResponseDto.toResponseDto(product, productOptionDtos);
+        return ProductResponseDto.toResponseDto(product);
     }
 
     @Transactional
@@ -117,7 +110,7 @@ public class ProductService {
             optionRepository.save(option);
         }
 
-        return ProductResponseDto.toResponseDto(product, productOptionDtos);
+        return ProductResponseDto.toResponseDto(product);
     }
 
     public PageResponseDto<ProductThumbNailDto> pagingProduct(Pageable pageable) {

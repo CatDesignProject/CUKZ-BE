@@ -19,4 +19,8 @@ public class ProductOptionDto {
                 .additionalPrice(this.additionalPrice)
                 .build();
     }
+
+    public static ProductOptionDto toProductOptionDto(Option option) {
+        return new ProductOptionDto(option.getName(), option.getAdditionalPrice());
+    }
 }
