@@ -11,6 +11,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -29,6 +32,9 @@ public class DemandForm extends TimeStamp {
     @Email
     private String email;
 
+    @OneToMany(mappedBy = "demandForm", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DemandOption> demandOptionList;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
@@ -40,6 +46,7 @@ public class DemandForm extends TimeStamp {
                 .product(product)
                 .isMember(true)
                 .email(requestDto.getEmail())
+                .demandOptionList(new ArrayList<>())
                 .build();
     }
 
@@ -50,6 +57,7 @@ public class DemandForm extends TimeStamp {
                 .product(product)
                 .isMember(false)
                 .email(requestDto.getEmail())
+                .demandOptionList(new ArrayList<>())
                 .build();
     }
 }

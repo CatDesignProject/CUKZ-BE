@@ -13,5 +13,5 @@ public class CreateDemandFormRequestDto {
 
     private String email;
 
-    private List<FormOptionDto> optionList;
+    private List<FormOptionRequestDto> optionList;
 }

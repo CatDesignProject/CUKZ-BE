@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -13,13 +15,21 @@ import lombok.NoArgsConstructor;
 public class DemandFormResponseDto {
 
     private Long id;
+    private Long productId;
     private Long memberId;
+    private List<FormOptionResponseDto> optionList;
 
     public static DemandFormResponseDto toResponseDto(DemandForm demandForm) {
 
+        List<FormOptionResponseDto> optionList = demandForm.getDemandOptionList().stream()
+                .map(FormOptionResponseDto::toResponseDto)
+                .toList();
+
         return DemandFormResponseDto.builder()
                 .id(demandForm.getId())
+                .productId(demandForm.getProduct().getId())
                 .memberId(demandForm.getMemberId())
+                .optionList(optionList)
                 .build();
     }
 }
