@@ -93,7 +93,7 @@ public class DemandFormService {
     @Transactional(readOnly = true)
     public Page<DemandFormResponseDto> getAllDemandFormsMember(int page, int size, Long memberId) {
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<DemandForm> demandFormList = demandFormRepository.findByMemberId(memberId, pageable);
 
@@ -103,9 +103,8 @@ public class DemandFormService {
     @Transactional(readOnly = true)
     public DemandFormResponseDto getDemandFormNonMember(DemandFormNonMemberRequestDto requestDto) {
 
-        DemandForm demandForm = demandFormRepository.findByOrderNumber(requestDto.getOrderNumber()).orElseThrow(() ->
-                new GlobalException(NOT_FOUND_FORM)
-        );
+        DemandForm demandForm = demandFormRepository.findByOrderNumber(requestDto.getOrderNumber())
+                .orElseThrow(() -> new GlobalException(NOT_FOUND_FORM));
 
         return DemandFormResponseDto.toResponseDto(demandForm);
     }
@@ -116,7 +115,7 @@ public class DemandFormService {
         Product product = findProduct(productId);
         checkMember(product, memberId);
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<DemandForm> demandFormList = demandFormRepository.findByProductId(productId, pageable);
 
@@ -133,7 +132,7 @@ public class DemandFormService {
     }
 
     public long generateOrderNumber() {
-        // 비회원 주문 번호 = 현재 날짜 + 랜덤 숫자 (16자리)
+        // 비회원 주문 번호 생성 = 현재 날짜 + 랜덤 숫자 (총 16자리)
         LocalDate today = LocalDate.now();
         String dateString = String.format("%ty%tm%td", today, today, today);
 
@@ -183,8 +182,13 @@ public class DemandFormService {
     }
 
     private void saveOptions(CreateDemandFormRequestDto requestDto, DemandForm demandForm) {
+
         for (FormOptionRequestDto optionDto : requestDto.getOptionList()) {
+            // 옵션 수요수량 업데이트
             Option option = findOption(optionDto.getOptionId());
+            option.updateDemandQuantity(optionDto.getQuantity());
+
+            // 옵션 수요조사 내역 저장
             DemandOption demandOption = DemandOption.toEntity(optionDto.getQuantity(), demandForm, option);
             demandOptionRepository.save(demandOption);
             demandForm.getDemandOptionList().add(demandOption);
