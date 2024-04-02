@@ -44,9 +44,7 @@ public class DemandFormService {
 
         // 유저 중복 참여 검증
         Member member = findMember(memberId);
-        demandFormRepository.findByProductIdAndMemberId(productId, member.getId()).ifPresent(demandForm -> {
-            throw new GlobalException(DUPLICATED_FORM);
-        });
+        checkDuplicate(requestDto.getEmail());
 
         // 수요조사 기간 검증
         Product product = findProduct(productId);
@@ -65,12 +63,16 @@ public class DemandFormService {
     @Transactional
     public DemandFormResponseDto demandNonMember(Long productId, CreateDemandFormRequestDto requestDto) {
 
+        // 중복 참여, 수요조사 기간 검증
+        checkDuplicate(requestDto.getEmail());
         Product product = findProduct(productId);
         checkPeriod(product);
 
+        // 랜덤 주문번호 생성
         long orderNumber = generateOrderNumber();
         DemandForm demandForm = DemandForm.toNonMemberEntity(orderNumber, product, requestDto);
         demandFormRepository.save(demandForm);
+        saveOptions(requestDto, demandForm);
 
         return DemandFormResponseDto.toResponseDto(demandForm);
     }
@@ -160,6 +162,12 @@ public class DemandFormService {
     public void checkMember(Product product, Long memberId) {
         if (!product.getMember().getId().equals(memberId)) {
             throw new GlobalException(UNAUTHORIZED_MEMBER);
+        }
+    }
+
+    public void checkDuplicate(String email) {
+        if (demandFormRepository.findByEmail(email).isPresent()) {
+            throw new GlobalException(DUPLICATED_FORM);
         }
     }
 
