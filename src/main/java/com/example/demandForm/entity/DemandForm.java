@@ -5,13 +5,11 @@ import com.example.demandForm.dto.CreateDemandFormRequestDto;
 import com.example.member.entity.Member;
 import com.example.product.entity.Product;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -28,14 +26,12 @@ public class DemandForm extends TimeStamp {
 
     private boolean isMember;
 
+    @Email
     private String email;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
-
-    @OneToMany(mappedBy = "demandForm", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DemandOption> demandOptionList = new ArrayList<>();
 
     public static DemandForm toMemberEntity(Member member, Product product, CreateDemandFormRequestDto requestDto) {
 

@@ -175,7 +175,6 @@ public class DemandFormService {
             Option option = findOption(optionDto.getOptionId());
             DemandOption demandOption = DemandOption.toEntity(optionDto.getQuantity(), demandForm, option);
             demandOptionRepository.save(demandOption);
-            demandForm.getDemandOptionList().add(demandOption);
         }
     }
 }
