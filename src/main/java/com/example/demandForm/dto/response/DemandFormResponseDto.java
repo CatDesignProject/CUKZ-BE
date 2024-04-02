@@ -1,4 +1,4 @@
-package com.example.demandForm.dto;
+package com.example.demandForm.dto.response;
 
 import com.example.demandForm.entity.DemandForm;
 import lombok.AllArgsConstructor;
@@ -13,14 +13,12 @@ import lombok.NoArgsConstructor;
 public class DemandFormResponseDto {
 
     private Long id;
-    private Long productId;
     private Long memberId;
 
     public static DemandFormResponseDto toResponseDto(DemandForm demandForm) {
 
         return DemandFormResponseDto.builder()
                 .id(demandForm.getId())
-                .productId(demandForm.getProduct().getId())
                 .memberId(demandForm.getMemberId())
                 .build();
     }

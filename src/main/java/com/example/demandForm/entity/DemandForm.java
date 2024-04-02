@@ -1,7 +1,7 @@
 package com.example.demandForm.entity;
 
 import com.example.common.time.TimeStamp;
-import com.example.demandForm.dto.CreateDemandFormRequestDto;
+import com.example.demandForm.dto.request.CreateDemandFormRequestDto;
 import com.example.member.entity.Member;
 import com.example.product.entity.Product;
 import jakarta.persistence.*;

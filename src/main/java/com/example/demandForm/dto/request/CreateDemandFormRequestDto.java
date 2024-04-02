@@ -1,4 +1,4 @@
-package com.example.demandForm.dto;
+package com.example.demandForm.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateDemandFormRequestDto {
-    
+
     private String email;
 
     private List<FormOptionDto> optionList;

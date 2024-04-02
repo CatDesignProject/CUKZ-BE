@@ -2,10 +2,10 @@ package com.example.demandForm.controller;
 
 import com.example.common.global.BaseResponse;
 import com.example.common.global.PageResponseDto;
-import com.example.demandForm.dto.CreateDemandFormRequestDto;
-import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
-import com.example.demandForm.dto.DemandFormResponseDto;
-import com.example.demandForm.dto.UpdateDemandFormRequestDto;
+import com.example.demandForm.dto.request.CreateDemandFormRequestDto;
+import com.example.demandForm.dto.request.DemandFormNonMemberRequestDto;
+import com.example.demandForm.dto.request.UpdateDemandFormRequestDto;
+import com.example.demandForm.dto.response.DemandFormResponseDto;
 import com.example.demandForm.service.DemandFormService;
 import com.example.security.authentication.AuthenticatedMember;
 import jakarta.validation.Valid;

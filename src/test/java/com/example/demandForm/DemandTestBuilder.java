@@ -1,7 +1,7 @@
 package com.example.demandForm;
 
-import com.example.demandForm.dto.CreateDemandFormRequestDto;
-import com.example.demandForm.dto.FormOptionDto;
+import com.example.demandForm.dto.request.CreateDemandFormRequestDto;
+import com.example.demandForm.dto.request.FormOptionDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.entity.DemandOption;
 import com.example.member.entity.Member;

@@ -1,4 +1,4 @@
-package com.example.demandForm.dto;
+package com.example.demandForm.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
