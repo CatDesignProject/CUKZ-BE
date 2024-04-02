@@ -4,14 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateDemandFormRequestDto {
-    
-    private String email;
+public class FormOptionDto {
 
-    private List<FormOptionDto> optionList;
+    private Long optionId;
+    private int quantity;
 }

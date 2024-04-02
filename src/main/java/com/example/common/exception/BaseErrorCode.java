@@ -29,6 +29,9 @@ public enum BaseErrorCode {
     UNAUTHORIZED_DELETE_PRODUCT(FORBIDDEN, "해당 상품을 삭제할 권한이 없습니다."),
     NOT_FOUND_PAGING_PRODUCT(NOT_FOUND, "목록에 상품이 없습니다."),
 
+    // Option
+    NOT_FOUND_OPTION(NOT_FOUND, "해당 옵션을 찾을 수 없습니다."),
+
     //Image
     NOT_FOUND_IMAGE(BAD_REQUEST, "해당 이미지를 찾을 수 없습니다."),
 

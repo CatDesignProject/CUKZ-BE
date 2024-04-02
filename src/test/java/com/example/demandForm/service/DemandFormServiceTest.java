@@ -1,14 +1,21 @@
 package com.example.demandForm.service;
 
 import com.example.common.exception.GlobalException;
+import com.example.demandForm.DemandTest;
+import com.example.demandForm.DemandTestBuilder;
 import com.example.demandForm.dto.CreateDemandFormRequestDto;
 import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
 import com.example.demandForm.dto.DemandFormResponseDto;
 import com.example.demandForm.entity.DemandForm;
+import com.example.demandForm.entity.DemandOption;
 import com.example.demandForm.repository.DemandFormRepository;
+import com.example.demandForm.repository.DemandOptionRepository;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
+import com.example.product.TestBuilder;
+import com.example.product.entity.Option;
 import com.example.product.entity.Product;
+import com.example.product.repository.OptionRepository;
 import com.example.product.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,7 +43,7 @@ import static org.mockito.Mockito.when;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
-public class DemandFormServiceTest {
+public class DemandFormServiceTest implements DemandTest {
 
     @Mock
     DemandFormRepository demandFormRepository;
@@ -47,34 +54,36 @@ public class DemandFormServiceTest {
     @Mock
     MemberRepository memberRepository;
 
+    @Mock
+    OptionRepository optionRepository;
+
+    @Mock
+    DemandOptionRepository demandOptionRepository;
+
     @InjectMocks
     DemandFormService demandFormService;
 
     Member member;
     Product product;
+    Option option;
+    DemandOption demandOption;
     DemandForm memberDemandForm;
     DemandForm nonMemberDemandForm;
     CreateDemandFormRequestDto requestDto;
     Long productId = 1L;
     Long memberId = 1L;
     Long formId = 1L;
-    int quantity = 3;
 
     @BeforeEach
     void setUp() {
-        member = new Member();
-        ReflectionTestUtils.setField(member, "id", 1L);
+        member = TestBuilder.testMemberBuild();
+        product = TestBuilder.testProductBuild();
+        ReflectionTestUtils.setField(product, "id", productId);
 
-        product = new Product();
-        LocalDateTime startDate = LocalDateTime.of(2024, 3, 20, 12, 0);
-        LocalDateTime endDate = LocalDateTime.of(3024, 4, 1, 12, 0);
-        ReflectionTestUtils.setField(product, "startDate", startDate);
-        ReflectionTestUtils.setField(product, "endDate", endDate);
-        ReflectionTestUtils.setField(product, "id", 1L);
-
-        requestDto = new CreateDemandFormRequestDto();
-        memberDemandForm = DemandForm.toMemberEntity(member, product, requestDto);
-        nonMemberDemandForm = DemandForm.toNonMemberEntity(1L, product, requestDto);
+        option = DemandTestBuilder.buildOption();
+        requestDto = DemandTestBuilder.buildCreateDemandFormRequestDto();
+        memberDemandForm = DemandTestBuilder.buildMemberDemandForm(member, product);
+        nonMemberDemandForm = DemandTestBuilder.buildNonMemberDemandForm(product);
     }
 
     @Nested
@@ -85,16 +94,22 @@ public class DemandFormServiceTest {
         @DisplayName("성공(일반 유저)")
         void demandMemberTest_success() {
             // given
+            demandOption = DemandTestBuilder.buildDemandOption(memberDemandForm);
+
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             when(demandFormRepository.findByProductIdAndMemberId(productId, memberId)).thenReturn(Optional.empty());
             when(productRepository.findById(productId)).thenReturn(Optional.of(product));
             when(demandFormRepository.save(any(DemandForm.class))).thenReturn(memberDemandForm);
+            when(optionRepository.findById(any())).thenReturn(Optional.of(option));
+            when(demandOptionRepository.save(any(DemandOption.class))).thenReturn(demandOption);
 
             // when
             DemandFormResponseDto responseDto = demandFormService.demandMember(productId, requestDto, memberId);
 
             // then
-            assertEquals(productId, responseDto.getProductId());
+            assertEquals(product.getId(), responseDto.getProductId());
+            assertEquals(member.getId(), responseDto.getMemberId());
+            assertEquals(TEST_EMAIL, requestDto.getEmail());
         }
 
         @Test

@@ -1,16 +1,17 @@
 package com.example.demandForm.service;
 
 import com.example.common.exception.GlobalException;
-import com.example.demandForm.dto.CreateDemandFormRequestDto;
-import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
-import com.example.demandForm.dto.DemandFormResponseDto;
-import com.example.demandForm.dto.UpdateDemandFormRequestDto;
+import com.example.demandForm.dto.*;
 import com.example.demandForm.entity.DemandForm;
+import com.example.demandForm.entity.DemandOption;
 import com.example.demandForm.repository.DemandFormRepository;
+import com.example.demandForm.repository.DemandOptionRepository;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
+import com.example.product.entity.Option;
 import com.example.product.entity.Product;
 import com.example.product.enums.SaleStatus;
+import com.example.product.repository.OptionRepository;
 import com.example.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,21 +34,30 @@ public class DemandFormService {
     private final DemandFormRepository demandFormRepository;
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
+    private final OptionRepository optionRepository;
+    private final DemandOptionRepository demandOptionRepository;
+
     private static final long MAX_ORDER_NUMBER = 9999999999L;
 
     @Transactional
     public DemandFormResponseDto demandMember(Long productId, CreateDemandFormRequestDto requestDto, Long memberId) {
 
+        // 유저 중복 참여 검증
         Member member = findMember(memberId);
         demandFormRepository.findByProductIdAndMemberId(productId, member.getId()).ifPresent(demandForm -> {
             throw new GlobalException(DUPLICATED_FORM);
         });
 
+        // 수요조사 기간 검증
         Product product = findProduct(productId);
         checkPeriod(product);
 
+        // demand form 생성
         DemandForm demandForm = DemandForm.toMemberEntity(member, product, requestDto);
         demandFormRepository.save(demandForm);
+
+        // 옵션 리스트에 대한 정보 저장
+        saveOptions(requestDto, demandForm);
 
         return DemandFormResponseDto.toResponseDto(demandForm);
     }
@@ -141,6 +151,12 @@ public class DemandFormService {
         );
     }
 
+    private Option findOption(Long optionId) {
+        return optionRepository.findById(optionId).orElseThrow(() ->
+                new GlobalException(NOT_FOUND_OPTION)
+        );
+    }
+
     public void checkMember(Product product, Long memberId) {
         if (!product.getMember().getId().equals(memberId)) {
             throw new GlobalException(UNAUTHORIZED_MEMBER);
@@ -151,6 +167,15 @@ public class DemandFormService {
         LocalDateTime now = LocalDateTime.now();
         if (now.isAfter(product.getEndDate()) || now.isBefore(product.getStartDate())) {
             throw new GlobalException(NOT_IN_PERIOD);
+        }
+    }
+
+    private void saveOptions(CreateDemandFormRequestDto requestDto, DemandForm demandForm) {
+        for (FormOptionDto optionDto : requestDto.getOptionList()) {
+            Option option = findOption(optionDto.getOptionId());
+            DemandOption demandOption = DemandOption.toEntity(optionDto.getQuantity(), demandForm, option);
+            demandOptionRepository.save(demandOption);
+            demandForm.getDemandOptionList().add(demandOption);
         }
     }
 }
