@@ -1,10 +1,9 @@
 package com.example.product.dto.response;
 
-import com.example.product.entity.Goods;
-import com.example.product.entity.Jacket;
+import com.example.product.dto.ProductOptionDto;
+import com.example.product.entity.Option;
 import com.example.product.entity.Product;
-import com.example.product.enums.ProductType;
-import com.example.product.enums.Size;
+import com.example.product.enums.SaleStatus;
 import com.example.product_image.entity.ProductImage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,62 +18,43 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductResponseDto {
 
+    private SaleStatus status;
     private String name;
     private int price;
     private String info;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private List<String> colors;
-    private List<Size> sizes;
     private List<String> imageUrls;
     private String nickname; //총대 닉네임
+    private int likesCount;
+    private List<ProductOptionDto> options;
 
     public static ProductResponseDto toResponseDto(Product product) {
-        if (product.getType() == ProductType.잠바) {
-            Jacket jacket = (Jacket) product;
-
-            List<ProductImage> productImages = jacket.getProductImages();
-            List<String> imageUrls = new ArrayList<>();
-
-            addToImageUrls(productImages, imageUrls);
-
-            return ProductResponseDto.builder()
-                    .name(jacket.getName())
-                    .price(jacket.getPrice())
-                    .info(jacket.getInfo())
-                    .startDate(jacket.getStartDate())
-                    .endDate(jacket.getEndDate())
-                    .colors(jacket.getColors())
-                    .sizes(jacket.getAvailableSizes())
-                    .imageUrls(imageUrls)
-                    .nickname(product.getMember().getNickname())
-                    .build();
-        } else {
-            Goods goods = (Goods) product;
-
-            List<ProductImage> productImages = goods.getProductImages();
-            List<String> imageUrls = new ArrayList<>();
-
-            addToImageUrls(productImages, imageUrls);
-
-            return ProductResponseDto.builder()
-                    .name(goods.getName())
-                    .price(goods.getPrice())
-                    .info(goods.getInfo())
-                    .startDate(goods.getStartDate())
-                    .endDate(goods.getEndDate())
-                    .colors(goods.getColors())
-                    .imageUrls(imageUrls)
-                    .nickname(product.getMember().getNickname())
-                    .build();
-        }
-    }
-
-    private static void addToImageUrls (List<ProductImage> productImages, List<String> imageUrls) {
+        List<ProductImage> productImages = product.getProductImages();
+        List<String> imageUrls = new ArrayList<>();
         for (ProductImage productImage : productImages) {
-            String imageUrl = productImage.getImageUrl();
-            imageUrls.add(imageUrl);
+            imageUrls.add(productImage.getImageUrl());
         }
+
+        List<Option> optionList = product.getOptions();
+        List<ProductOptionDto> productOptionDtos = new ArrayList<>();
+        for (Option option : optionList) {
+            productOptionDtos.add(ProductOptionDto.toProductOptionDto(option));
+        }
+
+
+        return ProductResponseDto.builder()
+                .status(product.getStatus())
+                .name(product.getName())
+                .price(product.getPrice())
+                .info(product.getInfo())
+                .startDate(product.getStartDate())
+                .endDate(product.getEndDate())
+                .imageUrls(imageUrls)
+                .nickname(product.getMember().getNickname())
+                .likesCount(product.getLikesCount())
+                .options(productOptionDtos)
+                .build();
     }
 }
 
