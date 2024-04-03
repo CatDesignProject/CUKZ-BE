@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,12 +58,11 @@ class ReviewServiceTest {
                 given(reviewRepository.findByPurchaseFormId(purchaseForm.getId())).willReturn(Optional.empty());
                 given(memberRepository.findById(seller.getId())).willReturn(Optional.of(seller));
                 given(reviewRepository.save(any(Review.class))).willReturn(any(Review.class));
-
-                reviewService.saveReview(reviewRequestDto, seller.getId(), purchaseForm.getId(), buyer.getId());
             }
             @Test
             @DisplayName("리뷰 작성에 성공한다.")
             void it_returns_succes_save_review() {
+                assertDoesNotThrow(() -> reviewService.saveReview(reviewRequestDto, seller.getId(), purchaseForm.getId(), buyer.getId()));
                 then(purchaseFormRepository).should(times(1)).findById(purchaseForm.getId());
                 then(reviewRepository).should(times(1)).findByPurchaseFormId(purchaseForm.getId());
                 then(memberRepository).should(times(1)).findById(seller.getId());
