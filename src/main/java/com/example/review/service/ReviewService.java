@@ -60,14 +60,3 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 }
-
-
-
-
-
-
-
-//        PurchaseForm purchaseForm = purchaseFormRepository.findByIdAndMemberId(purchaseFormId, sellerId)
-//                .orElseThrow(
-//                () -> new GlobalException(BaseErrorCode.UNAUTHORIZED_WRITE_REVIEW_TO_SELLER)
-//        );
