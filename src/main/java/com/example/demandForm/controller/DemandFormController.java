@@ -75,6 +75,16 @@ public class DemandFormController {
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
     }
 
+    // 관리자
+    @DeleteMapping("/demand/{demandFormId}")
+    public ResponseEntity<BaseResponse<String>> deleteDemandForm(
+            @PathVariable Long demandFormId) {
+
+        demandFormService.deleteDemandForm(demandFormId);
+
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, "수요조사 내역이 삭제되었습니다."));
+    }
+
     // 총대
     @GetMapping("/products/{productId}/demand")
     public ResponseEntity<BaseResponse<PageResponseDto<DemandFormResponseDto>>> getAllDemandForms(

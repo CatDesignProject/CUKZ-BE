@@ -109,6 +109,22 @@ public class DemandFormService {
         return DemandFormResponseDto.toResponseDto(demandForm);
     }
 
+
+    @Transactional
+    public void deleteDemandForm(Long demandFormId) {
+
+        DemandForm demandForm = demandFormRepository.findById(demandFormId).orElseThrow(() ->
+                new GlobalException(NOT_FOUND_FORM)
+        );
+
+        demandForm.getDemandOptionList().forEach(demandOption -> {
+            Option option = demandOption.getOption();
+            option.updateDemandQuantity(-demandOption.getQuantity());
+        });
+
+        demandFormRepository.delete(demandForm);
+    }
+
     @Transactional(readOnly = true)
     public Page<DemandFormResponseDto> getAllDemandForms(int page, int size, Long productId, Long memberId) {
 
