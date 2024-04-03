@@ -22,6 +22,7 @@ public class DemandTestBuilder implements DemandTest {
 
     public static Option buildOption() {
         return Option.builder()
+                .id(1L)
                 .name(OPTION_NAME)
                 .build();
     }

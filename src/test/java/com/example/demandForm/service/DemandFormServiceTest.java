@@ -81,6 +81,7 @@ public class DemandFormServiceTest implements DemandTest {
         ReflectionTestUtils.setField(product, "id", productId);
 
         option = DemandTestBuilder.buildOption();
+        demandOption = DemandTestBuilder.buildDemandOption(memberDemandForm);
         requestDto = DemandTestBuilder.buildCreateDemandFormRequestDto();
         memberDemandForm = DemandTestBuilder.buildMemberDemandForm(member, product);
         nonMemberDemandForm = DemandTestBuilder.buildNonMemberDemandForm(product);
@@ -94,10 +95,7 @@ public class DemandFormServiceTest implements DemandTest {
         @DisplayName("성공(일반 유저)")
         void demandMemberTest_success() {
             // given
-            demandOption = DemandTestBuilder.buildDemandOption(memberDemandForm);
-
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-            when(demandFormRepository.findByProductIdAndMemberId(productId, memberId)).thenReturn(Optional.empty());
             when(productRepository.findById(productId)).thenReturn(Optional.of(product));
             when(demandFormRepository.save(any(DemandForm.class))).thenReturn(memberDemandForm);
             when(optionRepository.findById(any())).thenReturn(Optional.of(option));
@@ -109,7 +107,8 @@ public class DemandFormServiceTest implements DemandTest {
             // then
             assertEquals(product.getId(), responseDto.getProductId());
             assertEquals(member.getId(), responseDto.getMemberId());
-            assertEquals(TEST_EMAIL, requestDto.getEmail());
+            assertEquals(requestDto.getOptionList().get(0).getOptionId(),
+                    responseDto.getOptionList().get(0).getOptionId());
         }
 
         @Test
@@ -117,8 +116,7 @@ public class DemandFormServiceTest implements DemandTest {
         void demandMemberTest_fail_duplicate() {
             // given
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-            when(demandFormRepository.findByProductIdAndMemberId(productId, memberId))
-                    .thenReturn(Optional.of(memberDemandForm));
+            when(demandFormRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(nonMemberDemandForm));
 
             // when - then
             GlobalException e = assertThrows(GlobalException.class, () -> {
@@ -132,7 +130,6 @@ public class DemandFormServiceTest implements DemandTest {
         void demandMemberTest_fail_NotFoundProduct() {
             // given
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-            when(demandFormRepository.findByProductIdAndMemberId(productId, memberId)).thenReturn(Optional.empty());
             when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
             // when - then
@@ -150,7 +147,6 @@ public class DemandFormServiceTest implements DemandTest {
             LocalDateTime endDate = LocalDateTime.of(2000, 4, 1, 12, 0);
             ReflectionTestUtils.setField(product, "endDate", endDate);
 
-            when(demandFormRepository.findByProductIdAndMemberId(productId, memberId)).thenReturn(Optional.empty());
             when(productRepository.findById(productId)).thenReturn(Optional.of(product));
 
             // when - then
@@ -165,14 +161,17 @@ public class DemandFormServiceTest implements DemandTest {
         void demandNonMemberTest_success() {
             // given
             when(productRepository.findById(productId)).thenReturn(Optional.of(product));
-            when(demandFormRepository.save(any(DemandForm.class))).thenReturn(nonMemberDemandForm);
+            when(demandFormRepository.save(any(DemandForm.class))).thenReturn(memberDemandForm);
+            when(optionRepository.findById(any())).thenReturn(Optional.of(option));
+            when(demandOptionRepository.save(any(DemandOption.class))).thenReturn(demandOption);
 
             // when
             DemandFormResponseDto responseDto = demandFormService.demandNonMember(productId, requestDto);
 
             // then
             assertEquals(productId, responseDto.getProductId());
-            System.out.println("responseDto.orderNumber = " + responseDto.getMemberId());
+            assertEquals(requestDto.getOptionList().get(0).getOptionId(),
+                    responseDto.getOptionList().get(0).getOptionId());
         }
     }
 
@@ -211,7 +210,7 @@ public class DemandFormServiceTest implements DemandTest {
             // given
             int page = 1;
             int size = 10;
-            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
             DemandForm memberDemandForm2 = DemandForm.toMemberEntity(member, product, requestDto);
             List<DemandForm> demandFormList = Arrays.asList(memberDemandForm, memberDemandForm2);
             Page<DemandForm> demandFormPage = new PageImpl<>(demandFormList);
