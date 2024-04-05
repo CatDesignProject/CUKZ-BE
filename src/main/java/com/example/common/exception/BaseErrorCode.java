@@ -21,6 +21,7 @@ public enum BaseErrorCode {
     NOT_FOUND_FORM(NOT_FOUND, "해당 폼을 찾을 수 없습니다."),
     DUPLICATED_FORM(BAD_REQUEST, "이미 참여한 폼이 있습니다."),
     NOT_IN_PERIOD(BAD_REQUEST, "참여 가능한 기간이 아닙니다."),
+    NOT_FOUND_PURCHASE_FORM(NOT_FOUND, "해당 구매폼을 찾을 수 없습니다."),
 
     // Product
     NOT_FOUND_PRODUCT(NOT_FOUND, "해당 상품을 찾을 수 없습니다."),
@@ -38,7 +39,12 @@ public enum BaseErrorCode {
 
     // Likes
     DUPLICATED_LIKES(BAD_REQUEST, "이미 좋아요를 누른 상품입니다."),
-    NOT_FOUND_LIKES(NOT_FOUND, "해당 좋아요를 찾을 수 없습니다.");
+    NOT_FOUND_LIKES(NOT_FOUND, "해당 좋아요를 찾을 수 없습니다."),
+
+    // Review
+    UNAUTHORIZED_WRITE_REVIEW_TO_SELLER(FORBIDDEN, "해당 총대에게 리뷰를 작성할 권한이 없습니다."),
+    ALREADY_WRITE_REVIEW(FORBIDDEN, "이미 리뷰를 작성했습니다."),
+    NOT_YET_WRITE_REVIEW(FORBIDDEN, "아직 해당 상품은 리뷰 작성을 할 수 없습니다.");
 
     private final HttpStatus status;
     private final String msg;

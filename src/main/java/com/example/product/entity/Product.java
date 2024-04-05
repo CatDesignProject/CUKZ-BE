@@ -91,7 +91,7 @@ public class Product {
         return this.likesCount;
     }
 
-    public void addOptions(Option option) {
+    public void addOption(Option option) {
         this.options.add(option);
     }
 }
