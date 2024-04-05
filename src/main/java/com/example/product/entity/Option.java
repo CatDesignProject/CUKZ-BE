@@ -28,7 +28,7 @@ public class Option {
 
     public void addProduct(Product product) {
         this.product = product;
-        product.addOptions(this);
+        product.addOption(this);
     }
 
     public void updateDemandQuantity(int quantity) {
