@@ -1,4 +1,4 @@
-package com.example.demandForm.dto;
+package com.example.demandForm.dto.request;
 
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DemandFormRequestDto {
+public class FormOptionRequestDto {
 
-    @Min(value = 1, message = "수량은 1개 이상 입력해주세요")
+    private Long optionId;
+
+    @Min(value = 1, message = "수량은 1개 이상이어야 합니다.")
     private int quantity;
 }

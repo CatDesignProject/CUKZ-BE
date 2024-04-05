@@ -29,7 +29,7 @@ public class ReviewService {
         //해당 상품이 공구가 완료된 상품인지
         PurchaseForm purchaseForm = purchaseFormRepository.findById(purchaseFormId)
                 .orElseThrow(
-                        () -> new GlobalException(BaseErrorCode.NOT_FOUND_PURCHASE_FORM)
+                        () -> new GlobalException(BaseErrorCode.NOT_FOUND_FORM)
                 );
         Product product = purchaseForm.getProduct();
         if (!product.getStatus().equals(SaleStatus.COMPLETE)) {

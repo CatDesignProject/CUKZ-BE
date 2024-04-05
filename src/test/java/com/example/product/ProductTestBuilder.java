@@ -26,7 +26,7 @@ public class ProductTestBuilder {
                 .price(50000)
                 .info("2024학년도 가톨릭대학교 학잠")
                 .startDate(LocalDateTime.of(2024, 3, 18, 15, 30, 0))
-                .endDate(LocalDateTime.of(2024, 3, 30, 15, 30, 0))
+                .endDate(LocalDateTime.of(3024, 3, 30, 15, 30, 0))
                 .productImageIds(Arrays.asList(1L, 2L))
                 .options(Arrays.asList(option1, option2))
                 .build();
@@ -42,7 +42,7 @@ public class ProductTestBuilder {
                 .price(50000)
                 .info("2024학년도 가톨릭대학교 학잠")
                 .startDate(LocalDateTime.of(2024, 3, 18, 15, 30, 0))
-                .endDate(LocalDateTime.of(2024, 3, 30, 15, 30, 0))
+                .endDate(LocalDateTime.of(3024, 3, 30, 15, 30, 0))
                 .productImageIds(Arrays.asList(3L, 4L))
                 .options(Arrays.asList(option1, option2))
                 .build();
@@ -85,7 +85,7 @@ public class ProductTestBuilder {
         productImages.add(productImage2);
 
         Product product = new Product(1L, requestDto.getName(), requestDto.getPrice(), requestDto.getInfo(), requestDto.getStatus()
-        ,requestDto.getStartDate(), requestDto.getEndDate(), member, 0, productImages, options);
+                , requestDto.getStartDate(), requestDto.getEndDate(), member, 0, productImages, options);
 
         return product;
     }
@@ -117,7 +117,7 @@ public class ProductTestBuilder {
         productImages.add(productImage4);
 
         Product product = new Product(2L, requestDto.getName(), requestDto.getPrice(), requestDto.getInfo(), requestDto.getStatus()
-                ,requestDto.getStartDate(), requestDto.getEndDate(), member, 0, productImages, options);
+                , requestDto.getStartDate(), requestDto.getEndDate(), member, 0, productImages, options);
 
         return product;
     }

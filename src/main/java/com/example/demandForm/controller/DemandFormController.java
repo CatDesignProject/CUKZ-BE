@@ -2,10 +2,10 @@ package com.example.demandForm.controller;
 
 import com.example.common.global.BaseResponse;
 import com.example.common.global.PageResponseDto;
-import com.example.demandForm.dto.DemandFormNonMemberRequestDto;
-import com.example.demandForm.dto.DemandFormRequestDto;
-import com.example.demandForm.dto.DemandFormResponseDto;
-import com.example.demandForm.dto.UpdateDemandFormRequestDto;
+import com.example.demandForm.dto.request.CreateDemandFormRequestDto;
+import com.example.demandForm.dto.request.DemandFormNonMemberRequestDto;
+import com.example.demandForm.dto.request.UpdateDemandFormRequestDto;
+import com.example.demandForm.dto.response.DemandFormResponseDto;
 import com.example.demandForm.service.DemandFormService;
 import com.example.security.authentication.AuthenticatedMember;
 import jakarta.validation.Valid;
@@ -26,7 +26,7 @@ public class DemandFormController {
     @PostMapping("/products/{productId}/demand/members")
     public ResponseEntity<BaseResponse<DemandFormResponseDto>> demandMember(
             @PathVariable Long productId,
-            @Valid @RequestBody DemandFormRequestDto requestDto,
+            @Valid @RequestBody CreateDemandFormRequestDto requestDto,
             @AuthenticationPrincipal AuthenticatedMember member) {
 
         DemandFormResponseDto responseDto = demandFormService.demandMember(productId, requestDto, member.getMemberId());
@@ -37,7 +37,7 @@ public class DemandFormController {
     @PostMapping("/products/{productId}/demand/non-members")
     public ResponseEntity<BaseResponse<DemandFormResponseDto>> demandNonMember(
             @PathVariable Long productId,
-            @Valid @RequestBody DemandFormRequestDto requestDto) {
+            @Valid @RequestBody CreateDemandFormRequestDto requestDto) {
 
         DemandFormResponseDto responseDto = demandFormService.demandNonMember(productId, requestDto);
 
@@ -73,6 +73,16 @@ public class DemandFormController {
         DemandFormResponseDto responseDto = demandFormService.getDemandFormNonMember(requestDto);
 
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
+    }
+
+    // 관리자
+    @DeleteMapping("/demand/{demandFormId}")
+    public ResponseEntity<BaseResponse<String>> deleteDemandForm(
+            @PathVariable Long demandFormId) {
+
+        demandFormService.deleteDemandForm(demandFormId);
+
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, "수요조사 내역이 삭제되었습니다."));
     }
 
     // 총대
