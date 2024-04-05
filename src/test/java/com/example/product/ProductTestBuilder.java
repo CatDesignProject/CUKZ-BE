@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TestBuilder {
+public class ProductTestBuilder {
     public static ProductRequestDto testProductRequestDtoBuild() {
         ProductOptionDto option1 = new ProductOptionDto("블랙 S", 3000);
         ProductOptionDto option2 = new ProductOptionDto("화이트 M", 0);

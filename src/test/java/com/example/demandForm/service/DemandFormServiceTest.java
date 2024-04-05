@@ -12,7 +12,7 @@ import com.example.demandForm.repository.DemandFormRepository;
 import com.example.demandForm.repository.DemandOptionRepository;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
-import com.example.product.TestBuilder;
+import com.example.product.ProductTestBuilder;
 import com.example.product.entity.Option;
 import com.example.product.entity.Product;
 import com.example.product.repository.OptionRepository;
@@ -76,8 +76,8 @@ public class DemandFormServiceTest implements DemandTest {
 
     @BeforeEach
     void setUp() {
-        member = TestBuilder.testMemberBuild();
-        product = TestBuilder.testProductBuild();
+        member = ProductTestBuilder.testMemberBuild();
+        product = ProductTestBuilder.testProductBuild();
         ReflectionTestUtils.setField(product, "id", productId);
 
         option = DemandTestBuilder.buildOption();
