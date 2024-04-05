@@ -161,7 +161,7 @@ class ReviewServiceTest {
     @DisplayName("findReview 메서드는")
     class Describe_findReview {
         @Nested
-        @DisplayName("유효한 총대의 sellerId 값이 주어지면")
+        @DisplayName("유효한 총대의 sellerId 값이 주어진 경우")
         class Context_with_seller_id {
             ReviewResponseDto reviewResponseDto;
             @BeforeEach
