@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -22,13 +23,19 @@ public class PurchaseForm extends TimeStamp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    private String buyerName;
+    private String buyerPhone;
+    private String buyerEmail;
 
+    private String RecipientName;
+    private String RecipientPhone;
     private String address;
 
-    private String phone;
+    private String payerName;
+    private LocalDate payDate;
+    private Boolean payStatus;
 
-    private boolean payStatus;
+    private int totalPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
