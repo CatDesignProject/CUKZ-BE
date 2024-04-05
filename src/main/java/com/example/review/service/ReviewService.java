@@ -9,6 +9,7 @@ import com.example.product.enums.SaleStatus;
 import com.example.purchaseForm.entity.PurchaseForm;
 import com.example.purchaseForm.repository.PurchaseFormRepository;
 import com.example.review.dto.request.ReviewRequestDto;
+import com.example.review.dto.response.ReviewResponseDto;
 import com.example.review.entity.Review;
 import com.example.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +32,15 @@ public class ReviewService {
                 .orElseThrow(
                         () -> new GlobalException(BaseErrorCode.NOT_FOUND_PURCHASE_FORM)
                 );
+
         Product product = purchaseForm.getProduct();
         if (!product.getStatus().equals(SaleStatus.COMPLETE)) {
             throw new GlobalException(BaseErrorCode.NOT_YET_WRITE_REVIEW);
+        }
+
+        //purchaseForm을 작성한 멤버의 id와 buyerId가 동일한지
+        if (!purchaseForm.getMember().getId().equals(buyerId)) {
+            throw new GlobalException(BaseErrorCode.UNAUTHORIZED_WRITE_REVIEW_FROM_PURCHASE_FORM);
         }
 
         //해당 purchaseForm에 대해 리뷰를 작성했는지 확인 -> 이미 작성 했으면 예외처리
@@ -58,5 +65,19 @@ public class ReviewService {
         review.addBuyerId(buyerId);
         review.addPurchaseFormId(purchaseFormId);
         reviewRepository.save(review);
+    }
+
+    public ReviewResponseDto findReview(Long sellerId) {
+        Member seller = memberRepository.findById(sellerId)
+                .orElseThrow(
+                        () -> new GlobalException(BaseErrorCode.NOT_FOUND_MEMBER)
+                );
+
+        int sellerKindnessCnt = reviewRepository.countBySellerAndSellerKindnessIsTrue(seller);
+        int goodNotificationCnt = reviewRepository.countBySellerAndGoodNotificationIsTrue(seller);
+        int descriptionMatchCnt = reviewRepository.countBySellerAndDescriptionMatchIsTrue(seller);
+        int arrivalSatisfactoryCnt = reviewRepository.countBySellerAndArrivalSatisfactoryIsTrue(seller);
+
+        return ReviewResponseDto.toResponseDto(seller.getNickname(), sellerKindnessCnt, goodNotificationCnt, descriptionMatchCnt, arrivalSatisfactoryCnt);
     }
 }
