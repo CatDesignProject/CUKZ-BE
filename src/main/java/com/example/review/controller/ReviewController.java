@@ -13,19 +13,21 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/reviews")
+@RequestMapping("/reviews/members/{sellerId}")
 public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping("/member/{sellerId}/purchaseForm/{purchaseFormId}")
-    public ResponseEntity<BaseResponse<String>> saveReview(@RequestBody ReviewRequestDto reviewRequestDto, @PathVariable Long sellerId, @PathVariable Long purchaseFormId, @AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
-        reviewService.saveReview(reviewRequestDto, sellerId, purchaseFormId, authenticatedMember.getMemberId());
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.CREATED, "리뷰 완료"));
-    }
-
-    @GetMapping("/member/{sellerId}")
+    @GetMapping
     public ResponseEntity<BaseResponse<ReviewResponseDto>> findReview(@PathVariable Long sellerId) {
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, reviewService.findReview(sellerId)));
+    }
+
+    @PostMapping("/purchaseForm/{purchaseFormId}")
+    public ResponseEntity<BaseResponse<String>> saveReview(@RequestBody ReviewRequestDto reviewRequestDto
+            , @PathVariable Long sellerId, @PathVariable Long purchaseFormId
+            , @AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
+        reviewService.saveReview(reviewRequestDto, sellerId, purchaseFormId, authenticatedMember.getMemberId());
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.CREATED, "리뷰 완료"));
     }
 }
