@@ -4,15 +4,13 @@ on:
   push:
     branches: [ "dev" ]
 
-permissions:
-  contents: read
-  packages: write
+permissions: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    env: 
+    env:
       DB_URL: ${{ secrets.DB_URL }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_USERNAME: ${{ secrets.DB_USERNAME }}
@@ -22,26 +20,26 @@ jobs:
       S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Make gradlew executable
-      run: chmod +x ./gradlew
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    - name: gradlew test
-      run: ./gradlew test
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
-    - name: Build with Gradle Wrapper
-      run: ./gradlew build
+      - name: gradlew test
+        run: ./gradlew test
 
-    - name: Publish Unit Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v1
-      if: ${{ always() }}
-      with:
-        files: build/test-results/**/*.xml
+      - name: Build with Gradle Wrapper
+        run: ./gradlew build
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: ${{ always() }}
+        with:
+          files: build/test-results/**/*.xml
