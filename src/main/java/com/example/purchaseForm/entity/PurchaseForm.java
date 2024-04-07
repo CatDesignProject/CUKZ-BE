@@ -3,12 +3,16 @@ package com.example.purchaseForm.entity;
 import com.example.member.entity.Member;
 import com.example.product.entity.Product;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class PurchaseForm {
 
     @Id

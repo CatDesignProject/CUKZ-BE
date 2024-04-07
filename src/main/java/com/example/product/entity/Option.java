@@ -20,6 +20,7 @@ public class Option {
     private String name;
     private int additionalPrice;
     private int salesQuantity;
+    private int demandQuantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
@@ -27,6 +28,10 @@ public class Option {
 
     public void addProduct(Product product) {
         this.product = product;
-        product.addOptions(this);
+        product.addOption(this);
+    }
+
+    public void updateDemandQuantity(int quantity) {
+        this.demandQuantity += quantity;
     }
 }

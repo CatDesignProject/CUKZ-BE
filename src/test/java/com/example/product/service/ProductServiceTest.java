@@ -4,7 +4,7 @@ import com.example.common.exception.GlobalException;
 import com.example.common.global.PageResponseDto;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
-import com.example.product.TestBuilder;
+import com.example.product.ProductTestBuilder;
 import com.example.product.dto.request.ProductRequestDto;
 import com.example.product.dto.response.ProductResponseDto;
 import com.example.product.dto.response.ProductThumbNailDto;
@@ -69,8 +69,8 @@ class ProductServiceTest {
         class Context_with_dto_exist_member {
             @BeforeEach
             void setUp() {
-                requestDto = TestBuilder.testProductRequestDtoBuild();
-                product = TestBuilder.testProductBuild();
+                requestDto = ProductTestBuilder.testProductRequestDtoBuild();
+                product = ProductTestBuilder.testProductBuild();
                 member = product.getMember();
                 List<ProductImage> productImages = product.getProductImages();
 
@@ -105,7 +105,7 @@ class ProductServiceTest {
         class Context_with_dto_un_authorized_member_role {
             @BeforeEach
             void setUp() {
-                member = TestBuilder.testMemberBuild();
+                member = ProductTestBuilder.testMemberBuild();
                 given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
             }
             @Test
@@ -126,7 +126,7 @@ class ProductServiceTest {
         class Context_with_exist_product {
             @BeforeEach
             void setUp() {
-                product = TestBuilder.testProductBuild();
+                product = ProductTestBuilder.testProductBuild();
 
                 given(productRepository.findFetchById(product.getId())).willReturn(Optional.of(product));
 
@@ -153,7 +153,7 @@ class ProductServiceTest {
         class Context_with_not_exist_product {
             @BeforeEach
             void setUp() {
-                product = TestBuilder.testProductBuild();
+                product = ProductTestBuilder.testProductBuild();
                 given(productRepository.findFetchById(product.getId())).willReturn(Optional.empty());
             }
             @Test
@@ -174,8 +174,8 @@ class ProductServiceTest {
         class Context_with_productId_productRequestDto_memberId {
             @BeforeEach
             void setUp() {
-                product = TestBuilder.testProductBuild();
-                requestDto = TestBuilder.testProductRequestDtoBuild();
+                product = ProductTestBuilder.testProductBuild();
+                requestDto = ProductTestBuilder.testProductRequestDtoBuild();
                 member = product.getMember();
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
                 doNothing().when(optionRepository).deleteAllByProductId(product.getId());
@@ -206,7 +206,7 @@ class ProductServiceTest {
         class Context_with_not_found_product {
             @BeforeEach
             void setUp() {
-                product = TestBuilder.testProductBuild();
+                product = ProductTestBuilder.testProductBuild();
                 member = product.getMember();
             }
             @Test
@@ -222,8 +222,8 @@ class ProductServiceTest {
         class Context_with_un_authorized {
             @BeforeEach
             void setUp() {
-                product = TestBuilder.testProductBuild();
-                member2 = TestBuilder.testMember2Build();
+                product = ProductTestBuilder.testProductBuild();
+                member2 = ProductTestBuilder.testMember2Build();
 
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
             }
@@ -245,7 +245,7 @@ class ProductServiceTest {
         class Context_with_productId_authorized_member {
             @BeforeEach
             void setUp() {
-                product = TestBuilder.testProductBuild();
+                product = ProductTestBuilder.testProductBuild();
                 member = product.getMember();
 
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
@@ -283,9 +283,9 @@ class ProductServiceTest {
         class Context_with_un_authorized {
             @BeforeEach
             void setUp() {
-                product = TestBuilder.testProductBuild();
+                product = ProductTestBuilder.testProductBuild();
                 member = product.getMember();
-                member2 = TestBuilder.testMember2Build();
+                member2 = ProductTestBuilder.testMember2Build();
 
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
             }
@@ -307,13 +307,13 @@ class ProductServiceTest {
         class Context_with_page_num {
             @BeforeEach
             void setUp() {
-                products = TestBuilder.testPageProductBuild();
+                products = ProductTestBuilder.testPageProductBuild();
                 for (Product product : products) {
                     given(productImageRepository.findFirstByProductId(product.getId()))
                             .willReturn(Optional.of(product.getProductImages().get(0)));
                 }
                 given(productRepository.findAll(any(Pageable.class))).willReturn(products);
-                pageResponseDto = productService.pagingProduct(TestBuilder.testPageableBuild());
+                pageResponseDto = productService.pagingProduct(ProductTestBuilder.testPageableBuild());
             }
             @Test
             @DisplayName("해당 페이지 번호의 결과를 반환한다.")
@@ -331,7 +331,7 @@ class ProductServiceTest {
         class Context_with_empty_paging_result {
             @BeforeEach
             void setUp() {
-                pageable = TestBuilder.testPageableBuild();
+                pageable = ProductTestBuilder.testPageableBuild();
                 given(productRepository.findAll(pageable)).willReturn(Page.empty());
             }
             @Test
@@ -352,7 +352,7 @@ class ProductServiceTest {
         class Context_with_keyword_page_num {
             @BeforeEach
             void setUp() {
-                products = TestBuilder.testPageProductBuild();
+                products = ProductTestBuilder.testPageProductBuild();
                 for (Product product : products) {
                     given(productImageRepository.findFirstByProductId(product.getId()))
                             .willReturn(Optional.of(product.getProductImages().get(0)));
@@ -377,7 +377,7 @@ class ProductServiceTest {
         class Context_with_empty_paging_result {
             @BeforeEach
             void setUp() {
-                pageable = TestBuilder.testPageableBuild();
+                pageable = ProductTestBuilder.testPageableBuild();
                 given(productRepository.findSearchByKeyword(keyword, pageable)).willReturn(Page.empty());
             }
             @Test
