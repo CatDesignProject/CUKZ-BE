@@ -29,6 +29,8 @@ public enum BaseErrorCode {
     UNAUTHORIZED_MODIFY_PRODUCT(FORBIDDEN, "해당 상품을 수정할 권한이 없습니다."),
     UNAUTHORIZED_DELETE_PRODUCT(FORBIDDEN, "해당 상품을 삭제할 권한이 없습니다."),
     NOT_FOUND_PAGING_PRODUCT(NOT_FOUND, "목록에 상품이 없습니다."),
+    INVALID_PERIOD(BAD_REQUEST, "시작일이 종료일보다 늦습니다."),
+    INVALID_STATUS(BAD_REQUEST, "기간에 따른 상품 상태가 올바르지 않습니다."),
 
     // Option
     NOT_FOUND_OPTION(NOT_FOUND, "해당 옵션을 찾을 수 없습니다."),
