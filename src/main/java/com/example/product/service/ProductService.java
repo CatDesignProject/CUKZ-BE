@@ -113,6 +113,7 @@ public class ProductService {
         return ProductResponseDto.toResponseDto(product);
     }
 
+    @Transactional
     public ProductResponseDto modifyProductForm(Long productId, ProductFormRequestDto requestDto, Long memberId) {
 
         Product product = productRepository.findById(productId).orElseThrow(() ->
