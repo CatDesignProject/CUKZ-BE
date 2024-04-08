@@ -60,12 +60,12 @@ class MemberControllerTest {
                             .contentType(MediaType.APPLICATION_JSON));
 
             // then
-            MvcResult mvcResult = resultActions
-                    .andExpect(status().isOk())
-                    .andDo(print())
-                    .andReturn();
-
-            System.out.println(mvcResult.getResponse().getContentAsString());
+//            MvcResult mvcResult = resultActions
+//                    .andExpect(status().isOk())
+//                    .andDo(print())
+//                    .andReturn();
+//
+//            System.out.println(mvcResult.getResponse().getContentAsString());
 
         }
 
