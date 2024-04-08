@@ -6,6 +6,7 @@ import com.example.common.global.PageResponseDto;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
 import com.example.product.dto.ProductOptionDto;
+import com.example.product.dto.request.ProductFormRequestDto;
 import com.example.product.dto.request.ProductRequestDto;
 import com.example.product.dto.response.ProductResponseDto;
 import com.example.product.dto.response.ProductThumbNailDto;
@@ -21,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -109,6 +109,20 @@ public class ProductService {
             option.addProduct(product);
             optionRepository.save(option);
         }
+
+        return ProductResponseDto.toResponseDto(product);
+    }
+
+    public ProductResponseDto modifyProductForm(Long productId, ProductFormRequestDto requestDto, Long memberId) {
+
+        Product product = productRepository.findById(productId).orElseThrow(() ->
+                new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT));
+
+        if (!product.getMember().getId().equals(memberId)) {
+            throw new GlobalException(BaseErrorCode.UNAUTHORIZED_MODIFY_PRODUCT);
+        }
+
+        product.modifyProductForm(requestDto);
 
         return ProductResponseDto.toResponseDto(product);
     }

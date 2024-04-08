@@ -4,13 +4,15 @@ import com.example.product.dto.ProductOptionDto;
 import com.example.product.entity.Product;
 import com.example.product.enums.SaleStatus;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
