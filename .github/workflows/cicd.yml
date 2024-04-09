@@ -39,6 +39,10 @@ jobs:
       - name: Build with Gradle Wrapper
         run: ./gradlew build
 
+      - name: Make .zip file
+        run: zip -r ./cukz.zip .
+        shell: bash
+
       - name: Build Docker image
         run: docker build --tag yerimsw/cukz:latest .
 
@@ -58,6 +62,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./cukz.zip s3://cukz-bucket/cukz.zip
+        
       - name: Start CodeDeploy agent
         run: >
           aws deploy create-deployment --application-name cukz
