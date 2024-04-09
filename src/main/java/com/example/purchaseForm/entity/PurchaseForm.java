@@ -71,4 +71,8 @@ public class PurchaseForm extends TimeStamp {
                 .purchaseOptionList(new ArrayList<>())
                 .build();
     }
+
+    public void updateTotalPrice(int price) {
+        this.totalPrice += price;
+    }
 }

@@ -74,6 +74,16 @@ public class PurchaseFormController {
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
     }
 
+    // 관리자
+    @DeleteMapping("/purchase/{purchaseFormId}")
+    public ResponseEntity<BaseResponse<String>> deletePurchaseForm(
+            @PathVariable Long purchaseFormId) {
+
+        purchaseFormService.deletePurchaseForm(purchaseFormId);
+
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, "구매 내역이 삭제되었습니다."));
+    }
+
     // 총대
     @GetMapping("/products/{productId}/purchase")
     public ResponseEntity<BaseResponse<PageResponseDto<PurchaseFormResponseDto>>> getAllPurchaseForms(

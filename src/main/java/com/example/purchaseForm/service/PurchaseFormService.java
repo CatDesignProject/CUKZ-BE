@@ -53,7 +53,7 @@ public class PurchaseFormService {
         purchaseFormRepository.save(purchaseForm);
 
         // 옵션 리스트에 대한 정보 저장
-        saveOptions(requestDto, purchaseForm);
+        saveOptions(requestDto, purchaseForm, product);
 
         return PurchaseFormResponseDto.toResponseDto(purchaseForm);
     }
@@ -69,7 +69,7 @@ public class PurchaseFormService {
         long orderNumber = generateOrderNumber();
         PurchaseForm purchaseForm = PurchaseForm.toEntity(orderNumber, product, requestDto);
         purchaseFormRepository.save(purchaseForm);
-        saveOptions(requestDto, purchaseForm);
+        saveOptions(requestDto, purchaseForm, product);
 
         return PurchaseFormResponseDto.toResponseDto(purchaseForm);
     }
@@ -103,6 +103,21 @@ public class PurchaseFormService {
         return PurchaseFormResponseDto.toResponseDto(purchaseForm);
     }
 
+    @Transactional
+    public void deletePurchaseForm(Long purchaseFormId) {
+
+        PurchaseForm purchaseForm = purchaseFormRepository.findById(purchaseFormId).orElseThrow(() ->
+                new GlobalException(NOT_FOUND_FORM)
+        );
+
+        purchaseForm.getPurchaseOptionList().forEach(purchaseOption -> {
+            Option option = purchaseOption.getOption();
+            option.updateSalesQuantity(-purchaseOption.getQuantity());
+        });
+
+        purchaseFormRepository.delete(purchaseForm);
+    }
+
     @Transactional(readOnly = true)
     public Page<PurchaseFormResponseDto> getAllPurchaseForms(int page, int size, Long productId, Long memberId) {
 
@@ -129,12 +144,17 @@ public class PurchaseFormService {
         return Long.parseLong(orderNumberStr);
     }
 
-    private void saveOptions(PurchaseFormRequestDto requestDto, PurchaseForm purchaseForm) {
+    private void saveOptions(PurchaseFormRequestDto requestDto, PurchaseForm purchaseForm, Product product) {
+
+        int price = product.getPrice();
 
         for (FormOptionRequestDto optionDto : requestDto.getOptionList()) {
             // 옵션 수요수량 업데이트
             Option option = findOption(optionDto.getOptionId());
             option.updateSalesQuantity(optionDto.getQuantity());
+
+            // 총 가격 업데이트
+            purchaseForm.updateTotalPrice((price + option.getAdditionalPrice()) * optionDto.getQuantity());
 
             // 옵션 수요조사 내역 저장
             PurchaseOption purchaseOption = PurchaseOption.toEntity(optionDto.getQuantity(), purchaseForm, option);
