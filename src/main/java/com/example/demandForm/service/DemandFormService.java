@@ -53,7 +53,7 @@ public class DemandFormService {
         checkPeriod(product);
 
         // demand form 생성
-        DemandForm demandForm = DemandForm.toEntity(member, product, requestDto);
+        DemandForm demandForm = DemandForm.toEntity(memberId, product, requestDto);
         demandFormRepository.save(demandForm);
 
         // 옵션 리스트에 대한 정보 저장
