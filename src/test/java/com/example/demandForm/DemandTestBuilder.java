@@ -1,6 +1,6 @@
 package com.example.demandForm;
 
-import com.example.demandForm.dto.request.CreateDemandFormRequestDto;
+import com.example.demandForm.dto.request.DemandFormRequestDto;
 import com.example.demandForm.dto.request.FormOptionRequestDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.entity.DemandOption;
@@ -11,13 +11,13 @@ import com.example.product.entity.Product;
 import java.util.List;
 
 public class DemandTestBuilder implements DemandTest {
-    public static CreateDemandFormRequestDto buildCreateDemandFormRequestDto() {
+    public static DemandFormRequestDto buildCreateDemandFormRequestDto() {
         List<FormOptionRequestDto> optionList = List.of(
                 new FormOptionRequestDto(1L, QUANTITY),
                 new FormOptionRequestDto(2L, QUANTITY)
         );
 
-        return new CreateDemandFormRequestDto(TEST_EMAIL, optionList);
+        return new DemandFormRequestDto(TEST_EMAIL, optionList);
     }
 
     public static Option buildOption() {

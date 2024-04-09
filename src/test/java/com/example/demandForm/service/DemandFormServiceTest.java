@@ -3,8 +3,8 @@ package com.example.demandForm.service;
 import com.example.common.exception.GlobalException;
 import com.example.demandForm.DemandTest;
 import com.example.demandForm.DemandTestBuilder;
-import com.example.demandForm.dto.request.CreateDemandFormRequestDto;
-import com.example.demandForm.dto.request.DemandFormNonMemberRequestDto;
+import com.example.demandForm.dto.request.DemandFormRequestDto;
+import com.example.demandForm.dto.request.GetFormNonMemberRequestDto;
 import com.example.demandForm.dto.response.DemandFormResponseDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.entity.DemandOption;
@@ -69,7 +69,7 @@ public class DemandFormServiceTest implements DemandTest {
     DemandOption demandOption;
     DemandForm memberDemandForm;
     DemandForm nonMemberDemandForm;
-    CreateDemandFormRequestDto requestDto;
+    DemandFormRequestDto requestDto;
     Long productId = 1L;
     Long memberId = 1L;
     Long formId = 1L;
@@ -231,7 +231,7 @@ public class DemandFormServiceTest implements DemandTest {
         void getNonMemberDemandFormTest_success() {
             //given
             Long orderNumber = 12345L;
-            DemandFormNonMemberRequestDto requestDto1 = new DemandFormNonMemberRequestDto(orderNumber);
+            GetFormNonMemberRequestDto requestDto1 = new GetFormNonMemberRequestDto(orderNumber);
             when(demandFormRepository.findByOrderNumber(orderNumber)).thenReturn(Optional.of(nonMemberDemandForm));
             ReflectionTestUtils.setField(nonMemberDemandForm, "memberId", orderNumber);
 

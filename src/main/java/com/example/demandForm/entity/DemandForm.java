@@ -1,7 +1,7 @@
 package com.example.demandForm.entity;
 
 import com.example.common.time.TimeStamp;
-import com.example.demandForm.dto.request.CreateDemandFormRequestDto;
+import com.example.demandForm.dto.request.DemandFormRequestDto;
 import com.example.member.entity.Member;
 import com.example.product.entity.Product;
 import jakarta.persistence.*;
@@ -39,7 +39,7 @@ public class DemandForm extends TimeStamp {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    public static DemandForm toMemberEntity(Member member, Product product, CreateDemandFormRequestDto requestDto) {
+    public static DemandForm toMemberEntity(Member member, Product product, DemandFormRequestDto requestDto) {
 
         return DemandForm.builder()
                 .memberId(member.getId())
@@ -50,7 +50,7 @@ public class DemandForm extends TimeStamp {
                 .build();
     }
 
-    public static DemandForm toNonMemberEntity(Long orderNumber, Product product, CreateDemandFormRequestDto requestDto) {
+    public static DemandForm toNonMemberEntity(Long orderNumber, Product product, DemandFormRequestDto requestDto) {
 
         return DemandForm.builder()
                 .memberId(orderNumber)

@@ -2,8 +2,8 @@ package com.example.demandForm.controller;
 
 import com.example.common.global.BaseResponse;
 import com.example.common.global.PageResponseDto;
-import com.example.demandForm.dto.request.CreateDemandFormRequestDto;
-import com.example.demandForm.dto.request.DemandFormNonMemberRequestDto;
+import com.example.demandForm.dto.request.DemandFormRequestDto;
+import com.example.demandForm.dto.request.GetFormNonMemberRequestDto;
 import com.example.demandForm.dto.response.DemandFormResponseDto;
 import com.example.demandForm.service.DemandFormService;
 import com.example.security.authentication.AuthenticatedMember;
@@ -25,7 +25,7 @@ public class DemandFormController {
     @PostMapping("/products/{productId}/demand/members")
     public ResponseEntity<BaseResponse<DemandFormResponseDto>> demandMember(
             @PathVariable Long productId,
-            @Valid @RequestBody CreateDemandFormRequestDto requestDto,
+            @Valid @RequestBody DemandFormRequestDto requestDto,
             @AuthenticationPrincipal AuthenticatedMember member) {
 
         DemandFormResponseDto responseDto = demandFormService.demandMember(productId, requestDto, member.getMemberId());
@@ -36,7 +36,7 @@ public class DemandFormController {
     @PostMapping("/products/{productId}/demand/non-members")
     public ResponseEntity<BaseResponse<DemandFormResponseDto>> demandNonMember(
             @PathVariable Long productId,
-            @Valid @RequestBody CreateDemandFormRequestDto requestDto) {
+            @Valid @RequestBody DemandFormRequestDto requestDto) {
 
         DemandFormResponseDto responseDto = demandFormService.demandNonMember(productId, requestDto);
 
@@ -67,7 +67,7 @@ public class DemandFormController {
 
     @GetMapping("/demand/non-members")
     public ResponseEntity<BaseResponse<DemandFormResponseDto>> getDemandFormNonMember(
-            @RequestBody DemandFormNonMemberRequestDto requestDto) {
+            @RequestBody GetFormNonMemberRequestDto requestDto) {
 
         DemandFormResponseDto responseDto = demandFormService.getDemandFormNonMember(requestDto);
 

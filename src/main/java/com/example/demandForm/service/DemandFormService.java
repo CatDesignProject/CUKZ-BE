@@ -1,9 +1,9 @@
 package com.example.demandForm.service;
 
 import com.example.common.exception.GlobalException;
-import com.example.demandForm.dto.request.CreateDemandFormRequestDto;
-import com.example.demandForm.dto.request.DemandFormNonMemberRequestDto;
+import com.example.demandForm.dto.request.DemandFormRequestDto;
 import com.example.demandForm.dto.request.FormOptionRequestDto;
+import com.example.demandForm.dto.request.GetFormNonMemberRequestDto;
 import com.example.demandForm.dto.response.DemandFormResponseDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.entity.DemandOption;
@@ -42,7 +42,7 @@ public class DemandFormService {
     private static final long MAX_ORDER_NUMBER = 9999999999L;
 
     @Transactional
-    public DemandFormResponseDto demandMember(Long productId, CreateDemandFormRequestDto requestDto, Long memberId) {
+    public DemandFormResponseDto demandMember(Long productId, DemandFormRequestDto requestDto, Long memberId) {
 
         // 유저 중복 참여 검증
         Member member = findMember(memberId);
@@ -63,7 +63,7 @@ public class DemandFormService {
     }
 
     @Transactional
-    public DemandFormResponseDto demandNonMember(Long productId, CreateDemandFormRequestDto requestDto) {
+    public DemandFormResponseDto demandNonMember(Long productId, DemandFormRequestDto requestDto) {
 
         // 중복 참여, 수요조사 기간 검증
         checkDuplicate(requestDto.getEmail());
@@ -99,7 +99,7 @@ public class DemandFormService {
     }
 
     @Transactional(readOnly = true)
-    public DemandFormResponseDto getDemandFormNonMember(DemandFormNonMemberRequestDto requestDto) {
+    public DemandFormResponseDto getDemandFormNonMember(GetFormNonMemberRequestDto requestDto) {
 
         DemandForm demandForm = demandFormRepository.findByOrderNumber(requestDto.getOrderNumber())
                 .orElseThrow(() -> new GlobalException(NOT_FOUND_FORM));
@@ -186,7 +186,7 @@ public class DemandFormService {
         }
     }
 
-    private void saveOptions(CreateDemandFormRequestDto requestDto, DemandForm demandForm) {
+    private void saveOptions(DemandFormRequestDto requestDto, DemandForm demandForm) {
 
         for (FormOptionRequestDto optionDto : requestDto.getOptionList()) {
             // 옵션 수요수량 업데이트
