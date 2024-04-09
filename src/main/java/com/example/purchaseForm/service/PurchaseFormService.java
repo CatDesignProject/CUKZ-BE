@@ -103,6 +103,19 @@ public class PurchaseFormService {
         return PurchaseFormResponseDto.toResponseDto(purchaseForm);
     }
 
+    @Transactional(readOnly = true)
+    public Page<PurchaseFormResponseDto> getAllPurchaseForms(int page, int size, Long productId, Long memberId) {
+
+        Product product = findProduct(productId);
+        checkMember(product, memberId);
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<PurchaseForm> purchaseFormList = purchaseFormRepository.findByProductId(productId, pageable);
+
+        return purchaseFormList.map(PurchaseFormResponseDto::toResponseDto);
+    }
+
     private long generateOrderNumber() {
         // 비회원 주문 번호 생성 = 현재 날짜 + 랜덤 숫자 (총 16자리)
         LocalDate today = LocalDate.now();
@@ -146,6 +159,12 @@ public class PurchaseFormService {
         return optionRepository.findById(optionId).orElseThrow(() ->
                 new GlobalException(NOT_FOUND_OPTION)
         );
+    }
+
+    public void checkMember(Product product, Long memberId) {
+        if (!product.getMember().getId().equals(memberId)) {
+            throw new GlobalException(UNAUTHORIZED_MEMBER);
+        }
     }
 
     public void checkPeriod(Product product) {

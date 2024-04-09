@@ -11,8 +11,10 @@ import java.util.Optional;
 public interface PurchaseFormRepository extends JpaRepository<PurchaseForm, Long> {
     Optional<PurchaseForm> findByIdAndMemberId(Long purchaseFormId, Long memberId);
 
-    Page<PurchaseForm> findByMemberId(Long memberId, Pageable pageable);
-
     @Query("SELECT pf FROM PurchaseForm pf WHERE pf.memberId = :orderNumber")
     Optional<PurchaseForm> findByOrderNumber(Long orderNumber);
+
+    Page<PurchaseForm> findByMemberId(Long memberId, Pageable pageable);
+
+    Page<PurchaseForm> findByProductId(Long productId, Pageable pageable);
 }

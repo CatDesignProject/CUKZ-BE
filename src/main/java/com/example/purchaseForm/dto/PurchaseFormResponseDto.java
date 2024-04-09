@@ -29,7 +29,7 @@ public class PurchaseFormResponseDto {
         return PurchaseFormResponseDto.builder()
                 .id(purchaseForm.getId())
                 .productId(purchaseForm.getProduct().getId())
-                .memberId(purchaseForm.getMember().getId())
+                .memberId(purchaseForm.getMemberId())
                 .optionList(optionList)
                 .build();
     }

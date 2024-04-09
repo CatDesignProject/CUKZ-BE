@@ -73,4 +73,18 @@ public class PurchaseFormController {
 
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
     }
+
+    // 총대
+    @GetMapping("/products/{productId}/purchase")
+    public ResponseEntity<BaseResponse<PageResponseDto<PurchaseFormResponseDto>>> getAllPurchaseForms(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @PathVariable Long productId,
+            @AuthenticationPrincipal AuthenticatedMember member) {
+
+        Page<PurchaseFormResponseDto> responseDtoList = purchaseFormService.getAllPurchaseForms(page - 1, size, productId,
+                member.getMemberId());
+
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, PageResponseDto.toResponseDto(responseDtoList)));
+    }
 }
