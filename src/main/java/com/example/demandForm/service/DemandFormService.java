@@ -9,7 +9,6 @@ import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.entity.DemandOption;
 import com.example.demandForm.repository.DemandFormRepository;
 import com.example.demandForm.repository.DemandOptionRepository;
-import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
 import com.example.product.entity.Option;
 import com.example.product.entity.Product;
@@ -45,7 +44,6 @@ public class DemandFormService {
     public DemandFormResponseDto demandMember(Long productId, DemandFormRequestDto requestDto, Long memberId) {
 
         // 유저 중복 참여 검증
-        Member member = findMember(memberId);
         checkDuplicate(requestDto.getEmail());
 
         // 수요조사 기간 검증
@@ -146,12 +144,6 @@ public class DemandFormService {
 
         String orderNumberStr = dateString + String.format("%010d", randomNumber);
         return Long.parseLong(orderNumberStr);
-    }
-
-    private Member findMember(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() ->
-                new GlobalException(NOT_FOUND_MEMBER)
-        );
     }
 
     private Product findProduct(Long productId) {
