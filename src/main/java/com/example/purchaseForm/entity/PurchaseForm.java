@@ -27,13 +27,16 @@ public class PurchaseForm extends TimeStamp {
     private String buyerPhone;
     private String buyerEmail;
 
-    private String RecipientName;
-    private String RecipientPhone;
+    private String recipientName;
+    private String recipientPhone;
     private String address;
 
     private String payerName;
     private LocalDate payDate;
     private Boolean payStatus;
+
+    private String refundName;
+    private String refundAccount;
 
     private int totalPrice;
 
@@ -47,4 +50,7 @@ public class PurchaseForm extends TimeStamp {
 
     @OneToMany(mappedBy = "purchaseForm", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PurchaseOption> purchaseOptionList;
+
+    @OneToMany(mappedBy = "purchaseForm", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Delivery> deliveryList;
 }
