@@ -211,7 +211,7 @@ public class DemandFormServiceTest implements DemandTest {
             int page = 1;
             int size = 10;
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-            DemandForm memberDemandForm2 = DemandForm.toMemberEntity(member, product, requestDto);
+            DemandForm memberDemandForm2 = DemandForm.toEntity(member, product, requestDto);
             List<DemandForm> demandFormList = Arrays.asList(memberDemandForm, memberDemandForm2);
             Page<DemandForm> demandFormPage = new PageImpl<>(demandFormList);
 
@@ -250,7 +250,7 @@ public class DemandFormServiceTest implements DemandTest {
             int page = 1;
             int size = 10;
             Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-            DemandForm memberDemandForm2 = DemandForm.toMemberEntity(member, product, requestDto);
+            DemandForm memberDemandForm2 = DemandForm.toEntity(member, product, requestDto);
             List<DemandForm> demandFormList = Arrays.asList(memberDemandForm, memberDemandForm2);
             Page<DemandForm> demandFormPage = new PageImpl<>(demandFormList, pageable, demandFormList.size());
 

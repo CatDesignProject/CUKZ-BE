@@ -32,10 +32,10 @@ public class DemandTestBuilder implements DemandTest {
     }
 
     public static DemandForm buildMemberDemandForm(Member member, Product product) {
-        return DemandForm.toMemberEntity(member, product, buildCreateDemandFormRequestDto());
+        return DemandForm.toEntity(member, product, buildCreateDemandFormRequestDto());
     }
 
     public static DemandForm buildNonMemberDemandForm(Product product) {
-        return DemandForm.toNonMemberEntity(ORDER_NUMBER, product, buildCreateDemandFormRequestDto());
+        return DemandForm.toEntity(ORDER_NUMBER, product, buildCreateDemandFormRequestDto());
     }
 }
