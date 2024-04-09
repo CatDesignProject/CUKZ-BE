@@ -22,16 +22,9 @@ public class ReviewTestBuilder {
 
         return PurchaseForm.builder()
                 .id(1L)
-                .color("블랙")
                 .address("역곡")
-                .phone("010-1234-5678")
-                .needlepoint("cat")
-                .quantity(1)
                 .payStatus(true)
-                .username("가톨릭")
-                .size("XL")
                 .product(product)
-                .member(member)
                 .build();
     }
 
@@ -40,16 +33,8 @@ public class ReviewTestBuilder {
         Product product = ProductTestBuilder.testProduct2Build();
         return PurchaseForm.builder()
                 .id(1L)
-                .color("블랙")
-                .address("역곡")
-                .phone("010-1234-5678")
-                .needlepoint("cat")
-                .quantity(1)
                 .payStatus(true)
-                .username("가톨릭")
-                .size("XL")
                 .product(product)
-                .member(member)
                 .build();
     }
 
@@ -62,7 +47,7 @@ public class ReviewTestBuilder {
                 .arrivalSatisfactory(false)
                 .goodNotification(false)
                 .purchaseFormId(purchaseForm.getId())
-                .buyerId(purchaseForm.getMember().getId())
+                .buyerId(purchaseForm.getMemberId())
                 .seller(testSeller())
                 .build();
     }

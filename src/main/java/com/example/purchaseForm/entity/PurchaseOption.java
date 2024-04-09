@@ -27,4 +27,13 @@ public class PurchaseOption {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "option_id")
     private Option option;
+
+    public static PurchaseOption toEntity(int quantity, PurchaseForm purchaseForm, Option option) {
+
+        return PurchaseOption.builder()
+                .quantity(quantity)
+                .purchaseForm(purchaseForm)
+                .option(option)
+                .build();
+    }
 }
