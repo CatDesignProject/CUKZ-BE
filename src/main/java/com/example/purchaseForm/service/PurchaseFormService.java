@@ -2,6 +2,7 @@ package com.example.purchaseForm.service;
 
 import com.example.common.exception.GlobalException;
 import com.example.demandForm.dto.request.FormOptionRequestDto;
+import com.example.demandForm.dto.request.GetFormNonMemberRequestDto;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
 import com.example.product.entity.Option;
@@ -74,6 +75,16 @@ public class PurchaseFormService {
     }
 
     @Transactional(readOnly = true)
+    public Page<PurchaseFormResponseDto> getAllPurchaseFormsMember(int page, int size, Long memberId) {
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<PurchaseForm> purchaseFormList = purchaseFormRepository.findByMemberId(memberId, pageable);
+
+        return purchaseFormList.map(PurchaseFormResponseDto::toResponseDto);
+    }
+
+    @Transactional(readOnly = true)
     public PurchaseFormResponseDto getPurchaseFormMember(Long purchaseFormId, Long memberId) {
 
         PurchaseForm purchaseForm = purchaseFormRepository.findByIdAndMemberId(purchaseFormId, memberId)
@@ -82,14 +93,14 @@ public class PurchaseFormService {
         return PurchaseFormResponseDto.toResponseDto(purchaseForm);
     }
 
+
     @Transactional(readOnly = true)
-    public Page<PurchaseFormResponseDto> getAllPurchaseFormsMember(int page, int size, Long memberId) {
+    public PurchaseFormResponseDto getPurchaseForNonMember(GetFormNonMemberRequestDto requestDto) {
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<PurchaseForm> purchaseFormList = purchaseFormRepository.findByMemberId(memberId, pageable);
+        PurchaseForm purchaseForm = purchaseFormRepository.findByOrderNumber(requestDto.getOrderNumber())
+                .orElseThrow(() -> new GlobalException(NOT_FOUND_FORM));
 
-        return purchaseFormList.map(PurchaseFormResponseDto::toResponseDto);
+        return PurchaseFormResponseDto.toResponseDto(purchaseForm);
     }
 
     private long generateOrderNumber() {

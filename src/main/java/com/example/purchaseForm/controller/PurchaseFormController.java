@@ -2,6 +2,7 @@ package com.example.purchaseForm.controller;
 
 import com.example.common.global.BaseResponse;
 import com.example.common.global.PageResponseDto;
+import com.example.demandForm.dto.request.GetFormNonMemberRequestDto;
 import com.example.purchaseForm.dto.PurchaseFormRequestDto;
 import com.example.purchaseForm.dto.PurchaseFormResponseDto;
 import com.example.purchaseForm.service.PurchaseFormService;
@@ -42,16 +43,6 @@ public class PurchaseFormController {
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.CREATED, responseDto));
     }
 
-    @GetMapping("/members/purchase/{purchaseFormId}")
-    public ResponseEntity<BaseResponse<PurchaseFormResponseDto>> getPurchaseFormMember(
-            @PathVariable Long purchaseFormId,
-            @AuthenticationPrincipal AuthenticatedMember member) {
-
-        PurchaseFormResponseDto responseDto = purchaseFormService.getPurchaseFormMember(purchaseFormId, member.getMemberId());
-
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
-    }
-
     @GetMapping("/members/purchase")
     public ResponseEntity<BaseResponse<PageResponseDto<PurchaseFormResponseDto>>> getAllPurchaseFormsMember(
             @RequestParam("page") int page,
@@ -62,5 +53,24 @@ public class PurchaseFormController {
                 member.getMemberId());
 
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, PageResponseDto.toResponseDto(responseDtoList)));
+    }
+
+    @GetMapping("/members/purchase/{purchaseFormId}")
+    public ResponseEntity<BaseResponse<PurchaseFormResponseDto>> getPurchaseFormMember(
+            @PathVariable Long purchaseFormId,
+            @AuthenticationPrincipal AuthenticatedMember member) {
+
+        PurchaseFormResponseDto responseDto = purchaseFormService.getPurchaseFormMember(purchaseFormId, member.getMemberId());
+
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
+    }
+
+    @GetMapping("/purchase/non-members")
+    public ResponseEntity<BaseResponse<PurchaseFormResponseDto>> getPurchaseForNonMember(
+            @RequestBody GetFormNonMemberRequestDto requestDto) {
+
+        PurchaseFormResponseDto responseDto = purchaseFormService.getPurchaseForNonMember(requestDto);
+
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
     }
 }
