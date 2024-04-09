@@ -15,6 +15,10 @@ import com.example.purchaseForm.entity.PurchaseOption;
 import com.example.purchaseForm.repository.PurchaseFormRepository;
 import com.example.purchaseForm.repository.PurchaseOptionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,12 +74,22 @@ public class PurchaseFormService {
     }
 
     @Transactional(readOnly = true)
-    public PurchaseFormResponseDto getDemandFormMember(Long purchaseFormId, Long memberId) {
+    public PurchaseFormResponseDto getPurchaseFormMember(Long purchaseFormId, Long memberId) {
 
         PurchaseForm purchaseForm = purchaseFormRepository.findByIdAndMemberId(purchaseFormId, memberId)
                 .orElseThrow(() -> new GlobalException(NOT_FOUND_FORM));
 
         return PurchaseFormResponseDto.toResponseDto(purchaseForm);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PurchaseFormResponseDto> getAllPurchaseFormsMember(int page, int size, Long memberId) {
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<PurchaseForm> purchaseFormList = purchaseFormRepository.findByMemberId(memberId, pageable);
+
+        return purchaseFormList.map(PurchaseFormResponseDto::toResponseDto);
     }
 
     private long generateOrderNumber() {
@@ -96,7 +110,7 @@ public class PurchaseFormService {
         for (FormOptionRequestDto optionDto : requestDto.getOptionList()) {
             // 옵션 수요수량 업데이트
             Option option = findOption(optionDto.getOptionId());
-            option.updateDemandQuantity(optionDto.getQuantity());
+            option.updateSalesQuantity(optionDto.getQuantity());
 
             // 옵션 수요조사 내역 저장
             PurchaseOption purchaseOption = PurchaseOption.toEntity(optionDto.getQuantity(), purchaseForm, option);

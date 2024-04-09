@@ -1,12 +1,14 @@
 package com.example.purchaseForm.controller;
 
 import com.example.common.global.BaseResponse;
+import com.example.common.global.PageResponseDto;
 import com.example.purchaseForm.dto.PurchaseFormRequestDto;
 import com.example.purchaseForm.dto.PurchaseFormResponseDto;
 import com.example.purchaseForm.service.PurchaseFormService;
 import com.example.security.authentication.AuthenticatedMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -45,8 +47,20 @@ public class PurchaseFormController {
             @PathVariable Long purchaseFormId,
             @AuthenticationPrincipal AuthenticatedMember member) {
 
-        PurchaseFormResponseDto responseDto = purchaseFormService.getDemandFormMember(purchaseFormId, member.getMemberId());
+        PurchaseFormResponseDto responseDto = purchaseFormService.getPurchaseFormMember(purchaseFormId, member.getMemberId());
 
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
+    }
+
+    @GetMapping("/members/purchase")
+    public ResponseEntity<BaseResponse<PageResponseDto<PurchaseFormResponseDto>>> getAllPurchaseFormsMember(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @AuthenticationPrincipal AuthenticatedMember member) {
+
+        Page<PurchaseFormResponseDto> responseDtoList = purchaseFormService.getAllPurchaseFormsMember(page - 1, size,
+                member.getMemberId());
+
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, PageResponseDto.toResponseDto(responseDtoList)));
     }
 }
