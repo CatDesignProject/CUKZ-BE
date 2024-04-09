@@ -4,7 +4,6 @@ import com.example.common.global.BaseResponse;
 import com.example.common.global.PageResponseDto;
 import com.example.demandForm.dto.request.CreateDemandFormRequestDto;
 import com.example.demandForm.dto.request.DemandFormNonMemberRequestDto;
-import com.example.demandForm.dto.request.UpdateDemandFormRequestDto;
 import com.example.demandForm.dto.response.DemandFormResponseDto;
 import com.example.demandForm.service.DemandFormService;
 import com.example.security.authentication.AuthenticatedMember;
@@ -97,16 +96,5 @@ public class DemandFormController {
                 member.getMemberId());
 
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, PageResponseDto.toResponseDto(responseDtoList)));
-    }
-
-    @PatchMapping("/products/{productId}/demand/open")
-    public ResponseEntity<BaseResponse<String>> startDemandForm(
-            @PathVariable Long productId,
-            @AuthenticationPrincipal AuthenticatedMember member,
-            @RequestBody UpdateDemandFormRequestDto requestDto) {
-
-        demandFormService.startDemandForm(productId, member.getMemberId(), requestDto);
-
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, "수요조사를 시작합니다."));
     }
 }

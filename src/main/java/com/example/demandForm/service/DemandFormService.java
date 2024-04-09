@@ -4,7 +4,6 @@ import com.example.common.exception.GlobalException;
 import com.example.demandForm.dto.request.CreateDemandFormRequestDto;
 import com.example.demandForm.dto.request.DemandFormNonMemberRequestDto;
 import com.example.demandForm.dto.request.FormOptionRequestDto;
-import com.example.demandForm.dto.request.UpdateDemandFormRequestDto;
 import com.example.demandForm.dto.response.DemandFormResponseDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.entity.DemandOption;
@@ -14,7 +13,6 @@ import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
 import com.example.product.entity.Option;
 import com.example.product.entity.Product;
-import com.example.product.enums.SaleStatus;
 import com.example.product.repository.OptionRepository;
 import com.example.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -136,15 +134,6 @@ public class DemandFormService {
         Page<DemandForm> demandFormList = demandFormRepository.findByProductId(productId, pageable);
 
         return demandFormList.map(DemandFormResponseDto::toResponseDto);
-    }
-
-    @Transactional
-    public void startDemandForm(Long productId, Long memberId, UpdateDemandFormRequestDto requestDto) {
-
-        Product product = findProduct(productId);
-        checkMember(product, memberId);
-        product.updateDate(requestDto.getStartDate(), requestDto.getEndDate());
-        product.updateStatus(SaleStatus.ON_DEMAND);
     }
 
     public long generateOrderNumber() {

@@ -6,11 +6,13 @@ import com.example.common.global.PageResponseDto;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
 import com.example.product.dto.ProductOptionDto;
+import com.example.product.dto.request.ProductFormRequestDto;
 import com.example.product.dto.request.ProductRequestDto;
 import com.example.product.dto.response.ProductResponseDto;
 import com.example.product.dto.response.ProductThumbNailDto;
 import com.example.product.entity.Option;
 import com.example.product.entity.Product;
+import com.example.product.enums.SaleStatus;
 import com.example.product.repository.OptionRepository;
 import com.example.product.repository.ProductRepository;
 import com.example.product_image.entity.ProductImage;
@@ -21,7 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -111,6 +113,35 @@ public class ProductService {
         }
 
         return ProductResponseDto.toResponseDto(product);
+    }
+
+    @Transactional
+    public ProductResponseDto modifyProductForm(Long productId, ProductFormRequestDto requestDto, Long memberId) {
+
+        Product product = productRepository.findById(productId).orElseThrow(() ->
+                new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT));
+
+        if (!product.getMember().getId().equals(memberId)) {
+            throw new GlobalException(BaseErrorCode.UNAUTHORIZED_MODIFY_PRODUCT);
+        }
+
+        checkPeriod(requestDto);
+        product.modifyProductForm(requestDto);
+
+        return ProductResponseDto.toResponseDto(product);
+    }
+
+    private void checkPeriod(ProductFormRequestDto requestDto) {
+        // 시작일이 종료일보다 늦음
+        if (requestDto.getStartDate().isAfter(requestDto.getEndDate())) {
+            throw new GlobalException(BaseErrorCode.INVALID_PERIOD);
+        }
+
+        // 판매중, 수요조사중 상태인데 종료일이 지남
+        if ((requestDto.getSaleStatus().equals(SaleStatus.ON_SALE) || requestDto.getSaleStatus().equals(SaleStatus.ON_DEMAND))
+                && requestDto.getEndDate().isBefore(LocalDateTime.now())) {
+            throw new GlobalException(BaseErrorCode.INVALID_STATUS);
+        }
     }
 
     public PageResponseDto<ProductThumbNailDto> pagingProduct(Pageable pageable) {
