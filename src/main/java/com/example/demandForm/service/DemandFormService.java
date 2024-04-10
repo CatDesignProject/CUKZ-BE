@@ -9,7 +9,6 @@ import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.entity.DemandOption;
 import com.example.demandForm.repository.DemandFormRepository;
 import com.example.demandForm.repository.DemandOptionRepository;
-import com.example.member.repository.MemberRepository;
 import com.example.product.entity.Option;
 import com.example.product.entity.Product;
 import com.example.product.repository.OptionRepository;
@@ -34,7 +33,6 @@ public class DemandFormService {
 
     private final DemandFormRepository demandFormRepository;
     private final ProductRepository productRepository;
-    private final MemberRepository memberRepository;
     private final OptionRepository optionRepository;
     private final DemandOptionRepository demandOptionRepository;
 

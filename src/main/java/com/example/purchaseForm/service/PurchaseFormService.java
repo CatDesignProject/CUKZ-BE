@@ -3,8 +3,6 @@ package com.example.purchaseForm.service;
 import com.example.common.exception.GlobalException;
 import com.example.demandForm.dto.request.FormOptionRequestDto;
 import com.example.demandForm.dto.request.GetFormNonMemberRequestDto;
-import com.example.member.entity.Member;
-import com.example.member.repository.MemberRepository;
 import com.example.product.entity.Option;
 import com.example.product.entity.Product;
 import com.example.product.repository.OptionRepository;
@@ -36,7 +34,6 @@ public class PurchaseFormService {
     private final PurchaseFormRepository purchaseFormRepository;
     private final PurchaseOptionRepository purchaseOptionRepository;
     private final ProductRepository productRepository;
-    private final MemberRepository memberRepository;
     private final OptionRepository optionRepository;
 
     private static final long MAX_ORDER_NUMBER = 9999999999L;
@@ -161,12 +158,6 @@ public class PurchaseFormService {
             purchaseOptionRepository.save(purchaseOption);
             purchaseForm.getPurchaseOptionList().add(purchaseOption);
         }
-    }
-
-    private Member findMember(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() ->
-                new GlobalException(NOT_FOUND_MEMBER)
-        );
     }
 
     private Product findProduct(Long productId) {

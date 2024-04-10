@@ -65,7 +65,7 @@ public class PurchaseForm extends TimeStamp {
                 .address(requestDto.getAddress())
                 .payerName(requestDto.getPayerName())
                 .payDate(requestDto.getPayDate())
-                .payStatus(requestDto.getPayStatus())
+                .payStatus(false)
                 .refundName(requestDto.getRefundName())
                 .refundAccount(requestDto.getRefundAccount())
                 .purchaseOptionList(new ArrayList<>())
