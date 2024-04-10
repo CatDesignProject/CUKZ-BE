@@ -45,7 +45,7 @@ class ReviewServiceTest {
 
     PurchaseForm purchaseForm = ReviewTestBuilder.testPurchaseForm();
     ReviewRequestDto reviewRequestDto = ReviewTestBuilder.testReviewRequestDto();
-    Member buyer = purchaseForm.getMember();
+    Long memberId = purchaseForm.getMemberId();
     Member seller = ReviewTestBuilder.testSeller();
     Review review;
     Long otherSellerId = 3L;
@@ -67,7 +67,7 @@ class ReviewServiceTest {
             @Test
             @DisplayName("리뷰 작성에 성공한다.")
             void it_returns_succes_save_review() {
-                assertDoesNotThrow(() -> reviewService.saveReview(reviewRequestDto, seller.getId(), purchaseForm.getId(), buyer.getId()));
+                assertDoesNotThrow(() -> reviewService.saveReview(reviewRequestDto, seller.getId(), purchaseForm.getId(), memberId));
                 then(purchaseFormRepository).should(times(1)).findById(purchaseForm.getId());
                 then(reviewRepository).should(times(1)).findByPurchaseFormId(purchaseForm.getId());
                 then(memberRepository).should(times(1)).findById(seller.getId());
@@ -89,7 +89,7 @@ class ReviewServiceTest {
             @Test
             @DisplayName("이미 리뷰를 작성했다는 예외를 발생시킨다.")
             void it_returns_already_write_review() {
-                assertThatThrownBy(() -> reviewService.saveReview(reviewRequestDto, seller.getId(), purchaseForm.getId(), buyer.getId()))
+                assertThatThrownBy(() -> reviewService.saveReview(reviewRequestDto, seller.getId(), purchaseForm.getId(), memberId))
                         .isInstanceOf(GlobalException.class)
                         .hasMessage("이미 리뷰를 작성했습니다.");
             }
@@ -107,7 +107,7 @@ class ReviewServiceTest {
             @Test
             @DisplayName("해당 총대에게 리뷰를 작성할 권한 없음 예외를 발생시킨다.")
             void it_returns_unauthorized_write_review_to_seller() {
-                assertThatThrownBy(() -> reviewService.saveReview(reviewRequestDto, otherSellerId, purchaseForm.getId(), buyer.getId()))
+                assertThatThrownBy(() -> reviewService.saveReview(reviewRequestDto, otherSellerId, purchaseForm.getId(), memberId))
                         .isInstanceOf(GlobalException.class)
                         .hasMessage("해당 총대에게 리뷰를 작성할 권한이 없습니다.");
             }
@@ -124,7 +124,7 @@ class ReviewServiceTest {
             @Test
             @DisplayName("해당 구매폼을 찾을 수 없다는 예외를 발생시킨다.")
             void it_returns_not_found_purchase_form() {
-                assertThatThrownBy(() -> reviewService.saveReview(reviewRequestDto, seller.getId(), purchaseForm.getId(), buyer.getId()))
+                assertThatThrownBy(() -> reviewService.saveReview(reviewRequestDto, seller.getId(), purchaseForm.getId(), memberId))
                         .isInstanceOf(GlobalException.class)
                         .hasMessage("해당 폼을 찾을 수 없습니다.");
             }
@@ -142,7 +142,7 @@ class ReviewServiceTest {
             @Test
             @DisplayName("아직 리뷰 작성이 불가능한 상품 예외를 발생시킨다.")
             void it_returns_not_yet_write_review() {
-                assertThatThrownBy(() -> reviewService.saveReview(reviewRequestDto, seller.getId(), purchaseForm.getId(), buyer.getId()))
+                assertThatThrownBy(() -> reviewService.saveReview(reviewRequestDto, seller.getId(), purchaseForm.getId(), memberId))
                         .isInstanceOf(GlobalException.class)
                         .hasMessage("아직 해당 상품은 리뷰 작성을 할 수 없습니다.");
             }
