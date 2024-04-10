@@ -18,6 +18,7 @@ public class PurchaseFormResponseDto {
     private Long id;
     private Long productId;
     private Long memberId;
+    private int totalPrice;
     private List<FormOptionResponseDto> optionList;
 
     public static PurchaseFormResponseDto toResponseDto(PurchaseForm purchaseForm) {
@@ -30,6 +31,7 @@ public class PurchaseFormResponseDto {
                 .id(purchaseForm.getId())
                 .productId(purchaseForm.getProduct().getId())
                 .memberId(purchaseForm.getMemberId())
+                .totalPrice(purchaseForm.getTotalPrice())
                 .optionList(optionList)
                 .build();
     }
