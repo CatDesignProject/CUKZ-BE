@@ -31,6 +31,14 @@ public class DemandTestBuilder implements DemandTest {
                 .build();
     }
 
+    public static Option buildOption(int additionalPrice) {
+        return Option.builder()
+                .id(1L)
+                .additionalPrice(additionalPrice)
+                .name(OPTION_NAME)
+                .build();
+    }
+
     public static DemandOption buildDemandOption(DemandForm demandForm) {
         return DemandOption.toEntity(QUANTITY, demandForm, buildOption());
     }
