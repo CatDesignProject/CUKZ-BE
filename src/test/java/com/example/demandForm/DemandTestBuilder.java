@@ -13,11 +13,15 @@ import java.util.List;
 public class DemandTestBuilder implements DemandTest {
     public static DemandFormRequestDto buildCreateDemandFormRequestDto() {
         List<FormOptionRequestDto> optionList = List.of(
-                new FormOptionRequestDto(1L, QUANTITY),
-                new FormOptionRequestDto(2L, QUANTITY)
+                buildFormOption(1L),
+                buildFormOption(2L)
         );
 
         return new DemandFormRequestDto(TEST_EMAIL, optionList);
+    }
+
+    public static FormOptionRequestDto buildFormOption(Long id) {
+        return new FormOptionRequestDto(id, QUANTITY);
     }
 
     public static Option buildOption() {
