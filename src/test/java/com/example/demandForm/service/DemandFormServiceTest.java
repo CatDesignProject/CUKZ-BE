@@ -11,7 +11,6 @@ import com.example.demandForm.entity.DemandOption;
 import com.example.demandForm.repository.DemandFormRepository;
 import com.example.demandForm.repository.DemandOptionRepository;
 import com.example.member.entity.Member;
-import com.example.member.repository.MemberRepository;
 import com.example.product.ProductTestBuilder;
 import com.example.product.entity.Option;
 import com.example.product.entity.Product;
@@ -50,9 +49,6 @@ public class DemandFormServiceTest implements DemandTest {
 
     @Mock
     ProductRepository productRepository;
-
-    @Mock
-    MemberRepository memberRepository;
 
     @Mock
     OptionRepository optionRepository;
@@ -95,7 +91,6 @@ public class DemandFormServiceTest implements DemandTest {
         @DisplayName("성공(일반 유저)")
         void demandMemberTest_success() {
             // given
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             when(productRepository.findById(productId)).thenReturn(Optional.of(product));
             when(demandFormRepository.save(any(DemandForm.class))).thenReturn(memberDemandForm);
             when(optionRepository.findById(any())).thenReturn(Optional.of(option));
@@ -115,7 +110,6 @@ public class DemandFormServiceTest implements DemandTest {
         @DisplayName("실패(일반 유저) - 중복 참여")
         void demandMemberTest_fail_duplicate() {
             // given
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             when(demandFormRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(nonMemberDemandForm));
 
             // when - then
@@ -129,7 +123,6 @@ public class DemandFormServiceTest implements DemandTest {
         @DisplayName("실패(일반 유저) - 없는 상품")
         void demandMemberTest_fail_NotFoundProduct() {
             // given
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
             // when - then
@@ -143,7 +136,6 @@ public class DemandFormServiceTest implements DemandTest {
         @DisplayName("실패(일반 유저) - 참여 기간이 아님")
         void demandMemberTest_fail_isNotPeriod() {
             // given
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             LocalDateTime endDate = LocalDateTime.of(2000, 4, 1, 12, 0);
             ReflectionTestUtils.setField(product, "endDate", endDate);
 
