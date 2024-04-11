@@ -66,10 +66,10 @@ public class PurchaseFormController {
     }
 
     @GetMapping("/purchase/non-members")
-    public ResponseEntity<BaseResponse<PurchaseFormResponseDto>> getPurchaseForNonMember(
+    public ResponseEntity<BaseResponse<PurchaseFormResponseDto>> getPurchaseFormNonMember(
             @RequestBody GetFormNonMemberRequestDto requestDto) {
 
-        PurchaseFormResponseDto responseDto = purchaseFormService.getPurchaseForNonMember(requestDto);
+        PurchaseFormResponseDto responseDto = purchaseFormService.getPurchaseFormNonMember(requestDto);
 
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
     }

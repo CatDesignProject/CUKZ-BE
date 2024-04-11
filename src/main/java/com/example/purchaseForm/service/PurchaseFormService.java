@@ -92,7 +92,7 @@ public class PurchaseFormService {
 
 
     @Transactional(readOnly = true)
-    public PurchaseFormResponseDto getPurchaseForNonMember(GetFormNonMemberRequestDto requestDto) {
+    public PurchaseFormResponseDto getPurchaseFormNonMember(GetFormNonMemberRequestDto requestDto) {
 
         PurchaseForm purchaseForm = purchaseFormRepository.findByOrderNumber(requestDto.getOrderNumber())
                 .orElseThrow(() -> new GlobalException(NOT_FOUND_FORM));
