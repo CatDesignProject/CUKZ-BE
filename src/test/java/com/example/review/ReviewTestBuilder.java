@@ -25,6 +25,7 @@ public class ReviewTestBuilder {
                 .address("역곡")
                 .payStatus(true)
                 .product(product)
+                .memberId(member.getId())
                 .build();
     }
 
