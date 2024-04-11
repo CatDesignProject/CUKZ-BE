@@ -9,8 +9,10 @@ import com.example.product.repository.OptionRepository;
 import com.example.product.repository.ProductRepository;
 import com.example.purchaseForm.dto.PurchaseFormRequestDto;
 import com.example.purchaseForm.dto.PurchaseFormResponseDto;
+import com.example.purchaseForm.entity.Delivery;
 import com.example.purchaseForm.entity.PurchaseForm;
 import com.example.purchaseForm.entity.PurchaseOption;
+import com.example.purchaseForm.repository.DeliveryRepository;
 import com.example.purchaseForm.repository.PurchaseFormRepository;
 import com.example.purchaseForm.repository.PurchaseOptionRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,7 @@ public class PurchaseFormService {
     private final PurchaseOptionRepository purchaseOptionRepository;
     private final ProductRepository productRepository;
     private final OptionRepository optionRepository;
+    private final DeliveryRepository deliveryRepository;
 
     private static final long MAX_ORDER_NUMBER = 9999999999L;
 
@@ -52,6 +55,10 @@ public class PurchaseFormService {
         // 옵션 리스트에 대한 정보 저장
         saveOptions(requestDto, purchaseForm, product);
 
+        // 배송 금액 저장
+        Delivery delivery = findDelivery(requestDto.getDeliveryId());
+        purchaseForm.updateTotalPrice(delivery.getPrice());
+
         return PurchaseFormResponseDto.toResponseDto(purchaseForm);
     }
 
@@ -67,6 +74,10 @@ public class PurchaseFormService {
         PurchaseForm purchaseForm = PurchaseForm.toEntity(orderNumber, product, requestDto);
         purchaseFormRepository.save(purchaseForm);
         saveOptions(requestDto, purchaseForm, product);
+
+        // 배송 금액 저장
+        Delivery delivery = findDelivery(requestDto.getDeliveryId());
+        purchaseForm.updateTotalPrice(delivery.getPrice());
 
         return PurchaseFormResponseDto.toResponseDto(purchaseForm);
     }
@@ -169,6 +180,12 @@ public class PurchaseFormService {
     private Option findOption(Long optionId) {
         return optionRepository.findById(optionId).orElseThrow(() ->
                 new GlobalException(NOT_FOUND_OPTION)
+        );
+    }
+
+    private Delivery findDelivery(Long deliveryId) {
+        return deliveryRepository.findById(deliveryId).orElseThrow(() ->
+                new GlobalException(NOT_FOUND_DELIVERY)
         );
     }
 

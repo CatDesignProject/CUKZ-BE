@@ -22,6 +22,7 @@ public enum BaseErrorCode {
     DUPLICATED_FORM(BAD_REQUEST, "이미 참여한 폼이 있습니다."),
     NOT_IN_PERIOD(BAD_REQUEST, "참여 가능한 기간이 아닙니다."),
     DUPLICATED_PARTICIPATION(BAD_REQUEST, "이미 참여한 폼이 있습니다."),
+    NOT_FOUND_DELIVERY(BAD_REQUEST, "해당 배송지를 찾을 수 없습니다."),
 
     // Product
     NOT_FOUND_PRODUCT(NOT_FOUND, "해당 상품을 찾을 수 없습니다."),

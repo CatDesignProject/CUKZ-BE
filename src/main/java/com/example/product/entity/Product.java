@@ -1,9 +1,10 @@
 package com.example.product.entity;
 
 import com.example.member.entity.Member;
-import com.example.product.dto.request.ProductFormRequestDto;
+import com.example.product.dto.request.ProductPurchaseRequestDto;
 import com.example.product.enums.SaleStatus;
 import com.example.product_image.entity.ProductImage;
+import com.example.purchaseForm.entity.Delivery;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +48,9 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Option> options = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product")
+    private List<Delivery> deliveries = new ArrayList<>();
+
     //== 편의 메서드 ==//
     public void addProductImage(ProductImage productImage) {
         this.productImages.add(productImage);
@@ -78,7 +82,7 @@ public class Product {
         this.endDate = endDate;
     }
 
-    public void modifyProductForm(ProductFormRequestDto requestDto) {
+    public void modifyProductForm(ProductPurchaseRequestDto requestDto) {
         this.startDate = requestDto.getStartDate();
         this.endDate = requestDto.getEndDate();
         this.status = requestDto.getSaleStatus();

@@ -6,7 +6,7 @@ import com.example.common.global.PageResponseDto;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
 import com.example.product.dto.ProductOptionDto;
-import com.example.product.dto.request.ProductFormRequestDto;
+import com.example.product.dto.request.ProductPurchaseRequestDto;
 import com.example.product.dto.request.ProductRequestDto;
 import com.example.product.dto.response.ProductResponseDto;
 import com.example.product.dto.response.ProductThumbNailDto;
@@ -17,6 +17,9 @@ import com.example.product.repository.OptionRepository;
 import com.example.product.repository.ProductRepository;
 import com.example.product_image.entity.ProductImage;
 import com.example.product_image.repository.ProductImageRepository;
+import com.example.purchaseForm.dto.DeliveryRequestDto;
+import com.example.purchaseForm.entity.Delivery;
+import com.example.purchaseForm.repository.DeliveryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +38,7 @@ public class ProductService {
     private final OptionRepository optionRepository;
     private final ProductImageRepository productImageRepository;
     private final MemberRepository memberRepository;
+    private final DeliveryRepository deliveryRepository;
 
     @Transactional
     public ProductResponseDto saveProduct(ProductRequestDto productRequestDto, Long memberId) {
@@ -116,7 +120,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponseDto modifyProductForm(Long productId, ProductFormRequestDto requestDto, Long memberId) {
+    public ProductResponseDto modifyProductPurchase(Long productId, ProductPurchaseRequestDto requestDto, Long memberId) {
 
         Product product = productRepository.findById(productId).orElseThrow(() ->
                 new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT));
@@ -127,21 +131,11 @@ public class ProductService {
 
         checkPeriod(requestDto);
         product.modifyProductForm(requestDto);
+        if (!requestDto.getDeliveryList().isEmpty()) {
+            saveDeliveryList(requestDto, product);
+        }
 
         return ProductResponseDto.toResponseDto(product);
-    }
-
-    private void checkPeriod(ProductFormRequestDto requestDto) {
-        // 시작일이 종료일보다 늦음
-        if (requestDto.getStartDate().isAfter(requestDto.getEndDate())) {
-            throw new GlobalException(BaseErrorCode.INVALID_PERIOD);
-        }
-
-        // 판매중, 수요조사중 상태인데 종료일이 지남
-        if ((requestDto.getSaleStatus().equals(SaleStatus.ON_SALE) || requestDto.getSaleStatus().equals(SaleStatus.ON_DEMAND))
-                && requestDto.getEndDate().isBefore(LocalDateTime.now())) {
-            throw new GlobalException(BaseErrorCode.INVALID_STATUS);
-        }
     }
 
     public PageResponseDto<ProductThumbNailDto> pagingProduct(Pageable pageable) {
@@ -174,5 +168,27 @@ public class ProductService {
                         )
         );
         return PageResponseDto.toResponseDto(productThumbNailDtos);
+    }
+
+    private void saveDeliveryList(ProductPurchaseRequestDto requestDto, Product product) {
+        // 배송지 리스트 저장
+        for (DeliveryRequestDto deliveryDto : requestDto.getDeliveryList()) {
+            Delivery delivery = Delivery.toEntity(deliveryDto, product);
+            deliveryRepository.save(delivery);
+            product.getDeliveries().add(delivery);
+        }
+    }
+
+    private void checkPeriod(ProductPurchaseRequestDto requestDto) {
+        // 시작일이 종료일보다 늦음
+        if (requestDto.getStartDate().isAfter(requestDto.getEndDate())) {
+            throw new GlobalException(BaseErrorCode.INVALID_PERIOD);
+        }
+
+        // 판매중, 수요조사중 상태인데 종료일이 지남
+        if ((requestDto.getSaleStatus().equals(SaleStatus.ON_SALE) || requestDto.getSaleStatus().equals(SaleStatus.ON_DEMAND))
+                && requestDto.getEndDate().isBefore(LocalDateTime.now())) {
+            throw new GlobalException(BaseErrorCode.INVALID_STATUS);
+        }
     }
 }

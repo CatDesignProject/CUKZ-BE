@@ -1,6 +1,7 @@
 package com.example.purchaseForm.entity;
 
 import com.example.product.entity.Product;
+import com.example.purchaseForm.dto.DeliveryRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,4 +26,12 @@ public class Delivery {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
+
+    public static Delivery toEntity(DeliveryRequestDto deliveryRequestDto, Product product) {
+        return Delivery.builder()
+                .type(deliveryRequestDto.getType())
+                .price(deliveryRequestDto.getPrice())
+                .product(product)
+                .build();
+    }
 }

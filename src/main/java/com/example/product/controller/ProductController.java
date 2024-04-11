@@ -2,7 +2,7 @@ package com.example.product.controller;
 
 import com.example.common.global.BaseResponse;
 import com.example.common.global.PageResponseDto;
-import com.example.product.dto.request.ProductFormRequestDto;
+import com.example.product.dto.request.ProductPurchaseRequestDto;
 import com.example.product.dto.request.ProductRequestDto;
 import com.example.product.dto.response.ProductResponseDto;
 import com.example.product.dto.response.ProductThumbNailDto;
@@ -43,10 +43,10 @@ public class ProductController {
     @PatchMapping("/{productId}/form")
     public ResponseEntity<BaseResponse<ProductResponseDto>> modifyProductForm(
             @PathVariable Long productId,
-            @RequestBody ProductFormRequestDto requestDto,
+            @RequestBody ProductPurchaseRequestDto requestDto,
             @AuthenticationPrincipal AuthenticatedMember member) {
 
-        ProductResponseDto responseDto = productService.modifyProductForm(productId, requestDto, member.getMemberId());
+        ProductResponseDto responseDto = productService.modifyProductPurchase(productId, requestDto, member.getMemberId());
 
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
     }
