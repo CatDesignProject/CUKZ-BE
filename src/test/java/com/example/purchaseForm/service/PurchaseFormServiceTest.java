@@ -12,8 +12,10 @@ import com.example.purchaseForm.PurchaseTest;
 import com.example.purchaseForm.PurchaseTestBuilder;
 import com.example.purchaseForm.dto.PurchaseFormRequestDto;
 import com.example.purchaseForm.dto.PurchaseFormResponseDto;
+import com.example.purchaseForm.entity.Delivery;
 import com.example.purchaseForm.entity.PurchaseForm;
 import com.example.purchaseForm.entity.PurchaseOption;
+import com.example.purchaseForm.repository.DeliveryRepository;
 import com.example.purchaseForm.repository.PurchaseFormRepository;
 import com.example.purchaseForm.repository.PurchaseOptionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,6 +52,8 @@ class PurchaseFormServiceTest implements PurchaseTest {
     ProductRepository productRepository;
     @Mock
     OptionRepository optionRepository;
+    @Mock
+    DeliveryRepository deliveryRepository;
     @InjectMocks
     PurchaseFormService purchaseFormService;
 
@@ -58,6 +62,7 @@ class PurchaseFormServiceTest implements PurchaseTest {
     Option option;
     PurchaseOption purchaseOption;
     PurchaseFormRequestDto requestDto;
+    Delivery delivery;
     Long productId = 1L;
     Long memberId = 1L;
     int page = 1;
@@ -72,6 +77,7 @@ class PurchaseFormServiceTest implements PurchaseTest {
         purchaseOption = PurchaseTestBuilder.buildPurchaseOption();
         purchaseForm = PurchaseTestBuilder.buildPurchaseForm();
         requestDto = PurchaseTestBuilder.buildPurchaseFormRequestDto();
+        delivery = PurchaseTestBuilder.buildDelivery(product);
     }
 
     @Nested
@@ -86,10 +92,11 @@ class PurchaseFormServiceTest implements PurchaseTest {
             when(purchaseFormRepository.save(any())).thenReturn(purchaseForm);
             when(optionRepository.findById(any())).thenReturn(Optional.of(option));
             when(purchaseOptionRepository.save(any())).thenReturn(purchaseOption);
+            when(deliveryRepository.findById(any())).thenReturn(Optional.of(delivery));
 
             // when
             PurchaseFormResponseDto responseDto = purchaseFormService.purchaseMember(productId, requestDto, memberId);
-            int totalPrice = (product.getPrice() + option.getAdditionalPrice()) * 2;
+            int totalPrice = (product.getPrice() + option.getAdditionalPrice()) * 2 + DELIVERY_PRICE;
 
             // then
             assertEquals(memberId, responseDto.getMemberId());
@@ -150,10 +157,11 @@ class PurchaseFormServiceTest implements PurchaseTest {
             when(purchaseFormRepository.save(any())).thenReturn(purchaseForm);
             when(optionRepository.findById(any())).thenReturn(Optional.of(option));
             when(purchaseOptionRepository.save(any())).thenReturn(purchaseOption);
+            when(deliveryRepository.findById(any())).thenReturn(Optional.of(delivery));
 
             // when
             PurchaseFormResponseDto responseDto = purchaseFormService.purchaseNonMember(productId, requestDto);
-            int totalPrice = (product.getPrice() + option.getAdditionalPrice()) * 2;
+            int totalPrice = (product.getPrice() + option.getAdditionalPrice()) * 2 + DELIVERY_PRICE;
 
             // then
             assertEquals(product.getId(), responseDto.getProductId());

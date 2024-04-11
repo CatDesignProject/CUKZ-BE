@@ -2,7 +2,9 @@ package com.example.purchaseForm;
 
 import com.example.demandForm.DemandTest;
 import com.example.demandForm.dto.request.FormOptionRequestDto;
+import com.example.product.entity.Product;
 import com.example.purchaseForm.dto.PurchaseFormRequestDto;
+import com.example.purchaseForm.entity.Delivery;
 import com.example.purchaseForm.entity.PurchaseForm;
 import com.example.purchaseForm.entity.PurchaseOption;
 
@@ -42,5 +44,9 @@ public class PurchaseTestBuilder implements PurchaseTest, DemandTest {
 
     public static PurchaseOption buildPurchaseOption() {
         return PurchaseOption.toEntity(QUANTITY, buildPurchaseForm(), buildOption());
+    }
+
+    public static Delivery buildDelivery(Product product) {
+        return new Delivery(1L, DELIVERY_TYPE, DELIVERY_PRICE, product);
     }
 }
