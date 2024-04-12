@@ -9,8 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface PurchaseFormRepository extends JpaRepository<PurchaseForm, Long> {
-    Optional<PurchaseForm> findByIdAndMemberId(Long purchaseFormId, Long memberId);
-
     @Query("SELECT pf FROM PurchaseForm pf WHERE pf.memberId = :orderNumber")
     Optional<PurchaseForm> findByOrderNumber(Long orderNumber);
 

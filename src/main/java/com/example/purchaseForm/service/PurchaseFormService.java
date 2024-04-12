@@ -95,8 +95,8 @@ public class PurchaseFormService {
     @Transactional(readOnly = true)
     public PurchaseFormResponseDto getPurchaseFormMember(Long purchaseFormId, Long memberId) {
 
-        PurchaseForm purchaseForm = purchaseFormRepository.findByIdAndMemberId(purchaseFormId, memberId)
-                .orElseThrow(() -> new GlobalException(NOT_FOUND_FORM));
+        PurchaseForm purchaseForm = findPurchaseForm(purchaseFormId);
+        checkMember(purchaseForm, memberId);
 
         return PurchaseFormResponseDto.toResponseDto(purchaseForm);
     }
@@ -114,9 +114,7 @@ public class PurchaseFormService {
     @Transactional
     public void deletePurchaseForm(Long purchaseFormId) {
 
-        PurchaseForm purchaseForm = purchaseFormRepository.findById(purchaseFormId).orElseThrow(() ->
-                new GlobalException(NOT_FOUND_FORM)
-        );
+        PurchaseForm purchaseForm = findPurchaseForm(purchaseFormId);
 
         purchaseForm.getPurchaseOptionList().forEach(purchaseOption -> {
             Option option = purchaseOption.getOption();
@@ -189,8 +187,20 @@ public class PurchaseFormService {
         );
     }
 
+    private PurchaseForm findPurchaseForm(Long formId) {
+        return purchaseFormRepository.findById(formId).orElseThrow(() ->
+                new GlobalException(NOT_FOUND_FORM)
+        );
+    }
+
     public void checkMember(Product product, Long memberId) {
         if (!product.getMember().getId().equals(memberId)) {
+            throw new GlobalException(UNAUTHORIZED_MEMBER);
+        }
+    }
+
+    public void checkMember(PurchaseForm purchaseForm, Long memberId) {
+        if (!purchaseForm.getMemberId().equals(memberId)) {
             throw new GlobalException(UNAUTHORIZED_MEMBER);
         }
     }

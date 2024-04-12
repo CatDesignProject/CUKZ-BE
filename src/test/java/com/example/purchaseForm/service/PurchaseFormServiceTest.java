@@ -178,7 +178,7 @@ class PurchaseFormServiceTest implements PurchaseTest {
         void getMemberPurchaseFormTest_success() {
             // given
             ReflectionTestUtils.setField(purchaseForm, "id", 1L);
-            when(purchaseFormRepository.findByIdAndMemberId(any(), any())).thenReturn(Optional.of(purchaseForm));
+            when(purchaseFormRepository.findById(any())).thenReturn(Optional.of(purchaseForm));
 
             // when
             PurchaseFormResponseDto responseDto = purchaseFormService.getPurchaseFormMember(purchaseForm.getId(), memberId);
@@ -193,13 +193,14 @@ class PurchaseFormServiceTest implements PurchaseTest {
         @DisplayName("실패(일반 유저) - 작성자와 불일치")
         void Test() {
             // given
-            when(purchaseFormRepository.findByIdAndMemberId(any(), any())).thenReturn(Optional.empty());
+            Long memberId2 = 2L;
+            when(purchaseFormRepository.findById(any())).thenReturn(Optional.of(purchaseForm));
 
             // when - then
             GlobalException e = assertThrows(GlobalException.class, () -> {
-                purchaseFormService.getPurchaseFormMember(purchaseForm.getId(), memberId);
+                purchaseFormService.getPurchaseFormMember(purchaseForm.getId(), memberId2);
             });
-            assertEquals(NOT_FOUND_FORM, e.getErrorCode());
+            assertEquals(UNAUTHORIZED_MEMBER, e.getErrorCode());
         }
 
         @Test
