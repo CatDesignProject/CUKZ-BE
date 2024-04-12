@@ -174,7 +174,7 @@ public class DemandFormServiceTest implements DemandTest {
         @DisplayName("성공(일반 유저) - 단건 조회")
         void getMemberDemandFormTest_success() {
             //given
-            when(demandFormRepository.findByIdAndMemberId(formId, memberId)).thenReturn(Optional.of(memberDemandForm));
+            when(demandFormRepository.findById(formId)).thenReturn(Optional.of(memberDemandForm));
 
             //when
             DemandFormResponseDto responseDto = demandFormService.getDemandFormMember(formId, memberId);
@@ -187,13 +187,14 @@ public class DemandFormServiceTest implements DemandTest {
         @DisplayName("실패(일반 유저) - 작성자와 불일치")
         void getMemberDemandFormTest_fail_misMatched() {
             //given
-            when(demandFormRepository.findByIdAndMemberId(formId, 2L)).thenReturn(Optional.empty());
+            Long memberId2 = 2L;
+            when(demandFormRepository.findById(formId)).thenReturn(Optional.of(memberDemandForm));
 
             //when - then
             GlobalException e = assertThrows(GlobalException.class, () -> {
-                demandFormService.getDemandFormMember(formId, 2L);
+                demandFormService.getDemandFormMember(formId, memberId2);
             });
-            assertEquals(NOT_FOUND_FORM, e.getErrorCode());
+            assertEquals(UNAUTHORIZED_MEMBER, e.getErrorCode());
         }
 
         @Test

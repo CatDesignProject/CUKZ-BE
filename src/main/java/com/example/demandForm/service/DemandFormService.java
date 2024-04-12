@@ -78,8 +78,8 @@ public class DemandFormService {
     @Transactional(readOnly = true)
     public DemandFormResponseDto getDemandFormMember(Long demandFormId, Long memberId) {
 
-        DemandForm demandForm = demandFormRepository.findByIdAndMemberId(demandFormId, memberId)
-                .orElseThrow(() -> new GlobalException(NOT_FOUND_FORM));
+        DemandForm demandForm = findDemandForm(demandFormId);
+        checkMember(demandForm, memberId);
 
         return DemandFormResponseDto.toResponseDto(demandForm);
     }
@@ -106,9 +106,7 @@ public class DemandFormService {
     @Transactional
     public void deleteDemandForm(Long demandFormId) {
 
-        DemandForm demandForm = demandFormRepository.findById(demandFormId).orElseThrow(() ->
-                new GlobalException(NOT_FOUND_FORM)
-        );
+        DemandForm demandForm = findDemandForm(demandFormId);
 
         demandForm.getDemandOptionList().forEach(demandOption -> {
             Option option = demandOption.getOption();
@@ -156,8 +154,20 @@ public class DemandFormService {
         );
     }
 
+    private DemandForm findDemandForm(Long formId) {
+        return demandFormRepository.findById(formId).orElseThrow(() ->
+                new GlobalException(NOT_FOUND_FORM)
+        );
+    }
+
     public void checkMember(Product product, Long memberId) {
         if (!product.getMember().getId().equals(memberId)) {
+            throw new GlobalException(UNAUTHORIZED_MEMBER);
+        }
+    }
+
+    public void checkMember(DemandForm demandForm, Long memberId) {
+        if (!demandForm.getMemberId().equals(memberId)) {
             throw new GlobalException(UNAUTHORIZED_MEMBER);
         }
     }
