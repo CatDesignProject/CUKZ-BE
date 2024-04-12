@@ -10,6 +10,7 @@ import com.example.product.repository.OptionRepository;
 import com.example.product.repository.ProductRepository;
 import com.example.purchaseForm.PurchaseTest;
 import com.example.purchaseForm.PurchaseTestBuilder;
+import com.example.purchaseForm.dto.PayRequestDto;
 import com.example.purchaseForm.dto.PurchaseFormRequestDto;
 import com.example.purchaseForm.dto.PurchaseFormResponseDto;
 import com.example.purchaseForm.entity.Delivery;
@@ -273,6 +274,43 @@ class PurchaseFormServiceTest implements PurchaseTest {
                 purchaseFormService.getAllPurchaseForms(page, size, productId, memberId2);
             });
             assertEquals(UNAUTHORIZED_MEMBER, e.getErrorCode());
+        }
+    }
+
+    @Nested
+    @DisplayName("입금 상태 변경 테스트")
+    class updatePayStatusTest {
+        PayRequestDto payRequestDto = PayRequestDto.builder()
+                .payStatus(true)
+                .purchaseFormIds(List.of(1L, 2L))
+                .build();
+
+        @Test
+        @DisplayName("성공")
+        void updatePayStatusTest_success() {
+            // given
+            when(productRepository.findById(any())).thenReturn(Optional.of(product));
+            when(purchaseFormRepository.findById(any())).thenReturn(Optional.of(purchaseForm));
+
+            // when
+            purchaseFormService.updatePayStatus(purchaseForm.getId(), payRequestDto, memberId);
+
+            // then
+            assertEquals(purchaseForm.getPayStatus(), true);
+        }
+
+        @Test
+        @DisplayName("실패 - 구매 폼 없음")
+        void updatePayStatusTest_fail_notFound() {
+            // given
+            when(productRepository.findById(any())).thenReturn(Optional.of(product));
+            when(purchaseFormRepository.findById(any())).thenReturn(Optional.empty());
+
+            // when - then
+            GlobalException e = assertThrows(GlobalException.class, () -> {
+                purchaseFormService.updatePayStatus(purchaseForm.getId(), payRequestDto, memberId);
+            });
+            assertEquals(NOT_FOUND_FORM, e.getErrorCode());
         }
     }
 }
