@@ -75,4 +75,8 @@ public class PurchaseForm extends TimeStamp {
     public void updateTotalPrice(int price) {
         this.totalPrice += price;
     }
+
+    public void updatePayStatus(boolean payStatus) {
+        this.payStatus = payStatus;
+    }
 }

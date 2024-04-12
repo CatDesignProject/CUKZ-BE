@@ -7,6 +7,7 @@ import com.example.product.entity.Option;
 import com.example.product.entity.Product;
 import com.example.product.repository.OptionRepository;
 import com.example.product.repository.ProductRepository;
+import com.example.purchaseForm.dto.PayRequestDto;
 import com.example.purchaseForm.dto.PurchaseFormRequestDto;
 import com.example.purchaseForm.dto.PurchaseFormResponseDto;
 import com.example.purchaseForm.entity.Delivery;
@@ -135,6 +136,18 @@ public class PurchaseFormService {
         Page<PurchaseForm> purchaseFormList = purchaseFormRepository.findByProductId(productId, pageable);
 
         return purchaseFormList.map(PurchaseFormResponseDto::toResponseDto);
+    }
+
+    @Transactional
+    public void updatePayStatus(Long productId, PayRequestDto requestDto, Long memberId) {
+
+        Product product = findProduct(productId);
+        checkMember(product, memberId);
+
+        for (Long formId : requestDto.getPurchaseFormIds()) {
+            PurchaseForm purchaseForm = findPurchaseForm(formId);
+            purchaseForm.updatePayStatus(requestDto.isPayStatus());
+        }
     }
 
     private long generateOrderNumber() {
