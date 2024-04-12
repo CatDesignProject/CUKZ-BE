@@ -296,7 +296,7 @@ class PurchaseFormServiceTest implements PurchaseTest {
             purchaseFormService.updatePayStatus(purchaseForm.getId(), payRequestDto, memberId);
 
             // then
-            assertEquals(purchaseForm.getPayStatus(), true);
+            assertEquals(true, purchaseForm.getPayStatus());
         }
 
         @Test
@@ -311,6 +311,22 @@ class PurchaseFormServiceTest implements PurchaseTest {
                 purchaseFormService.updatePayStatus(purchaseForm.getId(), payRequestDto, memberId);
             });
             assertEquals(NOT_FOUND_FORM, e.getErrorCode());
+        }
+
+        @Test
+        @DisplayName("실패 - 권한 없음")
+        void updatePayStatusTest_fail_unauthorized() {
+            // given
+            Long memberId2 = 2L;
+            when(productRepository.findById(any())).thenReturn(Optional.of(product));
+            when(purchaseFormRepository.findById(any())).thenReturn(Optional.of(purchaseForm));
+
+            // when - then
+            GlobalException e = assertThrows(GlobalException.class, () -> {
+                purchaseFormService.updatePayStatus(purchaseForm.getId(), payRequestDto, memberId2);
+            });
+            assertEquals(UNAUTHORIZED_MEMBER, e.getErrorCode());
+
         }
     }
 }
