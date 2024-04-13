@@ -2,7 +2,6 @@ package com.example.product.controller;
 
 import com.example.common.global.BaseResponse;
 import com.example.common.global.PageResponseDto;
-import com.example.product.dto.request.ProductPurchaseRequestDto;
 import com.example.product.dto.request.ProductRequestDto;
 import com.example.product.dto.response.ProductResponseDto;
 import com.example.product.dto.response.ProductThumbNailDto;
@@ -38,17 +37,6 @@ public class ProductController {
     @PatchMapping("/{productId}")
     public ResponseEntity<BaseResponse<ProductResponseDto>> modifyProduct(@PathVariable Long productId, @RequestBody ProductRequestDto productRequestDto, @AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, productService.modifyProduct(productId, productRequestDto, authenticatedMember.getMemberId())));
-    }
-
-    @PatchMapping("/{productId}/form")
-    public ResponseEntity<BaseResponse<ProductResponseDto>> modifyProductForm(
-            @PathVariable Long productId,
-            @RequestBody ProductPurchaseRequestDto requestDto,
-            @AuthenticationPrincipal AuthenticatedMember member) {
-
-        ProductResponseDto responseDto = productService.modifyProductPurchase(productId, requestDto, member.getMemberId());
-
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
     }
 
     @DeleteMapping("/{productId}")

@@ -1,9 +1,9 @@
 package com.example.product.entity;
 
 import com.example.member.entity.Member;
-import com.example.product.dto.request.ProductPurchaseRequestDto;
 import com.example.product.enums.SaleStatus;
 import com.example.product_image.entity.ProductImage;
+import com.example.purchaseForm.dto.ProductPurchaseRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

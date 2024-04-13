@@ -1,7 +1,6 @@
-package com.example.product.dto.request;
+package com.example.purchaseForm.dto;
 
 import com.example.product.enums.SaleStatus;
-import com.example.purchaseForm.dto.DeliveryRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

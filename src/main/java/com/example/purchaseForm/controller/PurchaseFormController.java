@@ -3,7 +3,9 @@ package com.example.purchaseForm.controller;
 import com.example.common.global.BaseResponse;
 import com.example.common.global.PageResponseDto;
 import com.example.demandForm.dto.request.GetFormNonMemberRequestDto;
+import com.example.product.dto.response.ProductResponseDto;
 import com.example.purchaseForm.dto.PayRequestDto;
+import com.example.purchaseForm.dto.ProductPurchaseRequestDto;
 import com.example.purchaseForm.dto.PurchaseFormRequestDto;
 import com.example.purchaseForm.dto.PurchaseFormResponseDto;
 import com.example.purchaseForm.service.PurchaseFormService;
@@ -99,7 +101,18 @@ public class PurchaseFormController {
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, PageResponseDto.toResponseDto(responseDtoList)));
     }
 
-    @PatchMapping("/products/{productId}/purchase")
+    @PatchMapping("products/{productId}/purchase")
+    public ResponseEntity<BaseResponse<ProductResponseDto>> modifyPurchaseForm(
+            @PathVariable Long productId,
+            @RequestBody ProductPurchaseRequestDto requestDto,
+            @AuthenticationPrincipal AuthenticatedMember member) {
+
+        ProductResponseDto responseDto = purchaseFormService.modifyPurchaseForm(productId, requestDto, member.getMemberId());
+
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
+    }
+
+    @PatchMapping("/products/{productId}/purchase/pay")
     public ResponseEntity<BaseResponse<String>> updatePayStatus(
             @PathVariable Long productId,
             @Valid @RequestBody PayRequestDto requestDto,

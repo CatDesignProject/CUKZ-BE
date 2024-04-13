@@ -1,15 +1,16 @@
 package com.example.purchaseForm.service;
 
+import com.example.common.exception.BaseErrorCode;
 import com.example.common.exception.GlobalException;
 import com.example.demandForm.dto.request.FormOptionRequestDto;
 import com.example.demandForm.dto.request.GetFormNonMemberRequestDto;
+import com.example.product.dto.response.ProductResponseDto;
 import com.example.product.entity.Option;
 import com.example.product.entity.Product;
+import com.example.product.enums.SaleStatus;
 import com.example.product.repository.OptionRepository;
 import com.example.product.repository.ProductRepository;
-import com.example.purchaseForm.dto.PayRequestDto;
-import com.example.purchaseForm.dto.PurchaseFormRequestDto;
-import com.example.purchaseForm.dto.PurchaseFormResponseDto;
+import com.example.purchaseForm.dto.*;
 import com.example.purchaseForm.entity.Delivery;
 import com.example.purchaseForm.entity.PurchaseForm;
 import com.example.purchaseForm.entity.PurchaseOption;
@@ -150,6 +151,23 @@ public class PurchaseFormService {
         }
     }
 
+    @Transactional
+    public ProductResponseDto modifyPurchaseForm(Long productId, ProductPurchaseRequestDto requestDto, Long memberId) {
+
+        Product product = productRepository.findById(productId).orElseThrow(() ->
+                new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT));
+
+        if (!product.getMember().getId().equals(memberId)) {
+            throw new GlobalException(BaseErrorCode.UNAUTHORIZED_MODIFY_PRODUCT);
+        }
+
+        checkPeriod(requestDto);
+        product.modifyProductForm(requestDto);
+        saveDeliveryList(requestDto, product);
+
+        return ProductResponseDto.toResponseDto(product);
+    }
+
     private long generateOrderNumber() {
         // 비회원 주문 번호 생성 = 현재 날짜 + 랜덤 숫자 (총 16자리)
         LocalDate today = LocalDate.now();
@@ -179,6 +197,17 @@ public class PurchaseFormService {
             PurchaseOption purchaseOption = PurchaseOption.toEntity(optionDto.getQuantity(), purchaseForm, option);
             purchaseOptionRepository.save(purchaseOption);
             purchaseForm.getPurchaseOptionList().add(purchaseOption);
+        }
+    }
+
+    private void saveDeliveryList(ProductPurchaseRequestDto requestDto, Product product) {
+        // 기존 배송지 리스트 삭제
+        deliveryRepository.deleteByProductId(product.getId());
+
+        // 신규 배송지 리스트 저장
+        for (DeliveryRequestDto deliveryDto : requestDto.getDeliveryList()) {
+            Delivery delivery = Delivery.toEntity(deliveryDto, product);
+            deliveryRepository.save(delivery);
         }
     }
 
@@ -219,9 +248,23 @@ public class PurchaseFormService {
     }
 
     public void checkPeriod(Product product) {
+        // 현재 시간이 종료일을 지난 경우
         LocalDateTime now = LocalDateTime.now();
         if (now.isAfter(product.getEndDate()) || now.isBefore(product.getStartDate())) {
             throw new GlobalException(NOT_IN_PERIOD);
+        }
+    }
+
+    private void checkPeriod(ProductPurchaseRequestDto requestDto) {
+        // 시작일이 종료일보다 늦음
+        if (requestDto.getStartDate().isAfter(requestDto.getEndDate())) {
+            throw new GlobalException(BaseErrorCode.INVALID_PERIOD);
+        }
+
+        // 판매중, 수요조사중 상태인데 종료일이 지남
+        if ((requestDto.getSaleStatus().equals(SaleStatus.ON_SALE) || requestDto.getSaleStatus().equals(SaleStatus.ON_DEMAND))
+                && requestDto.getEndDate().isBefore(LocalDateTime.now())) {
+            throw new GlobalException(BaseErrorCode.INVALID_STATUS);
         }
     }
 }
