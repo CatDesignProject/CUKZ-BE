@@ -154,15 +154,13 @@ public class PurchaseFormService {
     @Transactional
     public ProductResponseDto modifyPurchaseForm(Long productId, ProductPurchaseRequestDto requestDto, Long memberId) {
 
-        Product product = productRepository.findById(productId).orElseThrow(() ->
-                new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT));
-
-        if (!product.getMember().getId().equals(memberId)) {
-            throw new GlobalException(BaseErrorCode.UNAUTHORIZED_MODIFY_PRODUCT);
-        }
-
+        // 유저 권한 검증, 날짜 검증
+        Product product = findProduct(productId);
+        checkMember(product, memberId);
         checkPeriod(requestDto);
-        product.modifyProductForm(requestDto);
+
+        // 폼 관련 정보 수정, 배송지 저장
+        product.modifyProductForm(requestDto.getSaleStatus(), requestDto.getStartDate(), requestDto.getEndDate());
         saveDeliveryList(requestDto, product);
 
         return ProductResponseDto.toResponseDto(product);
@@ -248,7 +246,7 @@ public class PurchaseFormService {
     }
 
     public void checkPeriod(Product product) {
-        // 현재 시간이 종료일을 지난 경우
+        // 판매 기간이 아님
         LocalDateTime now = LocalDateTime.now();
         if (now.isAfter(product.getEndDate()) || now.isBefore(product.getStartDate())) {
             throw new GlobalException(NOT_IN_PERIOD);
