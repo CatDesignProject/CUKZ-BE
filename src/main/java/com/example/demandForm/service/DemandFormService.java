@@ -1,16 +1,20 @@
 package com.example.demandForm.service;
 
+import com.example.common.exception.BaseErrorCode;
 import com.example.common.exception.GlobalException;
 import com.example.demandForm.dto.request.DemandFormRequestDto;
 import com.example.demandForm.dto.request.FormOptionRequestDto;
 import com.example.demandForm.dto.request.GetFormNonMemberRequestDto;
+import com.example.demandForm.dto.request.ProductDemandRequestDto;
 import com.example.demandForm.dto.response.DemandFormResponseDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.entity.DemandOption;
 import com.example.demandForm.repository.DemandFormRepository;
 import com.example.demandForm.repository.DemandOptionRepository;
+import com.example.product.dto.response.ProductResponseDto;
 import com.example.product.entity.Option;
 import com.example.product.entity.Product;
+import com.example.product.enums.SaleStatus;
 import com.example.product.repository.OptionRepository;
 import com.example.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -129,6 +133,17 @@ public class DemandFormService {
         return demandFormList.map(DemandFormResponseDto::toResponseDto);
     }
 
+    @Transactional
+    public ProductResponseDto modifyDemandForm(Long productId, ProductDemandRequestDto requestDto, Long memberId) {
+
+        Product product = findProduct(productId);
+        checkMember(product, memberId);
+        checkPeriod(requestDto);
+        product.modifyProductForm(requestDto.getSaleStatus(), requestDto.getStartDate(), requestDto.getEndDate());
+
+        return ProductResponseDto.toResponseDto(product);
+    }
+
     public long generateOrderNumber() {
         // 비회원 주문 번호 생성 = 현재 날짜 + 랜덤 숫자 (총 16자리)
         LocalDate today = LocalDate.now();
@@ -179,9 +194,23 @@ public class DemandFormService {
     }
 
     public void checkPeriod(Product product) {
+        // 수요조사 기간이 아님
         LocalDateTime now = LocalDateTime.now();
         if (now.isAfter(product.getEndDate()) || now.isBefore(product.getStartDate())) {
             throw new GlobalException(NOT_IN_PERIOD);
+        }
+    }
+
+    private void checkPeriod(ProductDemandRequestDto requestDto) {
+        // 시작일이 종료일보다 늦음
+        if (requestDto.getStartDate().isAfter(requestDto.getEndDate())) {
+            throw new GlobalException(BaseErrorCode.INVALID_PERIOD);
+        }
+
+        // 판매중, 수요조사중 상태인데 종료일이 지남
+        if ((requestDto.getSaleStatus().equals(SaleStatus.ON_SALE) || requestDto.getSaleStatus().equals(SaleStatus.ON_DEMAND))
+                && requestDto.getEndDate().isBefore(LocalDateTime.now())) {
+            throw new GlobalException(BaseErrorCode.INVALID_STATUS);
         }
     }
 

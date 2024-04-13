@@ -3,7 +3,6 @@ package com.example.product.entity;
 import com.example.member.entity.Member;
 import com.example.product.enums.SaleStatus;
 import com.example.product_image.entity.ProductImage;
-import com.example.purchaseForm.dto.ProductPurchaseRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -78,10 +77,10 @@ public class Product {
         this.endDate = endDate;
     }
 
-    public void modifyProductForm(ProductPurchaseRequestDto requestDto) {
-        this.startDate = requestDto.getStartDate();
-        this.endDate = requestDto.getEndDate();
-        this.status = requestDto.getSaleStatus();
+    public void modifyProductForm(SaleStatus status, LocalDateTime startDate, LocalDateTime endDate) {
+        this.status = status;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     public void updateStatus(SaleStatus status) {

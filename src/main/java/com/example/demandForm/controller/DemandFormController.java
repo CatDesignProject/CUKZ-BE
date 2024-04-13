@@ -4,8 +4,10 @@ import com.example.common.global.BaseResponse;
 import com.example.common.global.PageResponseDto;
 import com.example.demandForm.dto.request.DemandFormRequestDto;
 import com.example.demandForm.dto.request.GetFormNonMemberRequestDto;
+import com.example.demandForm.dto.request.ProductDemandRequestDto;
 import com.example.demandForm.dto.response.DemandFormResponseDto;
 import com.example.demandForm.service.DemandFormService;
+import com.example.product.dto.response.ProductResponseDto;
 import com.example.security.authentication.AuthenticatedMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -96,5 +98,16 @@ public class DemandFormController {
                 member.getMemberId());
 
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, PageResponseDto.toResponseDto(responseDtoList)));
+    }
+
+    @PatchMapping("products/{productId}/demand")
+    public ResponseEntity<BaseResponse<ProductResponseDto>> modifyDemandForm(
+            @PathVariable Long productId,
+            @RequestBody ProductDemandRequestDto requestDto,
+            @AuthenticationPrincipal AuthenticatedMember member) {
+
+        ProductResponseDto responseDto = demandFormService.modifyDemandForm(productId, requestDto, member.getMemberId());
+
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
     }
 }
