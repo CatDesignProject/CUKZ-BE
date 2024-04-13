@@ -88,7 +88,7 @@ public class ProductTestBuilder {
         productImages.add(productImage2);
 
         Product product = new Product(1L, requestDto.getName(), requestDto.getPrice(), requestDto.getInfo(), requestDto.getStatus()
-                , requestDto.getStartDate(), requestDto.getEndDate(), member, 0, productImages, options, deliveries);
+                , requestDto.getStartDate(), requestDto.getEndDate(), member, 0, productImages, options);
 
         return product;
     }
@@ -98,7 +98,6 @@ public class ProductTestBuilder {
         Member member = testMember2Build();
         List<ProductOptionDto> productOptions = requestDto.getOptions();
         List<Option> options = new ArrayList<>();
-        List<Delivery> deliveries = new ArrayList<>();
 
         for (ProductOptionDto productOption : productOptions) {
             Option option = productOption.toOption();
@@ -122,7 +121,7 @@ public class ProductTestBuilder {
         productImages.add(productImage4);
 
         Product product = new Product(2L, requestDto.getName(), requestDto.getPrice(), requestDto.getInfo(), requestDto.getStatus()
-                , requestDto.getStartDate(), requestDto.getEndDate(), member, 0, productImages, options, deliveries);
+                , requestDto.getStartDate(), requestDto.getEndDate(), member, 0, productImages, options);
 
         return product;
     }
