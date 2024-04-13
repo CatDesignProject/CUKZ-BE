@@ -319,7 +319,6 @@ class PurchaseFormServiceTest implements PurchaseTest {
             // given
             Long memberId2 = 2L;
             when(productRepository.findById(any())).thenReturn(Optional.of(product));
-            when(purchaseFormRepository.findById(any())).thenReturn(Optional.of(purchaseForm));
 
             // when - then
             GlobalException e = assertThrows(GlobalException.class, () -> {
