@@ -175,7 +175,6 @@ public class ProductService {
         for (DeliveryRequestDto deliveryDto : requestDto.getDeliveryList()) {
             Delivery delivery = Delivery.toEntity(deliveryDto, product);
             deliveryRepository.save(delivery);
-            product.getDeliveries().add(delivery);
         }
     }
 
