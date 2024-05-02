@@ -34,4 +34,8 @@ public class Option {
     public void updateDemandQuantity(int quantity) {
         this.demandQuantity += quantity;
     }
+
+    public void updateSalesQuantity(int quantity) {
+        this.salesQuantity += quantity;
+    }
 }

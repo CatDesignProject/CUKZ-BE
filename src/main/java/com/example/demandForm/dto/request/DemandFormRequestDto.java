@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateDemandFormRequestDto {
+public class DemandFormRequestDto {
 
     private String email;
 

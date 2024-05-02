@@ -39,7 +39,7 @@ public class ReviewService {
         }
 
         //purchaseForm을 작성한 멤버의 id와 buyerId가 동일한지
-        if (!purchaseForm.getMember().getId().equals(buyerId)) {
+        if (!purchaseForm.getMemberId().equals(buyerId)) {
             throw new GlobalException(BaseErrorCode.UNAUTHORIZED_WRITE_REVIEW_FROM_PURCHASE_FORM);
         }
 

@@ -11,10 +11,6 @@ import java.util.Optional;
 
 public interface DemandFormRepository extends JpaRepository<DemandForm, Long> {
 
-    Optional<DemandForm> findByProductIdAndMemberId(Long productId, Long memberId);
-
-    Optional<DemandForm> findByIdAndMemberId(Long demandFormId, Long memberId);
-
     @Query("SELECT df FROM DemandForm df WHERE df.memberId = :orderNumber")
     Optional<DemandForm> findByOrderNumber(@Param("orderNumber") Long orderNumber);
 
