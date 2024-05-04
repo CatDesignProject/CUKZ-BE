@@ -1,5 +1,7 @@
 package com.example.demandForm.dto.request;
 
+import com.example.demandForm.entity.DemandForm;
+import com.example.demandForm.entity.DemandOption;
 import com.example.product.entity.Option;
 import com.example.purchaseForm.entity.PurchaseForm;
 import com.example.purchaseForm.entity.PurchaseOption;
@@ -23,6 +25,15 @@ public class FormOptionRequestDto {
         return PurchaseOption.builder()
                 .quantity(this.quantity)
                 .purchaseForm(purchaseForm)
+                .option(option)
+                .build();
+    }
+
+    public DemandOption toEntity(DemandForm demandForm, Option option) {
+
+        return DemandOption.builder()
+                .quantity(this.quantity)
+                .demandForm(demandForm)
                 .option(option)
                 .build();
     }

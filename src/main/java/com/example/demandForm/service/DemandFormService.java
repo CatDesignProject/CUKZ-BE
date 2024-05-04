@@ -53,7 +53,7 @@ public class DemandFormService {
         checkPeriod(product);
 
         // demand form 생성
-        DemandForm demandForm = DemandForm.toEntity(memberId, product, requestDto);
+        DemandForm demandForm = requestDto.toEntity(memberId, product);
         demandFormRepository.save(demandForm);
 
         // 옵션 리스트에 대한 정보 저장
@@ -72,7 +72,7 @@ public class DemandFormService {
 
         // 랜덤 주문번호 생성
         long orderNumber = generateOrderNumber();
-        DemandForm demandForm = DemandForm.toEntity(orderNumber, product, requestDto);
+        DemandForm demandForm = requestDto.toEntity(orderNumber, product);
         demandFormRepository.save(demandForm);
         saveOptions(requestDto, demandForm);
 
@@ -222,7 +222,7 @@ public class DemandFormService {
             option.updateDemandQuantity(optionDto.getQuantity());
 
             // 옵션 수요조사 내역 저장
-            DemandOption demandOption = DemandOption.toEntity(optionDto.getQuantity(), demandForm, option);
+            DemandOption demandOption = optionDto.toEntity(demandForm, option);
             demandOptionRepository.save(demandOption);
             demandForm.getDemandOptionList().add(demandOption);
         }
