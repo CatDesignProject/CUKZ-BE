@@ -39,8 +39,12 @@ public class SecurityConfig {
                         .logoutUrl("/members/logout"))
                 .requestCache(cache -> cache.disable()) // 요청 간 HttpSession 내 RequestCache 저장 비허용 (로그인 전 세션 생성 방지)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/members/login", "members/register").permitAll() // 로그인, 회원가입 url만 허용
+                        .requestMatchers(new AntPathRequestMatcher("/**/admin/**")).hasAuthority("ROLE_ADMIN")
                         .requestMatchers(new AntPathRequestMatcher("/**/non-members/**")).permitAll()   // 비회원 요청 허용
+                        .requestMatchers(new AntPathRequestMatcher("/products/{productId:\\d+}")).hasAuthority("ROLE_MANAGER")
+                        .requestMatchers("/products/{productId:\\d+}/likes","/products/{productId:\\d+}/unlikes", "/members/likes").hasAuthority("ROLE_USER")
+                        .requestMatchers("/members/login", "/members/register","/members/verify-username",
+                                "/products/search","/products/paging").permitAll()
                         .anyRequest().authenticated())
                 .securityContext(securityContext -> new HttpSessionSecurityContextRepository())
                 .exceptionHandling(exceptionHandling -> exceptionHandling

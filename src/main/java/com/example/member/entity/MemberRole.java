@@ -1,5 +1,5 @@
 package com.example.member.entity;
 
 public enum MemberRole {
-    manager, user
+    manager, user, admin
 }
