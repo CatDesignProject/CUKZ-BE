@@ -134,7 +134,7 @@ public class ProductService {
         Page<ProductThumbNailDto> productThumbNailDtos = page.map(
                 product ->
                         new ProductThumbNailDto(
-                                product.getName(), product.getPrice(), product.getLikesCount()
+                                product.getId(), product.getName(), product.getPrice(), product.getLikesCount()
                                 , productImageRepository.findFirstByProductId(product.getId())
                                 .orElseThrow(
                                         () -> new GlobalException(BaseErrorCode.NOT_FOUND_IMAGE)
