@@ -11,7 +11,7 @@ import java.util.stream.IntStream;
 
 public class CustomAuthorityUtils {
 
-    private static List<String> roles = List.of("ROLE_MANAGER", "ROLE_USER");
+    private static List<String> roles = List.of("ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER");
 
     public static List<GrantedAuthority> getAuthorities(MemberRole memberRole) {
         List<GrantedAuthority> authorities = new ArrayList<>();
