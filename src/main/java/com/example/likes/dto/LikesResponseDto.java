@@ -12,12 +12,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LikesResponseDto {
 
-    private Long productId;
+    private Long id;
     private int likesCount;
 
     public static LikesResponseDto toResponseDto(Product product) {
         return LikesResponseDto.builder()
-                .productId(product.getId())
+                .id(product.getId())
                 .likesCount(product.getLikesCount())
                 .build();
     }
