@@ -39,11 +39,13 @@ public class PurchaseTestBuilder implements PurchaseTest, DemandTest {
     }
 
     public static PurchaseForm buildPurchaseForm() {
-        return PurchaseForm.toEntity(1L, testProductBuild(), buildPurchaseFormRequestDto());
+        PurchaseFormRequestDto requestDto = buildPurchaseFormRequestDto();
+        return requestDto.toEntity(1L, testProductBuild());
     }
 
     public static PurchaseOption buildPurchaseOption() {
-        return PurchaseOption.toEntity(QUANTITY, buildPurchaseForm(), buildOption());
+        FormOptionRequestDto requestDto = new FormOptionRequestDto(1L, QUANTITY);
+        return requestDto.toEntity(buildPurchaseForm(), buildOption());
     }
 
     public static Delivery buildDelivery(Product product) {
