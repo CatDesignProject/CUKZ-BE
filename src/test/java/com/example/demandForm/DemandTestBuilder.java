@@ -40,14 +40,17 @@ public class DemandTestBuilder implements DemandTest {
     }
 
     public static DemandOption buildDemandOption(DemandForm demandForm) {
-        return DemandOption.toEntity(QUANTITY, demandForm, buildOption());
+        FormOptionRequestDto requestDto = new FormOptionRequestDto(1L, QUANTITY);
+        return requestDto.toEntity(demandForm, buildOption());
     }
 
     public static DemandForm buildMemberDemandForm(Member member, Product product) {
-        return DemandForm.toEntity(member.getId(), product, buildCreateDemandFormRequestDto());
+        DemandFormRequestDto requestDto = buildCreateDemandFormRequestDto();
+        return requestDto.toEntity(member.getId(), product);
     }
 
     public static DemandForm buildNonMemberDemandForm(Product product) {
-        return DemandForm.toEntity(ORDER_NUMBER, product, buildCreateDemandFormRequestDto());
+        DemandFormRequestDto requestDto = buildCreateDemandFormRequestDto();
+        return requestDto.toEntity(ORDER_NUMBER, product);
     }
 }
