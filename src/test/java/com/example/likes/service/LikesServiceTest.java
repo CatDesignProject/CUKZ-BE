@@ -115,7 +115,6 @@ class LikesServiceTest {
         @DisplayName("좋아요 취소 성공")
         void unLikeProductTest_success() {
             //given
-            when(memberRepository.findById(any())).thenReturn(Optional.of(member));
             when(productRepository.findById(any())).thenReturn(Optional.of(product));
             when(likesRepository.findByProductIdAndMemberId(any(), any())).thenReturn(Optional.of(likes));
 
