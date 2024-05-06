@@ -57,7 +57,7 @@ class LikesServiceTest {
         ReflectionTestUtils.setField(product, "id", 1L);
 
         likes = Likes.toEntity(member, product);
-        responseDto = LikesResponseDto.toResponseDto(product.getLikesCount());
+        responseDto = LikesResponseDto.toResponseDto(product);
     }
 
     @Nested
