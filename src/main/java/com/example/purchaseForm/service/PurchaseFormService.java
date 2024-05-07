@@ -51,7 +51,7 @@ public class PurchaseFormService {
         checkPeriod(product);
 
         // purchase form 생성
-        PurchaseForm purchaseForm = PurchaseForm.toEntity(memberId, product, requestDto);
+        PurchaseForm purchaseForm = requestDto.toEntity(memberId, product);
         purchaseFormRepository.save(purchaseForm);
 
         // 옵션 리스트에 대한 정보 저장
@@ -73,7 +73,7 @@ public class PurchaseFormService {
 
         // 랜덤 주문번호 생성
         long orderNumber = generateOrderNumber();
-        PurchaseForm purchaseForm = PurchaseForm.toEntity(orderNumber, product, requestDto);
+        PurchaseForm purchaseForm = requestDto.toEntity(orderNumber, product);
         purchaseFormRepository.save(purchaseForm);
         saveOptions(requestDto, purchaseForm, product);
 
@@ -192,7 +192,7 @@ public class PurchaseFormService {
             purchaseForm.updateTotalPrice((price + option.getAdditionalPrice()) * optionDto.getQuantity());
 
             // 옵션 수요조사 내역 저장
-            PurchaseOption purchaseOption = PurchaseOption.toEntity(optionDto.getQuantity(), purchaseForm, option);
+            PurchaseOption purchaseOption = optionDto.toEntity(purchaseForm, option);
             purchaseOptionRepository.save(purchaseOption);
             purchaseForm.getPurchaseOptionList().add(purchaseOption);
         }
@@ -204,7 +204,7 @@ public class PurchaseFormService {
 
         // 신규 배송지 리스트 저장
         for (DeliveryRequestDto deliveryDto : requestDto.getDeliveryList()) {
-            Delivery delivery = Delivery.toEntity(deliveryDto, product);
+            Delivery delivery = deliveryDto.toEntity(product);
             deliveryRepository.save(delivery);
         }
     }

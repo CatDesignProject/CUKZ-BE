@@ -27,13 +27,4 @@ public class DemandOption {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "option_id")
     private Option option;
-
-    public static DemandOption toEntity(int quantity, DemandForm demandForm, Option option) {
-
-        return DemandOption.builder()
-                .quantity(quantity)
-                .demandForm(demandForm)
-                .option(option)
-                .build();
-    }
 }

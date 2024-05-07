@@ -227,7 +227,7 @@ class PurchaseFormServiceTest implements PurchaseTest {
         @DisplayName("성공(일반 유저) - 페이징 조회")
         void getAllPurchaseFormMemberTest_success() {
             // given
-            PurchaseForm purchaseForm2 = PurchaseForm.toEntity(memberId, product, PurchaseTestBuilder.buildPurchaseFormRequestDto());
+            PurchaseForm purchaseForm2 = requestDto.toEntity(memberId, product);
             List<PurchaseForm> purchaseFormList = Arrays.asList(purchaseForm, purchaseForm2);
             Page<PurchaseForm> purchaseFormPage = new PageImpl<>(purchaseFormList);
 
@@ -246,7 +246,7 @@ class PurchaseFormServiceTest implements PurchaseTest {
         @DisplayName("성공(총대) - 페이징 조회")
         void getAllPurchaseFormsTest_success() {
             // given
-            PurchaseForm purchaseForm2 = PurchaseForm.toEntity(memberId, product, PurchaseTestBuilder.buildPurchaseFormRequestDto());
+            PurchaseForm purchaseForm2 = requestDto.toEntity(memberId, product);
             List<PurchaseForm> purchaseFormList = Arrays.asList(purchaseForm, purchaseForm2);
             Page<PurchaseForm> purchaseFormPage = new PageImpl<>(purchaseFormList);
 
