@@ -87,9 +87,8 @@ public class Product {
         this.status = status;
     }
 
-    public int updateLikesCount(int cal) {
+    public void updateLikesCount(int cal) {
         this.likesCount += cal;
-        return this.likesCount;
     }
 
     public void addOption(Option option) {

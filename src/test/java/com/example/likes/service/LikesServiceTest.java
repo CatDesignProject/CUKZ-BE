@@ -57,7 +57,7 @@ class LikesServiceTest {
         ReflectionTestUtils.setField(product, "id", 1L);
 
         likes = Likes.toEntity(member, product);
-        responseDto = LikesResponseDto.toResponseDto(product.getLikesCount());
+        responseDto = LikesResponseDto.toResponseDto(product);
     }
 
     @Nested
@@ -115,7 +115,6 @@ class LikesServiceTest {
         @DisplayName("좋아요 취소 성공")
         void unLikeProductTest_success() {
             //given
-            when(memberRepository.findById(any())).thenReturn(Optional.of(member));
             when(productRepository.findById(any())).thenReturn(Optional.of(product));
             when(likesRepository.findByProductIdAndMemberId(any(), any())).thenReturn(Optional.of(likes));
 
@@ -130,7 +129,6 @@ class LikesServiceTest {
         @DisplayName("좋아요 취소 실패 - 존재하지 않는 좋아요")
         void unLikeProductTest_fail_NotfoundLikes() {
             //given
-            when(memberRepository.findById(any())).thenReturn(Optional.of(member));
             when(productRepository.findById(any())).thenReturn(Optional.of(product));
             when(likesRepository.findByProductIdAndMemberId(any(), any())).thenReturn(Optional.empty());
 

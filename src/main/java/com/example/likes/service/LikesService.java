@@ -6,7 +6,6 @@ import com.example.likes.entity.Likes;
 import com.example.likes.repository.LikesRepository;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
-import com.example.product.dto.response.ProductResponseDto;
 import com.example.product.entity.Product;
 import com.example.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,26 +35,25 @@ public class LikesService {
 
         Likes likes = Likes.toEntity(member, product);
         likesRepository.save(likes);
-        int likesCount = product.updateLikesCount(1);
+        product.updateLikesCount(1);
 
-        return LikesResponseDto.toResponseDto(likesCount);
+        return LikesResponseDto.toResponseDto(product);
     }
 
     @Transactional
     public LikesResponseDto unlikeProduct(Long productId, Long memberId) {
 
-        Member member = findMember(memberId);
         Product product = findProduct(productId);
         Likes likes = findLikes(productId, memberId);
 
         likesRepository.delete(likes);
-        int likesCount = product.updateLikesCount(-1);
+        product.updateLikesCount(-1);
 
-        return LikesResponseDto.toResponseDto(likesCount);
+        return LikesResponseDto.toResponseDto(product);
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductResponseDto> getLikedProducts(int page, int size, Long memberId) {
+    public Page<LikesResponseDto> getLikedProducts(int page, int size, Long memberId) {
 
         Member member = findMember(memberId);
 
@@ -63,7 +61,7 @@ public class LikesService {
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Likes> likes = likesRepository.findByMemberId(member.getId(), pageable);
 
-        return likes.map(like -> ProductResponseDto.toResponseDto(like.getProduct()));
+        return likes.map(like -> LikesResponseDto.toResponseDto(like.getProduct()));
     }
 
     private Member findMember(Long memberId) {
