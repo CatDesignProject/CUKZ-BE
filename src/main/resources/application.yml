@@ -12,17 +12,23 @@ spring:
         show_sql: true
 
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ENC(L6u0PIDNX8L/AfPWlUWfl5yNpwNrT19ASEaUgdB/vlFcPntBO6lMNm4tk+S2jL3VJnb3MrOxq3JomczQugoOWYMtocsrtwROICC0sLeJH7YEZXEqnphr0jJ32BQFdDhl+ZOLXSFYaaXMfJGpw4bdNZHeti9rpbur)
+    username: ENC(NrBotP5u+u/gw9PYSBZ4SZ2JEoqGqwGN)
+    password: ENC(6QBAQWBB9UhtlwFSObzzwzFCCHjPC0C66MjuUvRLXV8=)
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 cloud:
   aws:
     s3:
-      bucket: ${S3_BUCKET}
+      bucket: ENC(XMrY8EvccgS1ME2kyQyaeA2fEV6nF7ava9iBsYwOyog=)
     stack.auto: false
-    region.static: ${S3_REGION}
+    region:
+      static: ENC(YFUlb95nE4ncc/vp2ut/9pjki2bO5hYC83MBm3uWgS0=)
     credentials:
-      accessKey: ${S3_ACCESS_KEY}
-      secretKey: ${S3_SECRET_KEY}
+      accessKey: ENC(nKGPfLtXJVpkRDlNi73McWhJd3PIKdDTfA853KSGcwAP3imslJvpKw==)
+      secretKey: ENC(QzjrxI9NhXLk3N1qZ+dmftGJpu4WOs5z/yLBP3Kk/VdpRN5dCy6po0VRD9EA2FRdy9Ieb9+2rphZCLY7N6OhgQ==)
+
+jasypt:
+  encryptor:
+    private-key-string: ${JASYPT_KEY}
+    algorithm: ${JASYPT_ALGORITHM}
