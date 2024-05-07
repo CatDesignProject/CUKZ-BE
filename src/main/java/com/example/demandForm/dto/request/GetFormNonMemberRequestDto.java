@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DemandFormNonMemberRequestDto {
+public class GetFormNonMemberRequestDto {
 
     private Long orderNumber;
 }

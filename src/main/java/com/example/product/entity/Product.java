@@ -77,7 +77,8 @@ public class Product {
         this.endDate = endDate;
     }
 
-    public void updateDate(LocalDateTime startDate, LocalDateTime endDate) {
+    public void modifyProductForm(SaleStatus status, LocalDateTime startDate, LocalDateTime endDate) {
+        this.status = status;
         this.startDate = startDate;
         this.endDate = endDate;
     }
@@ -86,9 +87,8 @@ public class Product {
         this.status = status;
     }
 
-    public int updateLikesCount(int cal) {
+    public void updateLikesCount(int cal) {
         this.likesCount += cal;
-        return this.likesCount;
     }
 
     public void addOption(Option option) {

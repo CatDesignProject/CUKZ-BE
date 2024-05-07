@@ -15,13 +15,13 @@ import com.example.product.repository.OptionRepository;
 import com.example.product.repository.ProductRepository;
 import com.example.product_image.entity.ProductImage;
 import com.example.product_image.repository.ProductImageRepository;
+import com.example.purchaseForm.repository.DeliveryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,6 +33,7 @@ public class ProductService {
     private final OptionRepository optionRepository;
     private final ProductImageRepository productImageRepository;
     private final MemberRepository memberRepository;
+    private final DeliveryRepository deliveryRepository;
 
     @Transactional
     public ProductResponseDto saveProduct(ProductRequestDto productRequestDto, Long memberId) {
@@ -133,7 +134,7 @@ public class ProductService {
         Page<ProductThumbNailDto> productThumbNailDtos = page.map(
                 product ->
                         new ProductThumbNailDto(
-                                product.getName(), product.getPrice(), product.getLikesCount()
+                                product.getId(), product.getName(), product.getPrice(), product.getLikesCount()
                                 , productImageRepository.findFirstByProductId(product.getId())
                                 .orElseThrow(
                                         () -> new GlobalException(BaseErrorCode.NOT_FOUND_IMAGE)

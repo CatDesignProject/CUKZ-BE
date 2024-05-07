@@ -1,4 +1,4 @@
-package com.example.demandForm.entity;
+package com.example.purchaseForm.entity;
 
 import com.example.product.entity.Option;
 import jakarta.persistence.*;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DemandOption {
+public class PurchaseOption {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +21,8 @@ public class DemandOption {
     private int quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "demand_form_id")
-    private DemandForm demandForm;
+    @JoinColumn(name = "purchase_form_id")
+    private PurchaseForm purchaseForm;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "option_id")

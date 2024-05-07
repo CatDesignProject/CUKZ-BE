@@ -8,6 +8,7 @@ import com.example.product.entity.Option;
 import com.example.product.entity.Product;
 import com.example.product.enums.SaleStatus;
 import com.example.product_image.entity.ProductImage;
+import com.example.purchaseForm.entity.Delivery;
 import org.springframework.data.domain.*;
 
 import java.time.LocalDateTime;
@@ -63,6 +64,8 @@ public class ProductTestBuilder {
         Member member = testMemberBuild();
         List<ProductOptionDto> productOptions = requestDto.getOptions();
         List<Option> options = new ArrayList<>();
+        List<Delivery> deliveries = new ArrayList<>();
+
         for (ProductOptionDto productOption : productOptions) {
             Option option = productOption.toOption();
             options.add(option);
@@ -95,6 +98,7 @@ public class ProductTestBuilder {
         Member member = testMember2Build();
         List<ProductOptionDto> productOptions = requestDto.getOptions();
         List<Option> options = new ArrayList<>();
+
         for (ProductOptionDto productOption : productOptions) {
             Option option = productOption.toOption();
             options.add(option);

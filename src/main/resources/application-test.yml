@@ -22,9 +22,15 @@ spring:
 cloud:
   aws:
     s3:
-      bucket: ${S3_BUCKET}
+      bucket: ENC(XMrY8EvccgS1ME2kyQyaeA2fEV6nF7ava9iBsYwOyog=)
     stack.auto: false
-    region.static: ${S3_REGION}
+    region:
+      static: ENC(YFUlb95nE4ncc/vp2ut/9pjki2bO5hYC83MBm3uWgS0=)
     credentials:
-      accessKey: ${S3_ACCESS_KEY}
-      secretKey: ${S3_SECRET_KEY}
+      accessKey: ENC(nKGPfLtXJVpkRDlNi73McWhJd3PIKdDTfA853KSGcwAP3imslJvpKw==)
+      secretKey: ENC(QzjrxI9NhXLk3N1qZ+dmftGJpu4WOs5z/yLBP3Kk/VdpRN5dCy6po0VRD9EA2FRdy9Ieb9+2rphZCLY7N6OhgQ==)
+
+jasypt:
+  encryptor:
+    private-key-string: ${JASYPT_KEY}
+    algorithm: ${JASYPT_ALGORITHM}

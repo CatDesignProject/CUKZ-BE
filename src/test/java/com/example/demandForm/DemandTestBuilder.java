@@ -1,6 +1,6 @@
 package com.example.demandForm;
 
-import com.example.demandForm.dto.request.CreateDemandFormRequestDto;
+import com.example.demandForm.dto.request.DemandFormRequestDto;
 import com.example.demandForm.dto.request.FormOptionRequestDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.entity.DemandOption;
@@ -11,13 +11,17 @@ import com.example.product.entity.Product;
 import java.util.List;
 
 public class DemandTestBuilder implements DemandTest {
-    public static CreateDemandFormRequestDto buildCreateDemandFormRequestDto() {
+    public static DemandFormRequestDto buildCreateDemandFormRequestDto() {
         List<FormOptionRequestDto> optionList = List.of(
-                new FormOptionRequestDto(1L, QUANTITY),
-                new FormOptionRequestDto(2L, QUANTITY)
+                buildFormOption(1L),
+                buildFormOption(2L)
         );
 
-        return new CreateDemandFormRequestDto(TEST_EMAIL, optionList);
+        return new DemandFormRequestDto(TEST_EMAIL, optionList);
+    }
+
+    public static FormOptionRequestDto buildFormOption(Long id) {
+        return new FormOptionRequestDto(id, QUANTITY);
     }
 
     public static Option buildOption() {
@@ -27,15 +31,26 @@ public class DemandTestBuilder implements DemandTest {
                 .build();
     }
 
+    public static Option buildOption(int additionalPrice) {
+        return Option.builder()
+                .id(1L)
+                .additionalPrice(additionalPrice)
+                .name(OPTION_NAME)
+                .build();
+    }
+
     public static DemandOption buildDemandOption(DemandForm demandForm) {
-        return DemandOption.toEntity(QUANTITY, demandForm, buildOption());
+        FormOptionRequestDto requestDto = new FormOptionRequestDto(1L, QUANTITY);
+        return requestDto.toEntity(demandForm, buildOption());
     }
 
     public static DemandForm buildMemberDemandForm(Member member, Product product) {
-        return DemandForm.toMemberEntity(member, product, buildCreateDemandFormRequestDto());
+        DemandFormRequestDto requestDto = buildCreateDemandFormRequestDto();
+        return requestDto.toEntity(member.getId(), product);
     }
 
     public static DemandForm buildNonMemberDemandForm(Product product) {
-        return DemandForm.toNonMemberEntity(ORDER_NUMBER, product, buildCreateDemandFormRequestDto());
+        DemandFormRequestDto requestDto = buildCreateDemandFormRequestDto();
+        return requestDto.toEntity(ORDER_NUMBER, product);
     }
 }

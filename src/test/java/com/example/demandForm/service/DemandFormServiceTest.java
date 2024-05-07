@@ -3,15 +3,14 @@ package com.example.demandForm.service;
 import com.example.common.exception.GlobalException;
 import com.example.demandForm.DemandTest;
 import com.example.demandForm.DemandTestBuilder;
-import com.example.demandForm.dto.request.CreateDemandFormRequestDto;
-import com.example.demandForm.dto.request.DemandFormNonMemberRequestDto;
+import com.example.demandForm.dto.request.DemandFormRequestDto;
+import com.example.demandForm.dto.request.GetFormNonMemberRequestDto;
 import com.example.demandForm.dto.response.DemandFormResponseDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.entity.DemandOption;
 import com.example.demandForm.repository.DemandFormRepository;
 import com.example.demandForm.repository.DemandOptionRepository;
 import com.example.member.entity.Member;
-import com.example.member.repository.MemberRepository;
 import com.example.product.ProductTestBuilder;
 import com.example.product.entity.Option;
 import com.example.product.entity.Product;
@@ -52,9 +51,6 @@ public class DemandFormServiceTest implements DemandTest {
     ProductRepository productRepository;
 
     @Mock
-    MemberRepository memberRepository;
-
-    @Mock
     OptionRepository optionRepository;
 
     @Mock
@@ -69,7 +65,7 @@ public class DemandFormServiceTest implements DemandTest {
     DemandOption demandOption;
     DemandForm memberDemandForm;
     DemandForm nonMemberDemandForm;
-    CreateDemandFormRequestDto requestDto;
+    DemandFormRequestDto requestDto;
     Long productId = 1L;
     Long memberId = 1L;
     Long formId = 1L;
@@ -95,7 +91,6 @@ public class DemandFormServiceTest implements DemandTest {
         @DisplayName("성공(일반 유저)")
         void demandMemberTest_success() {
             // given
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             when(productRepository.findById(productId)).thenReturn(Optional.of(product));
             when(demandFormRepository.save(any(DemandForm.class))).thenReturn(memberDemandForm);
             when(optionRepository.findById(any())).thenReturn(Optional.of(option));
@@ -115,7 +110,6 @@ public class DemandFormServiceTest implements DemandTest {
         @DisplayName("실패(일반 유저) - 중복 참여")
         void demandMemberTest_fail_duplicate() {
             // given
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             when(demandFormRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(nonMemberDemandForm));
 
             // when - then
@@ -129,7 +123,6 @@ public class DemandFormServiceTest implements DemandTest {
         @DisplayName("실패(일반 유저) - 없는 상품")
         void demandMemberTest_fail_NotFoundProduct() {
             // given
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
             // when - then
@@ -143,7 +136,6 @@ public class DemandFormServiceTest implements DemandTest {
         @DisplayName("실패(일반 유저) - 참여 기간이 아님")
         void demandMemberTest_fail_isNotPeriod() {
             // given
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             LocalDateTime endDate = LocalDateTime.of(2000, 4, 1, 12, 0);
             ReflectionTestUtils.setField(product, "endDate", endDate);
 
@@ -182,7 +174,7 @@ public class DemandFormServiceTest implements DemandTest {
         @DisplayName("성공(일반 유저) - 단건 조회")
         void getMemberDemandFormTest_success() {
             //given
-            when(demandFormRepository.findByIdAndMemberId(formId, memberId)).thenReturn(Optional.of(memberDemandForm));
+            when(demandFormRepository.findById(formId)).thenReturn(Optional.of(memberDemandForm));
 
             //when
             DemandFormResponseDto responseDto = demandFormService.getDemandFormMember(formId, memberId);
@@ -195,13 +187,14 @@ public class DemandFormServiceTest implements DemandTest {
         @DisplayName("실패(일반 유저) - 작성자와 불일치")
         void getMemberDemandFormTest_fail_misMatched() {
             //given
-            when(demandFormRepository.findByIdAndMemberId(formId, 2L)).thenReturn(Optional.empty());
+            Long memberId2 = 2L;
+            when(demandFormRepository.findById(formId)).thenReturn(Optional.of(memberDemandForm));
 
             //when - then
             GlobalException e = assertThrows(GlobalException.class, () -> {
-                demandFormService.getDemandFormMember(formId, 2L);
+                demandFormService.getDemandFormMember(formId, memberId2);
             });
-            assertEquals(NOT_FOUND_FORM, e.getErrorCode());
+            assertEquals(UNAUTHORIZED_MEMBER, e.getErrorCode());
         }
 
         @Test
@@ -211,7 +204,7 @@ public class DemandFormServiceTest implements DemandTest {
             int page = 1;
             int size = 10;
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-            DemandForm memberDemandForm2 = DemandForm.toMemberEntity(member, product, requestDto);
+            DemandForm memberDemandForm2 = requestDto.toEntity(memberId, product);
             List<DemandForm> demandFormList = Arrays.asList(memberDemandForm, memberDemandForm2);
             Page<DemandForm> demandFormPage = new PageImpl<>(demandFormList);
 
@@ -231,7 +224,7 @@ public class DemandFormServiceTest implements DemandTest {
         void getNonMemberDemandFormTest_success() {
             //given
             Long orderNumber = 12345L;
-            DemandFormNonMemberRequestDto requestDto1 = new DemandFormNonMemberRequestDto(orderNumber);
+            GetFormNonMemberRequestDto requestDto1 = new GetFormNonMemberRequestDto(orderNumber);
             when(demandFormRepository.findByOrderNumber(orderNumber)).thenReturn(Optional.of(nonMemberDemandForm));
             ReflectionTestUtils.setField(nonMemberDemandForm, "memberId", orderNumber);
 
@@ -250,7 +243,7 @@ public class DemandFormServiceTest implements DemandTest {
             int page = 1;
             int size = 10;
             Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-            DemandForm memberDemandForm2 = DemandForm.toMemberEntity(member, product, requestDto);
+            DemandForm memberDemandForm2 = requestDto.toEntity(memberId, product);
             List<DemandForm> demandFormList = Arrays.asList(memberDemandForm, memberDemandForm2);
             Page<DemandForm> demandFormPage = new PageImpl<>(demandFormList, pageable, demandFormList.size());
 
