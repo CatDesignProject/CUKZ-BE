@@ -96,7 +96,7 @@ public class DemandFormController {
         Page<DemandFormResponseDto> responseDtoList = demandFormService.getAllDemandForms(page - 1, size, productId,
                 member.getMemberId());
 
-        return ResponseEntity.ok().body(PageResponseDto.toResponseDto(responseDtoList));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(PageResponseDto.toResponseDto(responseDtoList));
     }
 
     @PatchMapping("products/{productId}/demand")
