@@ -4,6 +4,7 @@ import com.example.common.global.BaseResponse;
 import com.example.common.global.PageResponseDto;
 import com.example.likes.dto.LikesResponseDto;
 import com.example.likes.service.LikesService;
+import com.example.product.dto.response.ProductResponseDto;
 import com.example.security.authentication.AuthenticatedMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,12 +40,12 @@ public class LikesController {
     }
 
     @GetMapping("/members/likes")
-    public ResponseEntity<BaseResponse<PageResponseDto<LikesResponseDto>>> getLikedProducts(
+    public ResponseEntity<BaseResponse<PageResponseDto<ProductResponseDto>>> getLikedProducts(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
             @AuthenticationPrincipal AuthenticatedMember member) {
 
-        Page<LikesResponseDto> responseDtoPage = likesService.getLikedProducts(page - 1, size, member.getMemberId());
+        Page<ProductResponseDto> responseDtoPage = likesService.getLikedProducts(page - 1, size, member.getMemberId());
 
         return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, PageResponseDto.toResponseDto(responseDtoPage)));
     }
