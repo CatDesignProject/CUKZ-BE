@@ -3,6 +3,8 @@ package com.example.product.service;
 import com.example.common.exception.BaseErrorCode;
 import com.example.common.exception.GlobalException;
 import com.example.common.global.PageResponseDto;
+import com.example.likes.entity.Likes;
+import com.example.likes.repository.LikesRepository;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
 import com.example.product.dto.ProductOptionDto;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +36,7 @@ public class ProductService {
     private final OptionRepository optionRepository;
     private final ProductImageRepository productImageRepository;
     private final MemberRepository memberRepository;
+    private final LikesRepository likesRepository;
     private final DeliveryRepository deliveryRepository;
 
     @Transactional
@@ -65,13 +69,19 @@ public class ProductService {
         return ProductResponseDto.toResponseDto(product);
     }
 
-    public ProductResponseDto findProduct(Long productId) {
+    public ProductResponseDto findProduct(Long productId, Long memberId) {
         Product product = productRepository.findFetchById(productId)
                 .orElseThrow(
                         () -> new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT)
                 );
 
-        return ProductResponseDto.toResponseDto(product);
+        Optional<Likes> isLiked = likesRepository.findByProductIdAndMemberId(productId, memberId);
+
+        if (isLiked.isPresent()) {
+            return ProductResponseDto.toResponseDto(product, true);
+        }
+
+        return ProductResponseDto.toResponseDto(product, false);
     }
 
     @Transactional

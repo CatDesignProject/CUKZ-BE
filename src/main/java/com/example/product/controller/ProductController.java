@@ -30,8 +30,8 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<BaseResponse<ProductResponseDto>> findProduct(@PathVariable Long productId) {
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, productService.findProduct(productId)));
+    public ResponseEntity<BaseResponse<ProductResponseDto>> findProduct(@PathVariable Long productId, @AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
+        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, productService.findProduct(productId, authenticatedMember.getMemberId())));
     }
 
     @PatchMapping("/{productId}")
