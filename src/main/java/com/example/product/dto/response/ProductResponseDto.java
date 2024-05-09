@@ -18,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductResponseDto {
 
+    private Long id;
     private SaleStatus status;
     private String name;
     private int price;
@@ -42,8 +43,8 @@ public class ProductResponseDto {
             productOptionDtos.add(ProductOptionDto.toProductOptionDto(option));
         }
 
-
         return ProductResponseDto.builder()
+                .id(product.getId())
                 .status(product.getStatus())
                 .name(product.getName())
                 .price(product.getPrice())
