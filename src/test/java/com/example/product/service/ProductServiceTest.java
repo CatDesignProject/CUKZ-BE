@@ -2,6 +2,8 @@ package com.example.product.service;
 
 import com.example.common.exception.GlobalException;
 import com.example.common.global.PageResponseDto;
+import com.example.likes.entity.Likes;
+import com.example.likes.repository.LikesRepository;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
 import com.example.product.ProductTestBuilder;
@@ -48,6 +50,9 @@ class ProductServiceTest {
     @Mock
     MemberRepository memberRepository;
 
+    @Mock
+    LikesRepository likesRepository;
+
     @InjectMocks
     ProductService productService;
 
@@ -60,6 +65,8 @@ class ProductServiceTest {
     PageResponseDto<ProductThumbNailDto> pageResponseDto;
     Pageable pageable;
     String keyword = "가톨릭";
+
+    Likes likes;
 
     @Nested
     @DisplayName("saveProduct 메서드는")
@@ -121,19 +128,22 @@ class ProductServiceTest {
     @Nested
     @DisplayName("findProduct 메서드는")
     class Describe_findProduct {
+
         @Nested
-        @DisplayName("유효햔 productId인 경우")
-        class Context_with_exist_product {
+        @DisplayName("유효한 productId이고 내가 좋아요를 누른 상품인 경우")
+        class Context_with_exist_product_and_likes {
             @BeforeEach
             void setUp() {
                 product = ProductTestBuilder.testProductBuild();
+                member2 = ProductTestBuilder.testMember2Build();
+                Likes likes = new Likes();
 
                 given(productRepository.findFetchById(product.getId())).willReturn(Optional.of(product));
-
-                responseDto = productService.findProduct(product.getId());
+                given(likesRepository.findByProductIdAndMemberId(product.getId(), member2.getId())).willReturn(Optional.of(likes));
+                responseDto = productService.findProduct(product.getId(), member2.getId());
             }
             @Test
-            @DisplayName("상품 정보를 반환한다.")
+            @DisplayName("상품 정보와 isLiked = true를 반환한다.")
             void it_returns_product_response_dto() {
                 assertEquals(product.getStatus(), responseDto.getStatus());
                 assertEquals(product.getName(), responseDto.getName());
@@ -146,6 +156,37 @@ class ProductServiceTest {
                 assertEquals("www.s3v1.png", responseDto.getImageUrls().get(0));
                 assertEquals("www.s3v2.png", responseDto.getImageUrls().get(1));
                 assertEquals(product.getOptions().size(), responseDto.getOptions().size());
+                assertEquals(true, responseDto.getIsLiked());
+            }
+        }
+
+        @Nested
+        @DisplayName("유효한 productId이고 내가 좋아요를 누르지 않은 상품인 경우")
+        class Context_with_exist_product_and_not_likes {
+            @BeforeEach
+            void setUp() {
+                product = ProductTestBuilder.testProductBuild();
+                member2 = ProductTestBuilder.testMember2Build();
+
+                given(productRepository.findFetchById(product.getId())).willReturn(Optional.of(product));
+                given(likesRepository.findByProductIdAndMemberId(product.getId(), member2.getId())).willReturn(Optional.empty());
+                responseDto = productService.findProduct(product.getId(), member2.getId());
+            }
+            @Test
+            @DisplayName("상품 정보와 isLiked = false 반환한다.")
+            void it_returns_product_response_dto() {
+                assertEquals(product.getStatus(), responseDto.getStatus());
+                assertEquals(product.getName(), responseDto.getName());
+                assertEquals(product.getPrice(), responseDto.getPrice());
+                assertEquals(product.getInfo(), responseDto.getInfo());
+                assertEquals(0, responseDto.getLikesCount());
+                assertEquals(product.getMember().getNickname(), responseDto.getNickname());
+                assertEquals(product.getStartDate(), responseDto.getStartDate());
+                assertEquals(product.getEndDate(), responseDto.getEndDate());
+                assertEquals("www.s3v1.png", responseDto.getImageUrls().get(0));
+                assertEquals("www.s3v2.png", responseDto.getImageUrls().get(1));
+                assertEquals(product.getOptions().size(), responseDto.getOptions().size());
+                assertEquals(false, responseDto.getIsLiked());
             }
         }
         @Nested
@@ -154,12 +195,13 @@ class ProductServiceTest {
             @BeforeEach
             void setUp() {
                 product = ProductTestBuilder.testProductBuild();
+                member2 = ProductTestBuilder.testMember2Build();
                 given(productRepository.findFetchById(product.getId())).willReturn(Optional.empty());
             }
             @Test
             @DisplayName("존재하지 않는 상품 예외를 발생시킨다.")
             void it_returns_not_found_product_exception() {
-                assertThatThrownBy(() -> productService.findProduct(product.getId()))
+                assertThatThrownBy(() -> productService.findProduct(product.getId(), member2.getId()))
                         .isInstanceOf(GlobalException.class)
                         .hasMessage("해당 상품을 찾을 수 없습니다.");
             }
