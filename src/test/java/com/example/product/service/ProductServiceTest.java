@@ -157,6 +157,7 @@ class ProductServiceTest {
                 assertEquals("www.s3v2.png", responseDto.getImageUrls().get(1));
                 assertEquals(product.getOptions().size(), responseDto.getOptions().size());
                 assertEquals(true, responseDto.getIsLiked());
+                assertEquals(product.getMember().getId(), responseDto.getSellerId());
             }
         }
 
@@ -187,6 +188,7 @@ class ProductServiceTest {
                 assertEquals("www.s3v2.png", responseDto.getImageUrls().get(1));
                 assertEquals(product.getOptions().size(), responseDto.getOptions().size());
                 assertEquals(false, responseDto.getIsLiked());
+                assertEquals(product.getMember().getId(), responseDto.getSellerId());
             }
         }
         @Nested
