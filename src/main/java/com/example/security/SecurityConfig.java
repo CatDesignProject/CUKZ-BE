@@ -41,10 +41,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(new AntPathRequestMatcher("/**/admin/**")).hasAuthority("ROLE_ADMIN")
                         .requestMatchers(new AntPathRequestMatcher("/**/non-members/**")).permitAll()   // 비회원 요청 허용
-                        .requestMatchers(new AntPathRequestMatcher("/products/{productId:\\d+}")).hasAuthority("ROLE_MANAGER")
                         .requestMatchers("/products/{productId:\\d+}/likes","/products/{productId:\\d+}/unlikes", "/members/likes").hasAuthority("ROLE_USER")
                         .requestMatchers("/members/login", "/members/register","/members/verify-username",
-                                "/products/search","/products/paging").permitAll()
+                                "/products/search","/products/paging","/products/{productId:\\d+}").permitAll()
                         .anyRequest().authenticated())
                 .securityContext(securityContext -> new HttpSessionSecurityContextRepository())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
