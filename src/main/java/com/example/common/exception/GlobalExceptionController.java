@@ -1,6 +1,5 @@
 package com.example.common.exception;
 
-import com.example.common.global.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,26 +13,20 @@ import java.util.stream.Collectors;
 public class GlobalExceptionController {
 
     @ExceptionHandler(GlobalException.class)
-    public ResponseEntity<BaseResponse<Object>> handleException(GlobalException e) {
+    public ResponseEntity<Object> handleException(GlobalException e) {
 
-        ExceptionResponseDto responseDto = new ExceptionResponseDto(e.getErrorCode());
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(BaseResponse.of(e.getErrorCode().getStatus(), responseDto));
+        return ResponseEntity.status(e.getErrorCode().getStatus()).body(e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<BaseResponse<Object>> handleValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<Object> handleValidException(MethodArgumentNotValidException e) {
 
         List<ValidationErrorResponseDto> validationErrorResponseDtos = e.getAllErrors().stream().map
-                (objectError -> new ValidationErrorResponseDto(objectError))
+                        (objectError -> new ValidationErrorResponseDto(objectError))
                 .collect(Collectors.toList());
 
         ExceptionResponseDto responseDto = new ExceptionResponseDto(HttpStatus.BAD_REQUEST, validationErrorResponseDtos);
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(BaseResponse.of(HttpStatus.BAD_REQUEST, responseDto));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
     }
 }
