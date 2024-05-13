@@ -1,6 +1,5 @@
 package com.example.purchaseForm.controller;
 
-import com.example.common.global.BaseResponse;
 import com.example.common.global.PageResponseDto;
 import com.example.demandForm.dto.request.GetFormNonMemberRequestDto;
 import com.example.product.dto.response.ProductResponseDto;
@@ -26,28 +25,28 @@ public class PurchaseFormController {
 
     // 유저
     @PostMapping("/products/{productId}/purchase/members")
-    public ResponseEntity<BaseResponse<PurchaseFormResponseDto>> purchaseMember(
+    public ResponseEntity<PurchaseFormResponseDto> purchaseMember(
             @PathVariable Long productId,
             @Valid @RequestBody PurchaseFormRequestDto requestDto,
             @AuthenticationPrincipal AuthenticatedMember member) {
 
         PurchaseFormResponseDto responseDto = purchaseFormService.purchaseMember(productId, requestDto, member.getMemberId());
 
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.CREATED, responseDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @PostMapping("/products/{productId}/purchase/non-members")
-    public ResponseEntity<BaseResponse<PurchaseFormResponseDto>> purchaseNonMember(
+    public ResponseEntity<PurchaseFormResponseDto> purchaseNonMember(
             @PathVariable Long productId,
             @Valid @RequestBody PurchaseFormRequestDto requestDto) {
 
         PurchaseFormResponseDto responseDto = purchaseFormService.purchaseNonMember(productId, requestDto);
 
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.CREATED, responseDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @GetMapping("/members/purchase")
-    public ResponseEntity<BaseResponse<PageResponseDto<PurchaseFormResponseDto>>> getAllPurchaseFormsMember(
+    public ResponseEntity<PageResponseDto<PurchaseFormResponseDto>> getAllPurchaseFormsMember(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
             @AuthenticationPrincipal AuthenticatedMember member) {
@@ -55,41 +54,41 @@ public class PurchaseFormController {
         Page<PurchaseFormResponseDto> responseDtoList = purchaseFormService.getAllPurchaseFormsMember(page - 1, size,
                 member.getMemberId());
 
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, PageResponseDto.toResponseDto(responseDtoList)));
+        return ResponseEntity.ok().body(PageResponseDto.toResponseDto(responseDtoList));
     }
 
     @GetMapping("/members/purchase/{purchaseFormId}")
-    public ResponseEntity<BaseResponse<PurchaseFormResponseDto>> getPurchaseFormMember(
+    public ResponseEntity<PurchaseFormResponseDto> getPurchaseFormMember(
             @PathVariable Long purchaseFormId,
             @AuthenticationPrincipal AuthenticatedMember member) {
 
         PurchaseFormResponseDto responseDto = purchaseFormService.getPurchaseFormMember(purchaseFormId, member.getMemberId());
 
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
+        return ResponseEntity.ok().body(responseDto);
     }
 
     @GetMapping("/purchase/non-members")
-    public ResponseEntity<BaseResponse<PurchaseFormResponseDto>> getPurchaseFormNonMember(
+    public ResponseEntity<PurchaseFormResponseDto> getPurchaseFormNonMember(
             @RequestBody GetFormNonMemberRequestDto requestDto) {
 
         PurchaseFormResponseDto responseDto = purchaseFormService.getPurchaseFormNonMember(requestDto);
 
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
+        return ResponseEntity.ok().body(responseDto);
     }
 
     // 관리자
     @DeleteMapping("/purchase/{purchaseFormId}")
-    public ResponseEntity<BaseResponse<String>> deletePurchaseForm(
+    public ResponseEntity<String> deletePurchaseForm(
             @PathVariable Long purchaseFormId) {
 
         purchaseFormService.deletePurchaseForm(purchaseFormId);
 
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, "구매 내역이 삭제되었습니다."));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("구매 내역이 삭제되었습니다.");
     }
 
     // 총대
     @GetMapping("/products/{productId}/purchase")
-    public ResponseEntity<BaseResponse<PageResponseDto<PurchaseFormResponseDto>>> getAllPurchaseForms(
+    public ResponseEntity<PageResponseDto<PurchaseFormResponseDto>> getAllPurchaseForms(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
             @PathVariable Long productId,
@@ -98,28 +97,28 @@ public class PurchaseFormController {
         Page<PurchaseFormResponseDto> responseDtoList = purchaseFormService.getAllPurchaseForms(page - 1, size, productId,
                 member.getMemberId());
 
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, PageResponseDto.toResponseDto(responseDtoList)));
+        return ResponseEntity.ok().body(PageResponseDto.toResponseDto(responseDtoList));
     }
 
     @PatchMapping("products/{productId}/purchase")
-    public ResponseEntity<BaseResponse<ProductResponseDto>> modifyPurchaseForm(
+    public ResponseEntity<ProductResponseDto> modifyPurchaseForm(
             @PathVariable Long productId,
             @RequestBody ProductPurchaseRequestDto requestDto,
             @AuthenticationPrincipal AuthenticatedMember member) {
 
         ProductResponseDto responseDto = purchaseFormService.modifyPurchaseForm(productId, requestDto, member.getMemberId());
 
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, responseDto));
+        return ResponseEntity.ok().body(responseDto);
     }
 
     @PatchMapping("/products/{productId}/purchase/pay")
-    public ResponseEntity<BaseResponse<String>> updatePayStatus(
+    public ResponseEntity<String> updatePayStatus(
             @PathVariable Long productId,
             @Valid @RequestBody PayRequestDto requestDto,
             @AuthenticationPrincipal AuthenticatedMember member) {
 
         purchaseFormService.updatePayStatus(productId, requestDto, member.getMemberId());
 
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, "입금 상태 변경이 완료되었습니다."));
+        return ResponseEntity.ok().body("입금 상태 변경이 완료되었습니다.");
     }
 }
