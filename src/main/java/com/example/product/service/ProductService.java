@@ -151,6 +151,7 @@ public class ProductService {
                                 )
                                 .getImageUrl()
                                 , product.getMember().getNickname()
+                                , product.getStatus()
                         )
         );
         return PageResponseDto.toResponseDto(productThumbNailDtos);
