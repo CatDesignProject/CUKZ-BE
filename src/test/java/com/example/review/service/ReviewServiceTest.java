@@ -212,7 +212,7 @@ class ReviewServiceTest {
             void it_returns_not_found_member() {
                 assertThatThrownBy(() -> reviewService.findReview(seller.getId()))
                         .isInstanceOf(GlobalException.class)
-                        .hasMessage("아이디가 일치하지 않습니다.");
+                        .hasMessage("사용자가 존재하지 않습니다.");
             }
         }
     }
