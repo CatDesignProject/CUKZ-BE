@@ -1,5 +1,7 @@
 package com.example.security.authentication;
 
+import com.example.member.entity.MemberRole;
+import com.example.security.authority.CustomAuthorityUtils;
 import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
@@ -16,8 +18,8 @@ public class MemberAuthenticationToken extends AbstractAuthenticationToken {
         this.setAuthenticated(false);
     }
 
-    private MemberAuthenticationToken(Object principal, String credential) {
-        super(null);
+    private MemberAuthenticationToken(Object principal, MemberRole memberRole) {
+        super(CustomAuthorityUtils.getAuthorities(memberRole));
         this.principal = principal;
         this.credential = null;
         this.setAuthenticated(true);
@@ -30,7 +32,7 @@ public class MemberAuthenticationToken extends AbstractAuthenticationToken {
 
     // 인증처리 후
     public static MemberAuthenticationToken authenticated(AuthenticatedMember principal) {
-        return new MemberAuthenticationToken(principal, null);
+        return new MemberAuthenticationToken(principal, principal.getRole());
     }
 
     @Override

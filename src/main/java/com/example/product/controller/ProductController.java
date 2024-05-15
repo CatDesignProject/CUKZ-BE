@@ -31,7 +31,13 @@ public class ProductController {
     @GetMapping("/{productId}")
     public ResponseEntity<ProductResponseDto> findProduct(@PathVariable Long productId
             , @AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
-        return ResponseEntity.ok().body(productService.findProduct(productId, authenticatedMember.getMemberId()));
+        ProductResponseDto responseDto;
+        if(authenticatedMember == null) {
+            responseDto = productService.findProduct(productId, null);
+        } else {
+            responseDto = productService.findProduct(productId, authenticatedMember.getMemberId());
+        }
+        return ResponseEntity.ok().body(responseDto);
     }
 
     @PatchMapping("/{productId}")

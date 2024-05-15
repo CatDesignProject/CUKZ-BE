@@ -76,6 +76,7 @@ public class ProductResponseDto {
         }
 
         return ProductResponseDto.builder()
+                .id(product.getId())
                 .status(product.getStatus())
                 .name(product.getName())
                 .price(product.getPrice())

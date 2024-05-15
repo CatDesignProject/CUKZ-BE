@@ -120,7 +120,7 @@ class ProductServiceTest {
             void it_returns_not_found_member_exception() {
                 assertThatThrownBy(() -> productService.saveProduct(requestDto, member.getId()))
                         .isInstanceOf(GlobalException.class)
-                        .hasMessage("아이디가 일치하지 않습니다.");
+                        .hasMessage("사용자가 존재하지 않습니다.");
             }
         }
     }
