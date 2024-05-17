@@ -18,8 +18,8 @@ import java.util.List;
 
 public class ProductTestBuilder {
     public static ProductRequestDto testProductRequestDtoBuild() {
-        ProductOptionDto option1 = new ProductOptionDto("블랙 S", 3000);
-        ProductOptionDto option2 = new ProductOptionDto("화이트 M", 0);
+        ProductOptionDto option1 = new ProductOptionDto(1L ,"블랙 S", 3000);
+        ProductOptionDto option2 = new ProductOptionDto(2L, "화이트 M", 0);
 
         return ProductRequestDto.builder()
                 .status(SaleStatus.ON_DEMAND)
@@ -34,8 +34,8 @@ public class ProductTestBuilder {
     }
 
     public static ProductRequestDto testProductRequestDto2Build() {
-        ProductOptionDto option1 = new ProductOptionDto("블랙 L", 3000);
-        ProductOptionDto option2 = new ProductOptionDto("화이트 XL", 0);
+        ProductOptionDto option1 = new ProductOptionDto(1L, "블랙 L", 3000);
+        ProductOptionDto option2 = new ProductOptionDto(2L, "화이트 XL", 0);
 
         return ProductRequestDto.builder()
                 .status(SaleStatus.ON_DEMAND)
@@ -88,7 +88,7 @@ public class ProductTestBuilder {
         productImages.add(productImage2);
 
         Product product = new Product(1L, requestDto.getName(), requestDto.getPrice(), requestDto.getInfo(), requestDto.getStatus()
-                , requestDto.getStartDate(), requestDto.getEndDate(), member, 0, productImages, options);
+                , requestDto.getStartDate(), requestDto.getEndDate(), member, 0, "123456789012", productImages, options);
 
         return product;
     }
@@ -121,7 +121,7 @@ public class ProductTestBuilder {
         productImages.add(productImage4);
 
         Product product = new Product(2L, requestDto.getName(), requestDto.getPrice(), requestDto.getInfo(), requestDto.getStatus()
-                , requestDto.getStartDate(), requestDto.getEndDate(), member, 0, productImages, options);
+                , requestDto.getStartDate(), requestDto.getEndDate(), member, 0, "123456789012", productImages, options);
 
         return product;
     }
