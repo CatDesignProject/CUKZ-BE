@@ -5,6 +5,7 @@ import com.example.review.dto.response.ReviewResponseDto;
 import com.example.review.service.ReviewService;
 import com.example.security.authentication.AuthenticatedMember;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,6 @@ public class ReviewController {
             , @PathVariable Long sellerId, @PathVariable Long purchaseFormId
             , @AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
         reviewService.saveReview(reviewRequestDto, sellerId, purchaseFormId, authenticatedMember.getMemberId());
-        return ResponseEntity.ok().body("리뷰 완료");
+        return ResponseEntity.status(HttpStatus.CREATED).body("리뷰 완료");
     }
 }
