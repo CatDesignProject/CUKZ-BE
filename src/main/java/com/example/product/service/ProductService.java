@@ -17,7 +17,6 @@ import com.example.product.repository.OptionRepository;
 import com.example.product.repository.ProductRepository;
 import com.example.product_image.entity.ProductImage;
 import com.example.product_image.repository.ProductImageRepository;
-import com.example.purchaseForm.repository.DeliveryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +36,6 @@ public class ProductService {
     private final ProductImageRepository productImageRepository;
     private final MemberRepository memberRepository;
     private final LikesRepository likesRepository;
-    private final DeliveryRepository deliveryRepository;
 
     @Transactional
     public ProductResponseDto saveProduct(ProductRequestDto productRequestDto, Long memberId) {
@@ -111,7 +109,7 @@ public class ProductService {
         }
 
         product.modifyProduct(productRequestDto.getName(), productRequestDto.getPrice(), productRequestDto.getInfo(), productRequestDto.getStatus(),
-                productRequestDto.getStartDate(), productRequestDto.getEndDate());
+                productRequestDto.getStartDate(), productRequestDto.getEndDate(), productRequestDto.getSellerAccount());
 
         optionRepository.deleteAllByProductId(productId);
         List<ProductOptionDto> productOptionDtos = productRequestDto.getOptions();

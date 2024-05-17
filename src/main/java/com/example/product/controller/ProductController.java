@@ -51,7 +51,7 @@ public class ProductController {
     public ResponseEntity<String> deleteProduct(@PathVariable Long productId
             , @AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
         productService.deleteProduct(productId, authenticatedMember.getMemberId());
-        return ResponseEntity.ok().body(" 상품 삭제 완료");
+        return ResponseEntity.ok().body("상품 삭제 완료");
     }
 
     @GetMapping("/paging")

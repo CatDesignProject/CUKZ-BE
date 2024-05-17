@@ -33,6 +33,7 @@ public class ProductResponseDto {
     @JsonProperty("isLiked")
     private Boolean isLiked;
     private Long sellerId;
+    private String sellerAccount;
 
     public static ProductResponseDto toResponseDto(Product product) {
         List<ProductImage> productImages = product.getProductImages();
@@ -59,6 +60,7 @@ public class ProductResponseDto {
                 .nickname(product.getMember().getNickname())
                 .likesCount(product.getLikesCount())
                 .options(productOptionDtos)
+                .sellerAccount(product.getSellerAccount())
                 .build();
     }
 
@@ -89,6 +91,7 @@ public class ProductResponseDto {
                 .options(productOptionDtos)
                 .isLiked(isLiked)
                 .sellerId(product.getMember().getId())
+                .sellerAccount(product.getSellerAccount())
                 .build();
     }
 }
