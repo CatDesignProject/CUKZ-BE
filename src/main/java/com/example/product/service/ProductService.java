@@ -3,6 +3,8 @@ package com.example.product.service;
 import com.example.common.exception.BaseErrorCode;
 import com.example.common.exception.GlobalException;
 import com.example.common.global.PageResponseDto;
+import com.example.likes.entity.Likes;
+import com.example.likes.repository.LikesRepository;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
 import com.example.product.dto.ProductOptionDto;
@@ -15,7 +17,6 @@ import com.example.product.repository.OptionRepository;
 import com.example.product.repository.ProductRepository;
 import com.example.product_image.entity.ProductImage;
 import com.example.product_image.repository.ProductImageRepository;
-import com.example.purchaseForm.repository.DeliveryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +35,7 @@ public class ProductService {
     private final OptionRepository optionRepository;
     private final ProductImageRepository productImageRepository;
     private final MemberRepository memberRepository;
-    private final DeliveryRepository deliveryRepository;
+    private final LikesRepository likesRepository;
 
     @Transactional
     public ProductResponseDto saveProduct(ProductRequestDto productRequestDto, Long memberId) {
@@ -65,13 +67,19 @@ public class ProductService {
         return ProductResponseDto.toResponseDto(product);
     }
 
-    public ProductResponseDto findProduct(Long productId) {
+    public ProductResponseDto findProduct(Long productId, Long memberId) {
         Product product = productRepository.findFetchById(productId)
                 .orElseThrow(
                         () -> new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT)
                 );
 
-        return ProductResponseDto.toResponseDto(product);
+        Optional<Likes> isLiked = likesRepository.findByProductIdAndMemberId(productId, memberId);
+
+        if (isLiked.isPresent()) {
+            return ProductResponseDto.toResponseDto(product, true);
+        }
+
+        return ProductResponseDto.toResponseDto(product, false);
     }
 
     @Transactional
@@ -101,7 +109,7 @@ public class ProductService {
         }
 
         product.modifyProduct(productRequestDto.getName(), productRequestDto.getPrice(), productRequestDto.getInfo(), productRequestDto.getStatus(),
-                productRequestDto.getStartDate(), productRequestDto.getEndDate());
+                productRequestDto.getStartDate(), productRequestDto.getEndDate(), productRequestDto.getSellerAccount());
 
         optionRepository.deleteAllByProductId(productId);
         List<ProductOptionDto> productOptionDtos = productRequestDto.getOptions();
@@ -141,6 +149,7 @@ public class ProductService {
                                 )
                                 .getImageUrl()
                                 , product.getMember().getNickname()
+                                , product.getStatus()
                         )
         );
         return PageResponseDto.toResponseDto(productThumbNailDtos);

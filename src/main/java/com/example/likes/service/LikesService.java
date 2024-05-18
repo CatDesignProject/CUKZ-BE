@@ -6,6 +6,7 @@ import com.example.likes.entity.Likes;
 import com.example.likes.repository.LikesRepository;
 import com.example.member.entity.Member;
 import com.example.member.repository.MemberRepository;
+import com.example.product.dto.response.ProductResponseDto;
 import com.example.product.entity.Product;
 import com.example.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +54,7 @@ public class LikesService {
     }
 
     @Transactional(readOnly = true)
-    public Page<LikesResponseDto> getLikedProducts(int page, int size, Long memberId) {
+    public Page<ProductResponseDto> getLikedProducts(int page, int size, Long memberId) {
 
         Member member = findMember(memberId);
 
@@ -61,7 +62,7 @@ public class LikesService {
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Likes> likes = likesRepository.findByMemberId(member.getId(), pageable);
 
-        return likes.map(like -> LikesResponseDto.toResponseDto(like.getProduct()));
+        return likes.map(like -> ProductResponseDto.toResponseDto(like.getProduct()));
     }
 
     private Member findMember(Long memberId) {

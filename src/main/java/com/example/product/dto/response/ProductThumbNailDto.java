@@ -1,5 +1,7 @@
 package com.example.product.dto.response;
 
+import com.example.product.enums.SaleStatus;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,4 +17,5 @@ public class ProductThumbNailDto {
     private int likesCount;
     private String imageUrl;
     private String nickname; //총대명
+    private SaleStatus saleStatus;
 }

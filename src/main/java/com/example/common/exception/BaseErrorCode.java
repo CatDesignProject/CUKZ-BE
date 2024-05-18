@@ -11,7 +11,7 @@ import static org.springframework.http.HttpStatus.*;
 public enum BaseErrorCode {
 
     // Member
-    NOT_FOUND_MEMBER(NOT_FOUND, "아이디가 일치하지 않습니다."),
+    NOT_FOUND_MEMBER(NOT_FOUND, "사용자가 존재하지 않습니다."),
     BAD_CREDENTIAL(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     DUPLICATED_MEMBER(BAD_REQUEST, "이미 등록된 아이디입니다."),
     MISMATCHED_MEMBER(BAD_REQUEST, "작성자와 일치하지 않는 유저입니다."),

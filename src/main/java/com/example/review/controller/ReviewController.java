@@ -1,6 +1,5 @@
 package com.example.review.controller;
 
-import com.example.common.global.BaseResponse;
 import com.example.review.dto.request.ReviewRequestDto;
 import com.example.review.dto.response.ReviewResponseDto;
 import com.example.review.service.ReviewService;
@@ -19,15 +18,15 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping
-    public ResponseEntity<BaseResponse<ReviewResponseDto>> findReview(@PathVariable Long sellerId) {
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.OK, reviewService.findReview(sellerId)));
+    public ResponseEntity<ReviewResponseDto> findReview(@PathVariable Long sellerId) {
+        return ResponseEntity.ok().body(reviewService.findReview(sellerId));
     }
 
     @PostMapping("/purchaseForm/{purchaseFormId}")
-    public ResponseEntity<BaseResponse<String>> saveReview(@RequestBody ReviewRequestDto reviewRequestDto
+    public ResponseEntity<String> saveReview(@RequestBody ReviewRequestDto reviewRequestDto
             , @PathVariable Long sellerId, @PathVariable Long purchaseFormId
             , @AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
         reviewService.saveReview(reviewRequestDto, sellerId, purchaseFormId, authenticatedMember.getMemberId());
-        return ResponseEntity.ok().body(BaseResponse.of(HttpStatus.CREATED, "리뷰 완료"));
+        return ResponseEntity.status(HttpStatus.CREATED).body("리뷰 완료");
     }
 }

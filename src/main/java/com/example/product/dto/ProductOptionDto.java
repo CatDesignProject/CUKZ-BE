@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductOptionDto {
-
+    private Long id;
     private String name;
     private int additionalPrice;
 
@@ -21,6 +21,6 @@ public class ProductOptionDto {
     }
 
     public static ProductOptionDto toProductOptionDto(Option option) {
-        return new ProductOptionDto(option.getName(), option.getAdditionalPrice());
+        return new ProductOptionDto(option.getId(), option.getName(), option.getAdditionalPrice());
     }
 }
