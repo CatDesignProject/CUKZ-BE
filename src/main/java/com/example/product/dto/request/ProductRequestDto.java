@@ -27,10 +27,11 @@ public class ProductRequestDto {
     @NotEmpty(message = "상품 이미지를 선택해주세요.")
     private List<Long> productImageIds;
     private List<ProductOptionDto> options;
+    private String sellerAccount;
 
     public Product toProduct() {
         Product product = new Product();
-        product.createProductPart(name, price, info, status, startDate, endDate);
+        product.createProductPart(name, price, info, status, startDate, endDate, sellerAccount);
         return product;
     }
 }

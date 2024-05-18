@@ -105,6 +105,7 @@ class ProductServiceTest {
                 assertEquals(requestDto.getOptions().get(0).getName(), responseDto.getOptions().get(0).getName());
                 assertEquals(requestDto.getOptions().get(0).getAdditionalPrice()
                         , responseDto.getOptions().get(0).getAdditionalPrice());
+                assertEquals(requestDto.getSellerAccount(), responseDto.getSellerAccount());
             }
         }
         @Nested
@@ -158,6 +159,7 @@ class ProductServiceTest {
                 assertEquals(product.getOptions().size(), responseDto.getOptions().size());
                 assertEquals(true, responseDto.getIsLiked());
                 assertEquals(product.getMember().getId(), responseDto.getSellerId());
+                assertEquals(product.getSellerAccount(), responseDto.getSellerAccount());
             }
         }
 
@@ -189,6 +191,7 @@ class ProductServiceTest {
                 assertEquals(product.getOptions().size(), responseDto.getOptions().size());
                 assertEquals(false, responseDto.getIsLiked());
                 assertEquals(product.getMember().getId(), responseDto.getSellerId());
+                assertEquals(product.getSellerAccount(), responseDto.getSellerAccount());
             }
         }
         @Nested
@@ -243,6 +246,7 @@ class ProductServiceTest {
                 assertEquals(requestDto.getOptions().get(0).getName(), responseDto.getOptions().get(0).getName());
                 assertEquals(requestDto.getOptions().get(0).getAdditionalPrice()
                         , responseDto.getOptions().get(0).getAdditionalPrice());
+                assertEquals(requestDto.getSellerAccount(), responseDto.getSellerAccount());
             }
         }
         @Nested

@@ -40,6 +40,8 @@ public class Product {
 
     private int likesCount;
 
+    private String sellerAccount;
+
     @OneToMany(mappedBy = "product")
     private List<ProductImage> productImages = new ArrayList<>();
 
@@ -57,7 +59,7 @@ public class Product {
     }
 
     public void createProductPart(String name, int price, String info
-            , SaleStatus status, LocalDateTime startDate, LocalDateTime endDate) {
+            , SaleStatus status, LocalDateTime startDate, LocalDateTime endDate, String sellerAccount) {
         this.name = name;
         this.price = price;
         this.info = info;
@@ -65,16 +67,18 @@ public class Product {
         this.startDate = startDate;
         this.endDate = endDate;
         this.likesCount = 0;
+        this.sellerAccount = sellerAccount;
     }
 
     public void modifyProduct(String name, int price, String info
-            , SaleStatus status, LocalDateTime startDate, LocalDateTime endDate) {
+            , SaleStatus status, LocalDateTime startDate, LocalDateTime endDate, String sellerAccount) {
         this.name = name;
         this.price = price;
         this.info = info;
         this.status = status;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.sellerAccount = sellerAccount;
     }
 
     public void modifyProductForm(SaleStatus status, LocalDateTime startDate, LocalDateTime endDate) {

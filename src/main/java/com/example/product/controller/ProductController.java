@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<ProductResponseDto> saveProduct(@Valid @RequestBody ProductRequestDto productRequestDto
             , @AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
-        return ResponseEntity.ok().body(productService.saveProduct(productRequestDto, authenticatedMember.getMemberId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.saveProduct(productRequestDto, authenticatedMember.getMemberId()));
     }
 
     @GetMapping("/{productId}")
@@ -51,7 +52,7 @@ public class ProductController {
     public ResponseEntity<String> deleteProduct(@PathVariable Long productId
             , @AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
         productService.deleteProduct(productId, authenticatedMember.getMemberId());
-        return ResponseEntity.ok().body(" 상품 삭제 완료");
+        return ResponseEntity.ok().body("상품 삭제 완료");
     }
 
     @GetMapping("/paging")
