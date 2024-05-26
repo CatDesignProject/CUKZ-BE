@@ -111,6 +111,18 @@ public class ProductService {
         product.modifyProduct(productRequestDto.getName(), productRequestDto.getPrice(), productRequestDto.getInfo(), productRequestDto.getStatus(),
                 productRequestDto.getStartDate(), productRequestDto.getEndDate(), productRequestDto.getSellerAccount());
 
+        product.removeProductImages();
+
+        for (Long id : productRequestDto.getProductImageIds()) {
+            ProductImage productImage = productImageRepository.findById(id).orElseThrow(
+                    () -> new GlobalException(BaseErrorCode.NOT_FOUND_IMAGE)
+            );
+
+            product.addProductImage(productImage);
+        }
+
+        productImageRepository.deleteByProductIsNull();
+
         optionRepository.deleteAllByProductId(productId);
         List<ProductOptionDto> productOptionDtos = productRequestDto.getOptions();
         for (ProductOptionDto productOptionDto : productOptionDtos) {
