@@ -110,7 +110,8 @@ public class DemandFormServiceTest implements DemandTest {
         @DisplayName("실패(일반 유저) - 중복 참여")
         void demandMemberTest_fail_duplicate() {
             // given
-            when(demandFormRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(nonMemberDemandForm));
+            when(demandFormRepository.findByEmailAndProductId(TEST_EMAIL, productId))
+                    .thenReturn(Optional.of(nonMemberDemandForm));
 
             // when - then
             GlobalException e = assertThrows(GlobalException.class, () -> {
