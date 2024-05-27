@@ -67,7 +67,6 @@ public class ProductController {
         return ResponseEntity.ok().body(productService.searchProduct(keyword, pageable));
     }
 
-    // 내가 등록한 상품 목록 전체 조회
     @GetMapping("/me")
     public ResponseEntity<PageResponseDto<ProductThumbNailDto>> findMyProduct(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
