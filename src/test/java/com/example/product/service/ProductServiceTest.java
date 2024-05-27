@@ -225,6 +225,8 @@ class ProductServiceTest {
                 requestDto = ProductTestBuilder.testProductRequestDtoBuild();
                 member = product.getMember();
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
+                given(productImageRepository.findById(requestDto.getProductImageIds().get(0))).willReturn(Optional.of(ProductTestBuilder.testProductImageBuild()));
+                given(productImageRepository.findById(requestDto.getProductImageIds().get(1))).willReturn(Optional.of(ProductTestBuilder.testProductImage2Build()));
                 doNothing().when(optionRepository).deleteAllByProductId(product.getId());
                 given(optionRepository.save(any(Option.class))).willReturn(any(Option.class));
 
@@ -241,8 +243,8 @@ class ProductServiceTest {
                 assertEquals(member.getNickname(), responseDto.getNickname());
                 assertEquals(requestDto.getStartDate(), responseDto.getStartDate());
                 assertEquals(requestDto.getEndDate(), responseDto.getEndDate());
-                assertEquals("www.s3v1.png", responseDto.getImageUrls().get(0));
-                assertEquals("www.s3v2.png", responseDto.getImageUrls().get(1));
+                assertEquals(ProductTestBuilder.testProductImageBuild().getImageUrl(), responseDto.getImageUrls().get(0));
+                assertEquals(ProductTestBuilder.testProductImage2Build().getImageUrl(), responseDto.getImageUrls().get(1));
                 assertEquals(requestDto.getOptions().get(0).getName(), responseDto.getOptions().get(0).getName());
                 assertEquals(requestDto.getOptions().get(0).getAdditionalPrice()
                         , responseDto.getOptions().get(0).getAdditionalPrice());

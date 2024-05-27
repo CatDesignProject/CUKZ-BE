@@ -26,4 +26,8 @@ public class ProductImage {
     public void addProduct(Product product) {
         this.product = product;
     }
+
+    public void removeProduct(Product product) {
+        this.product = product;
+    }
 }
