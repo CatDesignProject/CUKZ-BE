@@ -150,6 +150,14 @@ public class ProductService {
         return toProductThumbNailDto(page);
     }
 
+    public PageResponseDto<ProductThumbNailDto> findMyProduct(Long memberId, Pageable pageable) {
+        Page<Product> page = productRepository.findByMemberId(memberId, pageable);
+        if (page.isEmpty()) {
+            throw new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT);
+        }
+        return toProductThumbNailDto(page);
+    }
+
     private PageResponseDto<ProductThumbNailDto> toProductThumbNailDto(Page<Product> page) {
         Page<ProductThumbNailDto> productThumbNailDtos = page.map(
                 product ->
