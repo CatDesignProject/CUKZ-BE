@@ -123,14 +123,6 @@ public class ProductService {
 
         productImageRepository.deleteByProductIsNull();
 
-        optionRepository.deleteAllByProductId(productId);
-        List<ProductOptionDto> productOptionDtos = productRequestDto.getOptions();
-        for (ProductOptionDto productOptionDto : productOptionDtos) {
-            Option option = productOptionDto.toOption();
-            option.addProduct(product);
-            optionRepository.save(option);
-        }
-
         return ProductResponseDto.toResponseDto(product);
     }
 
