@@ -111,13 +111,17 @@ public class ProductService {
         product.modifyProduct(productRequestDto.getName(), productRequestDto.getPrice(), productRequestDto.getInfo(), productRequestDto.getStatus(),
                 productRequestDto.getStartDate(), productRequestDto.getEndDate(), productRequestDto.getSellerAccount());
 
-        optionRepository.deleteAllByProductId(productId);
-        List<ProductOptionDto> productOptionDtos = productRequestDto.getOptions();
-        for (ProductOptionDto productOptionDto : productOptionDtos) {
-            Option option = productOptionDto.toOption();
-            option.addProduct(product);
-            optionRepository.save(option);
+        product.removeProductImages();
+
+        for (Long id : productRequestDto.getProductImageIds()) {
+            ProductImage productImage = productImageRepository.findById(id).orElseThrow(
+                    () -> new GlobalException(BaseErrorCode.NOT_FOUND_IMAGE)
+            );
+
+            product.addProductImage(productImage);
         }
+
+        productImageRepository.deleteByProductIsNull();
 
         return ProductResponseDto.toResponseDto(product);
     }
@@ -134,6 +138,14 @@ public class ProductService {
         Page<Product> page = productRepository.findSearchByKeyword(keyword, pageable);
         if (page.isEmpty()) {
             throw new GlobalException(BaseErrorCode.NOT_FOUND_SEARCH_PRODUCT);
+        }
+        return toProductThumbNailDto(page);
+    }
+
+    public PageResponseDto<ProductThumbNailDto> findMyProduct(Long memberId, Pageable pageable) {
+        Page<Product> page = productRepository.findByMemberId(memberId, pageable);
+        if (page.isEmpty()) {
+            throw new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT);
         }
         return toProductThumbNailDto(page);
     }

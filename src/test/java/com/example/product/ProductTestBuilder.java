@@ -137,4 +137,18 @@ public class ProductTestBuilder {
         List<Product> products = Arrays.asList(product1, product2);
         return new PageImpl<>(products, pageable, products.size());
     }
+
+    public static ProductImage testProductImageBuild() {
+        return ProductImage.builder()
+                .id(3L)
+                .imageUrl("www.s3v1.com")
+                .build();
+    }
+
+    public static ProductImage testProductImage2Build() {
+        return ProductImage.builder()
+                .id(4L)
+                .imageUrl("www.s3v2.com")
+                .build();
+    }
 }

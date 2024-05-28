@@ -46,7 +46,7 @@ public class DemandFormService {
     public DemandFormResponseDto demandMember(Long productId, DemandFormRequestDto requestDto, Long memberId) {
 
         // 유저 중복 참여 검증
-        checkDuplicate(requestDto.getEmail());
+        checkDuplicate(requestDto.getEmail(), productId);
 
         // 수요조사 기간 검증
         Product product = findProduct(productId);
@@ -66,7 +66,7 @@ public class DemandFormService {
     public DemandFormResponseDto demandNonMember(Long productId, DemandFormRequestDto requestDto) {
 
         // 중복 참여, 수요조사 기간 검증
-        checkDuplicate(requestDto.getEmail());
+        checkDuplicate(requestDto.getEmail(), productId);
         Product product = findProduct(productId);
         checkPeriod(product);
 
@@ -187,8 +187,8 @@ public class DemandFormService {
         }
     }
 
-    public void checkDuplicate(String email) {
-        if (demandFormRepository.findByEmail(email).isPresent()) {
+    public void checkDuplicate(String email, Long productId) {
+        if (demandFormRepository.findByEmailAndProductId(email, productId).isPresent()) {
             throw new GlobalException(DUPLICATED_FORM);
         }
     }
