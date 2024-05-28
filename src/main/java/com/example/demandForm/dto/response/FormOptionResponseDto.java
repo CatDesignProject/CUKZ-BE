@@ -14,12 +14,14 @@ import lombok.NoArgsConstructor;
 public class FormOptionResponseDto {
 
     private Long optionId;
+    private String optionName;
     private int quantity;
 
     public static FormOptionResponseDto toResponseDto(DemandOption demandOption) {
 
         return FormOptionResponseDto.builder()
                 .optionId(demandOption.getOption().getId())
+                .optionName(demandOption.getOption().getName())
                 .quantity(demandOption.getQuantity())
                 .build();
     }
@@ -28,6 +30,7 @@ public class FormOptionResponseDto {
 
         return FormOptionResponseDto.builder()
                 .optionId(purchaseOption.getOption().getId())
+                .optionName(purchaseOption.getOption().getName())
                 .quantity(purchaseOption.getQuantity())
                 .build();
     }

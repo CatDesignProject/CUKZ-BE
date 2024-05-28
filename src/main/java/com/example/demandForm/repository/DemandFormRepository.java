@@ -14,9 +14,10 @@ public interface DemandFormRepository extends JpaRepository<DemandForm, Long> {
     @Query("SELECT df FROM DemandForm df WHERE df.memberId = :orderNumber")
     Optional<DemandForm> findByOrderNumber(@Param("orderNumber") Long orderNumber);
 
-    Optional<DemandForm> findByEmail(String email);
+    Optional<DemandForm> findByEmailAndProductId(String email, Long productId);
 
     Page<DemandForm> findByMemberId(Long memberId, Pageable pageable);
 
     Page<DemandForm> findByProductId(Long productId, Pageable pageable);
+
 }
