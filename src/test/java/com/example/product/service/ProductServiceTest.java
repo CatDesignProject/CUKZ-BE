@@ -227,8 +227,6 @@ class ProductServiceTest {
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
                 given(productImageRepository.findById(requestDto.getProductImageIds().get(0))).willReturn(Optional.of(ProductTestBuilder.testProductImageBuild()));
                 given(productImageRepository.findById(requestDto.getProductImageIds().get(1))).willReturn(Optional.of(ProductTestBuilder.testProductImage2Build()));
-                doNothing().when(optionRepository).deleteAllByProductId(product.getId());
-                given(optionRepository.save(any(Option.class))).willReturn(any(Option.class));
 
                 responseDto = productService.modifyProduct(product.getId(), requestDto, member.getId());
             }
@@ -299,7 +297,6 @@ class ProductServiceTest {
                 member = product.getMember();
 
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
-                doNothing().when(optionRepository).deleteAllByProductId(product.getId());
                 doNothing().when(productImageRepository).deleteAllByProductId(product.getId());
                 doNothing().when(productRepository).deleteById(product.getId());
 
@@ -308,7 +305,6 @@ class ProductServiceTest {
             @Test
             @DisplayName("상품 삭제에 성공한다.")
             void it_returns_success_delete() {
-                then(optionRepository).should(times(1)).deleteAllByProductId(product.getId());
                 then(productImageRepository).should(times(1)).deleteAllByProductId(product.getId());
                 then(productRepository).should(times(1)).deleteById(product.getId());
             }
