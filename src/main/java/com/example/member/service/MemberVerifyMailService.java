@@ -1,15 +1,22 @@
 package com.example.member.service;
 
+import com.example.common.jwt.JwtTokenizer;
 import com.example.member.dto.VerifyMailDto;
+import com.example.security.authentication.AuthenticatedMember;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class MemberVerifyMailService {
 
+    private final JwtTokenizer jwtTokenizer;
+    private final String domain = "http://3.35.203.198:8080?token=";
+
     public boolean requestVerification(VerifyMailDto verifyMailDto) {
         String verificationLink = createVerificationLink(verifyMailDto.getEmail());
+        System.out.println(verificationLink);
         String mailTemplate = createMailTemplate(verificationLink);
         sendEmail(mailTemplate);
         return false;
@@ -20,11 +27,10 @@ public class MemberVerifyMailService {
         return false;
     }
 
-    private String createVerificationLink(String email) {
-        // SecurityContext에서 memberId 꺼내기
-        // JWT 토큰 생성 시 memberId, email 넘겨주기
-        // 토큰 Redis에 저장하기
-        return ""; // 링크에 JWT 이어붙여 리턴
+    private String createVerificationLink(String email) { // memberId, email 으로 JWT 토큰 생성 및 메일 인증링크 생성
+        Long memberId = ((AuthenticatedMember) (SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getMemberId();
+        String jwt = jwtTokenizer.createToken(memberId, email);
+        return domain + jwt;
     }
 
     private String createMailTemplate(String link) {
