@@ -58,8 +58,8 @@ public class PurchaseFormService {
         saveOptions(requestDto, purchaseForm, product);
 
         // 배송 금액 저장
-        Delivery delivery = findDelivery(requestDto.getDeliveryId());
-        purchaseForm.updateTotalPrice(delivery.getPrice());
+//        Delivery delivery = findDelivery(requestDto.getDeliveryId());
+//        purchaseForm.updateTotalPrice(delivery.getPrice());
 
         return PurchaseFormResponseDto.toResponseDto(purchaseForm);
     }
@@ -78,8 +78,8 @@ public class PurchaseFormService {
         saveOptions(requestDto, purchaseForm, product);
 
         // 배송 금액 저장
-        Delivery delivery = findDelivery(requestDto.getDeliveryId());
-        purchaseForm.updateTotalPrice(delivery.getPrice());
+//        Delivery delivery = findDelivery(requestDto.getDeliveryId());
+//        purchaseForm.updateTotalPrice(delivery.getPrice());
 
         return PurchaseFormResponseDto.toResponseDto(purchaseForm);
     }
