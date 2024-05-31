@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +27,6 @@ public class PurchaseFormRequestDto {
     private String address;
 
     private String payerName;
-    private LocalDate payDate;
 
     private String refundName;
     private String refundAccount;
@@ -48,7 +46,6 @@ public class PurchaseFormRequestDto {
                 .recipientPhone(this.recipientPhone)
                 .address(this.address)
                 .payerName(this.payerName)
-                .payDate(this.payDate)
                 .refundName(this.refundName)
                 .refundAccount(this.refundAccount)
                 .purchaseOptionList(new ArrayList<>())
