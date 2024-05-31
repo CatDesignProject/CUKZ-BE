@@ -25,7 +25,7 @@ public class PurchaseTestBuilder implements PurchaseTest, DemandTest {
         return PurchaseFormRequestDto.builder()
                 .buyerName(BUYER_NAME)
                 .buyerPhone(BUYER_PHONE)
-                .buyerEmail(BUYER_EMAIL)
+                //.buyerEmail(BUYER_EMAIL)
                 //.deliveryId(1L)
                 .recipientName(RECIPIENT_NAME)
                 .recipientPhone(RECIPIENT_PHONE)

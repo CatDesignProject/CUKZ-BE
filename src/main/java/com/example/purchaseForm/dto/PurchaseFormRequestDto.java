@@ -19,7 +19,7 @@ public class PurchaseFormRequestDto {
 
     private String buyerName;
     private String buyerPhone;
-    private String buyerEmail;
+    //private String buyerEmail;
 
     //private Long deliveryId;
     private String recipientName;
@@ -40,7 +40,7 @@ public class PurchaseFormRequestDto {
                 .product(product)
                 .buyerName(this.buyerName)
                 .buyerPhone(this.buyerPhone)
-                .buyerEmail(this.buyerEmail)
+                //.buyerEmail(this.buyerEmail)
                 //.deliveryId(this.deliveryId)
                 .recipientName(this.recipientName)
                 .recipientPhone(this.recipientPhone)
