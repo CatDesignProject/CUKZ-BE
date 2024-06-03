@@ -14,11 +14,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Slf4j
-@RestController
+@Controller
 @RequiredArgsConstructor
 public class MemberController {
 
@@ -57,5 +61,12 @@ public class MemberController {
     public ResponseEntity<Boolean> verifyMail(@RequestBody @Validated VerifyMailDto verifyMailDto) {
         boolean isRequested = memberVerifyMailService.requestVerification(verifyMailDto);
         return ResponseEntity.ok().body(isRequested);
+    }
+
+    @GetMapping("/verify-email")
+    public String verifyMail(@RequestParam String token, Model model) {
+        Map<String, String> map = memberVerifyMailService.verify(token);
+        model.addAllAttributes(map);
+        return "email-verification-complete";
     }
 }

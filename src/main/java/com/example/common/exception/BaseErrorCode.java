@@ -54,8 +54,9 @@ public enum BaseErrorCode {
     NOT_YET_WRITE_REVIEW(FORBIDDEN, "아직 해당 상품은 리뷰 작성을 할 수 없습니다."),
 
     // Mail
-    INVALID_EMAIL(BAD_REQUEST, "이메일 형식이 올바르지 않습니다."),
-    MAIL_SEND_FAILED(INTERNAL_SERVER_ERROR, "메일 전송에 실패했습니다.");
+    ILLEGAL_EMAIL(BAD_REQUEST, "이메일 형식이 올바르지 않습니다."),
+    MAIL_SEND_FAILED(INTERNAL_SERVER_ERROR, "메일 전송에 실패했습니다."),
+    INVALID_EMAIL(BAD_REQUEST, "이메일 인증에 실패했습니다.");
 
     private final HttpStatus status;
     private final String msg;
