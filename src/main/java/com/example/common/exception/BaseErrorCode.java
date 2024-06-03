@@ -51,7 +51,11 @@ public enum BaseErrorCode {
     UNAUTHORIZED_WRITE_REVIEW_TO_SELLER(FORBIDDEN, "해당 총대에게 리뷰를 작성할 권한이 없습니다."),
     UNAUTHORIZED_WRITE_REVIEW_FROM_PURCHASE_FORM(FORBIDDEN, "해당 구매폼으로 리뷰를 작성할 권한이 없습니다."),
     ALREADY_WRITE_REVIEW(FORBIDDEN, "이미 리뷰를 작성했습니다."),
-    NOT_YET_WRITE_REVIEW(FORBIDDEN, "아직 해당 상품은 리뷰 작성을 할 수 없습니다.");
+    NOT_YET_WRITE_REVIEW(FORBIDDEN, "아직 해당 상품은 리뷰 작성을 할 수 없습니다."),
+
+    // Mail
+    INVALID_EMAIL(BAD_REQUEST, "이메일 형식이 올바르지 않습니다."),
+    MAIL_SEND_FAILED(INTERNAL_SERVER_ERROR, "메일 전송에 실패했습니다.");
 
     private final HttpStatus status;
     private final String msg;
