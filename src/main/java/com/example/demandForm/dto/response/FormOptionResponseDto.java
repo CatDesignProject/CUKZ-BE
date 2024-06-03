@@ -15,13 +15,15 @@ public class FormOptionResponseDto {
 
     private Long optionId;
     private String optionName;
+    private int additionalPrice;
     private int quantity;
 
     public static FormOptionResponseDto toResponseDto(DemandOption demandOption) {
 
         return FormOptionResponseDto.builder()
-                .optionId(demandOption.getOption().getId())
-                .optionName(demandOption.getOption().getName())
+                .optionId(demandOption.getOptionId())
+                .optionName(demandOption.getOptionName())
+                .additionalPrice(demandOption.getAdditionalPrice())
                 .quantity(demandOption.getQuantity())
                 .build();
     }
