@@ -31,9 +31,9 @@ public class FormOptionResponseDto {
     public static FormOptionResponseDto toResponseDto(PurchaseOption purchaseOption) {
 
         return FormOptionResponseDto.builder()
-                .optionId(purchaseOption.getOption().getId())
-                .optionName(purchaseOption.getOption().getName())
-                .additionalPrice(purchaseOption.getOption().getAdditionalPrice())
+                .optionId(purchaseOption.getOptionId())
+                .optionName(purchaseOption.getOptionName())
+                .additionalPrice(purchaseOption.getAdditionalPrice())
                 .quantity(purchaseOption.getQuantity())
                 .build();
     }

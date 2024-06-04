@@ -1,6 +1,5 @@
 package com.example.purchaseForm.entity;
 
-import com.example.product.entity.Option;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,11 +19,13 @@ public class PurchaseOption {
 
     private int quantity;
 
+    private Long optionId;
+
+    private String optionName;
+
+    private int additionalPrice;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "purchase_form_id")
     private PurchaseForm purchaseForm;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "option_id")
-    private Option option;
 }
