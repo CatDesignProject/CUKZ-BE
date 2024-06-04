@@ -66,4 +66,11 @@ public class ProductController {
             , @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(productService.searchProduct(keyword, pageable));
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<PageResponseDto<ProductThumbNailDto>> findMyProduct(
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+            , @AuthenticationPrincipal AuthenticatedMember authenticatedMember) {
+        return ResponseEntity.ok().body(productService.findMyProduct(authenticatedMember.getMemberId(), pageable));
+    }
 }

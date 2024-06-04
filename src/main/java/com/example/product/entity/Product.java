@@ -98,4 +98,11 @@ public class Product {
     public void addOption(Option option) {
         this.options.add(option);
     }
+
+    public void removeProductImages() {
+        for (ProductImage productImage : new ArrayList<>(productImages)) {
+                productImage.removeProduct(null);
+                this.productImages.remove(productImage);
+        }
+    }
 }

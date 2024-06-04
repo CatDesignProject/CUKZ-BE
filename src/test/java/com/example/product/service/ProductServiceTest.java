@@ -225,8 +225,8 @@ class ProductServiceTest {
                 requestDto = ProductTestBuilder.testProductRequestDtoBuild();
                 member = product.getMember();
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
-                doNothing().when(optionRepository).deleteAllByProductId(product.getId());
-                given(optionRepository.save(any(Option.class))).willReturn(any(Option.class));
+                given(productImageRepository.findById(requestDto.getProductImageIds().get(0))).willReturn(Optional.of(ProductTestBuilder.testProductImageBuild()));
+                given(productImageRepository.findById(requestDto.getProductImageIds().get(1))).willReturn(Optional.of(ProductTestBuilder.testProductImage2Build()));
 
                 responseDto = productService.modifyProduct(product.getId(), requestDto, member.getId());
             }
@@ -241,8 +241,8 @@ class ProductServiceTest {
                 assertEquals(member.getNickname(), responseDto.getNickname());
                 assertEquals(requestDto.getStartDate(), responseDto.getStartDate());
                 assertEquals(requestDto.getEndDate(), responseDto.getEndDate());
-                assertEquals("www.s3v1.png", responseDto.getImageUrls().get(0));
-                assertEquals("www.s3v2.png", responseDto.getImageUrls().get(1));
+                assertEquals(ProductTestBuilder.testProductImageBuild().getImageUrl(), responseDto.getImageUrls().get(0));
+                assertEquals(ProductTestBuilder.testProductImage2Build().getImageUrl(), responseDto.getImageUrls().get(1));
                 assertEquals(requestDto.getOptions().get(0).getName(), responseDto.getOptions().get(0).getName());
                 assertEquals(requestDto.getOptions().get(0).getAdditionalPrice()
                         , responseDto.getOptions().get(0).getAdditionalPrice());
@@ -297,7 +297,6 @@ class ProductServiceTest {
                 member = product.getMember();
 
                 given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
-                doNothing().when(optionRepository).deleteAllByProductId(product.getId());
                 doNothing().when(productImageRepository).deleteAllByProductId(product.getId());
                 doNothing().when(productRepository).deleteById(product.getId());
 
@@ -306,7 +305,6 @@ class ProductServiceTest {
             @Test
             @DisplayName("상품 삭제에 성공한다.")
             void it_returns_success_delete() {
-                then(optionRepository).should(times(1)).deleteAllByProductId(product.getId());
                 then(productImageRepository).should(times(1)).deleteAllByProductId(product.getId());
                 then(productRepository).should(times(1)).deleteById(product.getId());
             }
