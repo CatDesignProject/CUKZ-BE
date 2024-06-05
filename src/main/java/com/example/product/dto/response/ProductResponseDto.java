@@ -69,7 +69,7 @@ public class ProductResponseDto {
                 .build();
     }
 
-    public static ProductResponseDto toResponseDto(Product product, Optional<Likes> isLiked, Optional<PurchaseForm> isBuy) {
+    public static ProductResponseDto toResponseDto(Product product, boolean isLiked, boolean isBuy) {
         List<ProductImage> productImages = product.getProductImages();
         List<String> imageUrls = new ArrayList<>();
         for (ProductImage productImage : productImages) {
@@ -94,8 +94,8 @@ public class ProductResponseDto {
                 .nickname(product.getMember().getNickname())
                 .likesCount(product.getLikesCount())
                 .options(productOptionDtos)
-                .isLiked(isLiked.isPresent())
-                .isBuy(isBuy.isPresent())
+                .isLiked(isLiked)
+                .isBuy(isBuy)
                 .sellerId(product.getMember().getId())
                 .sellerAccount(product.getSellerAccount())
                 .build();

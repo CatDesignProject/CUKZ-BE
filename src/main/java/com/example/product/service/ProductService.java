@@ -76,8 +76,8 @@ public class ProductService {
                         () -> new GlobalException(BaseErrorCode.NOT_FOUND_PRODUCT)
                 );
 
-        Optional<Likes> isLiked = likesRepository.findByProductIdAndMemberId(productId, memberId);
-        Optional<PurchaseForm> isBuy = purchaseFormRepository.findByProductIdAndMemberId(productId, memberId);
+        boolean isLiked = likesRepository.findByProductIdAndMemberId(productId, memberId).isPresent();
+        boolean isBuy = purchaseFormRepository.findByProductIdAndMemberId(productId, memberId).isPresent();
 
         return ProductResponseDto.toResponseDto(product, isLiked, isBuy);
     }
