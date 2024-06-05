@@ -32,6 +32,8 @@ public class ProductResponseDto {
     private List<ProductOptionDto> options;
     @JsonProperty("isLiked")
     private Boolean isLiked;
+    @JsonProperty("isBuy")
+    private Boolean isBuy;
     private Long sellerId;
     private String sellerAccount;
 
@@ -64,7 +66,7 @@ public class ProductResponseDto {
                 .build();
     }
 
-    public static ProductResponseDto toResponseDto(Product product, boolean isLiked) {
+    public static ProductResponseDto toResponseDto(Product product, boolean isLiked, boolean isBuy) {
         List<ProductImage> productImages = product.getProductImages();
         List<String> imageUrls = new ArrayList<>();
         for (ProductImage productImage : productImages) {
@@ -90,6 +92,7 @@ public class ProductResponseDto {
                 .likesCount(product.getLikesCount())
                 .options(productOptionDtos)
                 .isLiked(isLiked)
+                .isBuy(isBuy)
                 .sellerId(product.getMember().getId())
                 .sellerAccount(product.getSellerAccount())
                 .build();
