@@ -14,6 +14,6 @@ public interface PurchaseTest {
     String REFUND_NAME = "환불자 이름";
     String REFUND_ACCOUNT = "환불 계좌";
     String DELIVERY_TYPE = "배송방법";
-    int DELIVERY_PRICE = 3000;
+    int DELIVERY_PRICE = 0;
     int ADDITIONAL_PRICE = 1000;
 }

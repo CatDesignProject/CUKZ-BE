@@ -58,8 +58,8 @@ public class PurchaseFormService {
         saveOptions(requestDto, purchaseForm, product);
 
         // 배송 금액 저장
-        Delivery delivery = findDelivery(requestDto.getDeliveryId());
-        purchaseForm.updateTotalPrice(delivery.getPrice());
+//        Delivery delivery = findDelivery(requestDto.getDeliveryId());
+//        purchaseForm.updateTotalPrice(delivery.getPrice());
 
         return PurchaseFormResponseDto.toResponseDto(purchaseForm);
     }
@@ -78,8 +78,8 @@ public class PurchaseFormService {
         saveOptions(requestDto, purchaseForm, product);
 
         // 배송 금액 저장
-        Delivery delivery = findDelivery(requestDto.getDeliveryId());
-        purchaseForm.updateTotalPrice(delivery.getPrice());
+//        Delivery delivery = findDelivery(requestDto.getDeliveryId());
+//        purchaseForm.updateTotalPrice(delivery.getPrice());
 
         return PurchaseFormResponseDto.toResponseDto(purchaseForm);
     }
@@ -119,7 +119,7 @@ public class PurchaseFormService {
         PurchaseForm purchaseForm = findPurchaseForm(purchaseFormId);
 
         purchaseForm.getPurchaseOptionList().forEach(purchaseOption -> {
-            Option option = purchaseOption.getOption();
+            Option option = findOption(purchaseOption.getOptionId());
             option.updateSalesQuantity(-purchaseOption.getQuantity());
         });
 
@@ -221,11 +221,11 @@ public class PurchaseFormService {
         );
     }
 
-    private Delivery findDelivery(Long deliveryId) {
-        return deliveryRepository.findById(deliveryId).orElseThrow(() ->
-                new GlobalException(NOT_FOUND_DELIVERY)
-        );
-    }
+//    private Delivery findDelivery(Long deliveryId) {
+//        return deliveryRepository.findById(deliveryId).orElseThrow(() ->
+//                new GlobalException(NOT_FOUND_DELIVERY)
+//        );
+//    }
 
     private PurchaseForm findPurchaseForm(Long formId) {
         return purchaseFormRepository.findById(formId).orElseThrow(() ->

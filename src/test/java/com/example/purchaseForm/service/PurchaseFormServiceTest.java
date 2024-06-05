@@ -93,7 +93,7 @@ class PurchaseFormServiceTest implements PurchaseTest {
             when(purchaseFormRepository.save(any())).thenReturn(purchaseForm);
             when(optionRepository.findById(any())).thenReturn(Optional.of(option));
             when(purchaseOptionRepository.save(any())).thenReturn(purchaseOption);
-            when(deliveryRepository.findById(any())).thenReturn(Optional.of(delivery));
+            //when(deliveryRepository.findById(any())).thenReturn(Optional.of(delivery));
 
             // when
             PurchaseFormResponseDto responseDto = purchaseFormService.purchaseMember(productId, requestDto, memberId);
@@ -158,7 +158,7 @@ class PurchaseFormServiceTest implements PurchaseTest {
             when(purchaseFormRepository.save(any())).thenReturn(purchaseForm);
             when(optionRepository.findById(any())).thenReturn(Optional.of(option));
             when(purchaseOptionRepository.save(any())).thenReturn(purchaseOption);
-            when(deliveryRepository.findById(any())).thenReturn(Optional.of(delivery));
+            //when(deliveryRepository.findById(any())).thenReturn(Optional.of(delivery));
 
             // when
             PurchaseFormResponseDto responseDto = purchaseFormService.purchaseNonMember(productId, requestDto);
