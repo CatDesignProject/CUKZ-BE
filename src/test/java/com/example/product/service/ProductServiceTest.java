@@ -151,7 +151,7 @@ class ProductServiceTest {
                 responseDto = productService.findProduct(product.getId(), member2.getId());
             }
             @Test
-            @DisplayName("상품 정보와 isLiked = true isBuy = true 를 반환한다.")
+            @DisplayName("상품 정보와 isLiked = true, isBuy = true 를 반환한다.")
             void it_returns_product_response_dto() {
                 assertEquals(product.getStatus(), responseDto.getStatus());
                 assertEquals(product.getName(), responseDto.getName());
