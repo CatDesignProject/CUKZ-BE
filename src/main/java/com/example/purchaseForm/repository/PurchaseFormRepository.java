@@ -15,4 +15,6 @@ public interface PurchaseFormRepository extends JpaRepository<PurchaseForm, Long
     Page<PurchaseForm> findByMemberId(Long memberId, Pageable pageable);
 
     Page<PurchaseForm> findByProductId(Long productId, Pageable pageable);
+
+    Optional<PurchaseForm> findByProductIdAndMemberId(Long productId, Long memberId);
 }

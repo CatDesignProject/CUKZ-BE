@@ -1,10 +1,12 @@
 package com.example.product.dto.response;
 
+import com.example.likes.entity.Likes;
 import com.example.product.dto.ProductOptionDto;
 import com.example.product.entity.Option;
 import com.example.product.entity.Product;
 import com.example.product.enums.SaleStatus;
 import com.example.product_image.entity.ProductImage;
+import com.example.purchaseForm.entity.PurchaseForm;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +15,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Builder
@@ -32,6 +35,8 @@ public class ProductResponseDto {
     private List<ProductOptionDto> options;
     @JsonProperty("isLiked")
     private Boolean isLiked;
+    @JsonProperty("isBuy")
+    private Boolean isBuy;
     private Long sellerId;
     private String sellerAccount;
 
@@ -64,7 +69,7 @@ public class ProductResponseDto {
                 .build();
     }
 
-    public static ProductResponseDto toResponseDto(Product product, boolean isLiked) {
+    public static ProductResponseDto toResponseDto(Product product, Optional<Likes> isLiked, Optional<PurchaseForm> isBuy) {
         List<ProductImage> productImages = product.getProductImages();
         List<String> imageUrls = new ArrayList<>();
         for (ProductImage productImage : productImages) {
@@ -89,7 +94,8 @@ public class ProductResponseDto {
                 .nickname(product.getMember().getNickname())
                 .likesCount(product.getLikesCount())
                 .options(productOptionDtos)
-                .isLiked(isLiked)
+                .isLiked(isLiked.isPresent())
+                .isBuy(isBuy.isPresent())
                 .sellerId(product.getMember().getId())
                 .sellerAccount(product.getSellerAccount())
                 .build();

@@ -17,6 +17,8 @@ import com.example.product.repository.OptionRepository;
 import com.example.product.repository.ProductRepository;
 import com.example.product_image.entity.ProductImage;
 import com.example.product_image.repository.ProductImageRepository;
+import com.example.purchaseForm.entity.PurchaseForm;
+import com.example.purchaseForm.repository.PurchaseFormRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +38,7 @@ public class ProductService {
     private final ProductImageRepository productImageRepository;
     private final MemberRepository memberRepository;
     private final LikesRepository likesRepository;
+    private final PurchaseFormRepository purchaseFormRepository;
 
     @Transactional
     public ProductResponseDto saveProduct(ProductRequestDto productRequestDto, Long memberId) {
@@ -74,12 +77,9 @@ public class ProductService {
                 );
 
         Optional<Likes> isLiked = likesRepository.findByProductIdAndMemberId(productId, memberId);
+        Optional<PurchaseForm> isBuy = purchaseFormRepository.findByProductIdAndMemberId(productId, memberId);
 
-        if (isLiked.isPresent()) {
-            return ProductResponseDto.toResponseDto(product, true);
-        }
-
-        return ProductResponseDto.toResponseDto(product, false);
+        return ProductResponseDto.toResponseDto(product, isLiked, isBuy);
     }
 
     @Transactional
