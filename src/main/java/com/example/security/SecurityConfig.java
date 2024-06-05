@@ -41,10 +41,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(new AntPathRequestMatcher("/**/admin/**")).hasAuthority("ROLE_ADMIN")
                         .requestMatchers(new AntPathRequestMatcher("/**/non-members/**")).permitAll()   // 비회원 요청 허용
-                        .requestMatchers("/products/{productId:\\d+}/likes","/products/{productId:\\d+}/unlikes",
-                                "/members/likes","/reviews/members/{sellerId:\\d+}/purchaseForm/{purchaseFormId:\\d+}").hasAuthority("ROLE_USER")
-                        .requestMatchers("/members/login", "/members/register","/members/verify-username",
-                                "/products/search","/products/paging","/products/{productId:\\d+}","/reviews/members/{sellerId:\\d+}").permitAll()
+                        .requestMatchers("/products/{productId:\\d+}/likes", "/products/{productId:\\d+}/unlikes",
+                                "/members/likes", "/reviews/members/{sellerId:\\d+}/purchaseForm/{purchaseFormId:\\d+}").hasAuthority("ROLE_USER")
+                        .requestMatchers("/members/login", "/members/register", "/members/verify-username", "/verify-email",
+                                "/products/search", "/products/paging", "/products/{productId:\\d+}", "/reviews/members/{sellerId:\\d+}").permitAll()
                         .anyRequest().authenticated())
                 .securityContext(securityContext -> new HttpSessionSecurityContextRepository())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
