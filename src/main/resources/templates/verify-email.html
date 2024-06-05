@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title th:remove="all">[CUKZ] 총대 신청 인증 메일</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<h3>[CUKZ] 총대 신청 인증 메일</h3>
+<p>
+    안녕하세요, <span th:text="${nickname}">nickname</span>님! 아래의 링크를 눌러 인증을 진행해주세요.
+</p>
+<p>
+    <span th:text="${verificationLink}">link</span>
+</p>
+</form>
+</body>
+</html>
