@@ -43,6 +43,11 @@ public class Member {
         this.nickname = nickname;
     }
 
+    public void promoteManager(String email) {
+        this.email = email;
+        this.role = MemberRole.manager;
+    }
+
     @Builder
     private Member(String username, String password, String nickname) {
         this.username = username;

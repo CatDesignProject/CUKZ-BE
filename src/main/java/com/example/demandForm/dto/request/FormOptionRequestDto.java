@@ -25,7 +25,9 @@ public class FormOptionRequestDto {
         return PurchaseOption.builder()
                 .quantity(this.quantity)
                 .purchaseForm(purchaseForm)
-                .option(option)
+                .optionId(optionId)
+                .optionName(option.getName())
+                .additionalPrice(option.getAdditionalPrice())
                 .build();
     }
 
@@ -34,7 +36,9 @@ public class FormOptionRequestDto {
         return DemandOption.builder()
                 .quantity(this.quantity)
                 .demandForm(demandForm)
-                .option(option)
+                .optionId(optionId)
+                .optionName(option.getName())
+                .additionalPrice(option.getAdditionalPrice())
                 .build();
     }
 }

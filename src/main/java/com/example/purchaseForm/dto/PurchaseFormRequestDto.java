@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,15 +19,14 @@ public class PurchaseFormRequestDto {
 
     private String buyerName;
     private String buyerPhone;
-    private String buyerEmail;
+    //private String buyerEmail;
 
-    private Long deliveryId;
+    //private Long deliveryId;
     private String recipientName;
     private String recipientPhone;
     private String address;
 
     private String payerName;
-    private LocalDate payDate;
 
     private String refundName;
     private String refundAccount;
@@ -42,13 +40,12 @@ public class PurchaseFormRequestDto {
                 .product(product)
                 .buyerName(this.buyerName)
                 .buyerPhone(this.buyerPhone)
-                .buyerEmail(this.buyerEmail)
-                .deliveryId(this.deliveryId)
+                //.buyerEmail(this.buyerEmail)
+                //.deliveryId(this.deliveryId)
                 .recipientName(this.recipientName)
                 .recipientPhone(this.recipientPhone)
                 .address(this.address)
                 .payerName(this.payerName)
-                .payDate(this.payDate)
                 .refundName(this.refundName)
                 .refundAccount(this.refundAccount)
                 .purchaseOptionList(new ArrayList<>())
