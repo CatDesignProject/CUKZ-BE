@@ -113,7 +113,7 @@ public class DemandFormService {
         DemandForm demandForm = findDemandForm(demandFormId);
 
         demandForm.getDemandOptionList().forEach(demandOption -> {
-            Option option = demandOption.getOption();
+            Option option = findOption(demandOption.getOptionId());
             option.updateDemandQuantity(-demandOption.getQuantity());
         });
 
