@@ -16,6 +16,8 @@ import com.example.product.repository.OptionRepository;
 import com.example.product.repository.ProductRepository;
 import com.example.product_image.entity.ProductImage;
 import com.example.product_image.repository.ProductImageRepository;
+import com.example.purchaseForm.entity.PurchaseForm;
+import com.example.purchaseForm.repository.PurchaseFormRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -52,6 +54,9 @@ class ProductServiceTest {
 
     @Mock
     LikesRepository likesRepository;
+
+    @Mock
+    PurchaseFormRepository purchaseFormRepository;
 
     @InjectMocks
     ProductService productService;
@@ -131,20 +136,22 @@ class ProductServiceTest {
     class Describe_findProduct {
 
         @Nested
-        @DisplayName("유효한 productId이고 내가 좋아요를 누른 상품인 경우")
+        @DisplayName("유효한 productId이고 내가 좋아요를 누르고 구매한 상품인 경우")
         class Context_with_exist_product_and_likes {
             @BeforeEach
             void setUp() {
                 product = ProductTestBuilder.testProductBuild();
                 member2 = ProductTestBuilder.testMember2Build();
                 Likes likes = new Likes();
+                PurchaseForm purchaseForm = new PurchaseForm();
 
                 given(productRepository.findFetchById(product.getId())).willReturn(Optional.of(product));
                 given(likesRepository.findByProductIdAndMemberId(product.getId(), member2.getId())).willReturn(Optional.of(likes));
+                given(purchaseFormRepository.findByProductIdAndMemberId(product.getId(), member2.getId())).willReturn(Optional.of(purchaseForm));
                 responseDto = productService.findProduct(product.getId(), member2.getId());
             }
             @Test
-            @DisplayName("상품 정보와 isLiked = true를 반환한다.")
+            @DisplayName("상품 정보와 isLiked = true isBuy = true 를 반환한다.")
             void it_returns_product_response_dto() {
                 assertEquals(product.getStatus(), responseDto.getStatus());
                 assertEquals(product.getName(), responseDto.getName());
@@ -158,13 +165,14 @@ class ProductServiceTest {
                 assertEquals("www.s3v2.png", responseDto.getImageUrls().get(1));
                 assertEquals(product.getOptions().size(), responseDto.getOptions().size());
                 assertEquals(true, responseDto.getIsLiked());
+                assertEquals(true, responseDto.getIsBuy());
                 assertEquals(product.getMember().getId(), responseDto.getSellerId());
                 assertEquals(product.getSellerAccount(), responseDto.getSellerAccount());
             }
         }
 
         @Nested
-        @DisplayName("유효한 productId이고 내가 좋아요를 누르지 않은 상품인 경우")
+        @DisplayName("유효한 productId이고 내가 좋아요를 누르지 않고 구매하지 않은 상품인 경우")
         class Context_with_exist_product_and_not_likes {
             @BeforeEach
             void setUp() {
@@ -173,10 +181,11 @@ class ProductServiceTest {
 
                 given(productRepository.findFetchById(product.getId())).willReturn(Optional.of(product));
                 given(likesRepository.findByProductIdAndMemberId(product.getId(), member2.getId())).willReturn(Optional.empty());
+                given(purchaseFormRepository.findByProductIdAndMemberId(product.getId(), member2.getId())).willReturn(Optional.empty());
                 responseDto = productService.findProduct(product.getId(), member2.getId());
             }
             @Test
-            @DisplayName("상품 정보와 isLiked = false 반환한다.")
+            @DisplayName("상품 정보와 isLiked = false, isBuy = false 를 반환한다.")
             void it_returns_product_response_dto() {
                 assertEquals(product.getStatus(), responseDto.getStatus());
                 assertEquals(product.getName(), responseDto.getName());
@@ -190,6 +199,7 @@ class ProductServiceTest {
                 assertEquals("www.s3v2.png", responseDto.getImageUrls().get(1));
                 assertEquals(product.getOptions().size(), responseDto.getOptions().size());
                 assertEquals(false, responseDto.getIsLiked());
+                assertEquals(false, responseDto.getIsBuy());
                 assertEquals(product.getMember().getId(), responseDto.getSellerId());
                 assertEquals(product.getSellerAccount(), responseDto.getSellerAccount());
             }
