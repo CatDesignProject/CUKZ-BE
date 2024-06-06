@@ -59,7 +59,7 @@ public class DemandFormService {
         demandFormRepository.save(demandForm);
 
         // 옵션 리스트에 대한 정보 저장
-        saveOptions(requestDto, demandForm);
+        saveOptions(requestDto, demandForm, productId);
 
         return DemandFormResponseDto.toResponseDto(demandForm);
     }
@@ -76,7 +76,7 @@ public class DemandFormService {
         long orderNumber = generateOrderNumber();
         DemandForm demandForm = requestDto.toEntity(orderNumber, product);
         demandFormRepository.save(demandForm);
-        saveOptions(requestDto, demandForm);
+        saveOptions(requestDto, demandForm, productId);
 
         return DemandFormResponseDto.toResponseDto(demandForm);
     }
@@ -229,7 +229,7 @@ public class DemandFormService {
         }
     }
 
-    private void saveOptions(DemandFormRequestDto requestDto, DemandForm demandForm) {
+    private void saveOptions(DemandFormRequestDto requestDto, DemandForm demandForm, Long productId) {
 
         for (FormOptionRequestDto optionDto : requestDto.getOptionList()) {
             // 옵션 수요수량 업데이트
@@ -237,7 +237,7 @@ public class DemandFormService {
             option.updateDemandQuantity(optionDto.getQuantity());
 
             // 옵션 수요조사 내역 저장
-            DemandOption demandOption = optionDto.toEntity(demandForm, option);
+            DemandOption demandOption = optionDto.toEntity(demandForm, option, productId);
             demandOptionRepository.save(demandOption);
             demandForm.getDemandOptionList().add(demandOption);
         }
