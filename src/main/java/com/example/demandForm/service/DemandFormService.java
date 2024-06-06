@@ -7,6 +7,7 @@ import com.example.demandForm.dto.request.FormOptionRequestDto;
 import com.example.demandForm.dto.request.GetFormNonMemberRequestDto;
 import com.example.demandForm.dto.request.ProductDemandRequestDto;
 import com.example.demandForm.dto.response.DemandFormResponseDto;
+import com.example.demandForm.dto.response.FormOptionResponseDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.entity.DemandOption;
 import com.example.demandForm.repository.DemandFormRepository;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 
 import static com.example.common.exception.BaseErrorCode.*;
@@ -57,7 +59,7 @@ public class DemandFormService {
         demandFormRepository.save(demandForm);
 
         // 옵션 리스트에 대한 정보 저장
-        saveOptions(requestDto, demandForm);
+        saveOptions(requestDto, demandForm, productId);
 
         return DemandFormResponseDto.toResponseDto(demandForm);
     }
@@ -74,7 +76,7 @@ public class DemandFormService {
         long orderNumber = generateOrderNumber();
         DemandForm demandForm = requestDto.toEntity(orderNumber, product);
         demandFormRepository.save(demandForm);
-        saveOptions(requestDto, demandForm);
+        saveOptions(requestDto, demandForm, productId);
 
         return DemandFormResponseDto.toResponseDto(demandForm);
     }
@@ -131,6 +133,19 @@ public class DemandFormService {
         Page<DemandForm> demandFormList = demandFormRepository.findByProductId(productId, pageable);
 
         return demandFormList.map(DemandFormResponseDto::toResponseDto);
+    }
+
+    @Transactional(readOnly = true)
+    public List<FormOptionResponseDto> getDemandCount(Long productId, Long memberId) {
+
+        Product product = findProduct(productId);
+        checkMember(product, memberId);
+
+        List<DemandOptionRepository.DemandOptionSummary> demandOptionList = demandOptionRepository.findSummarizedByProductId(productId);
+
+        return demandOptionList.stream()
+                .map(FormOptionResponseDto::toResponseDto)
+                .toList();
     }
 
     @Transactional
@@ -214,7 +229,7 @@ public class DemandFormService {
         }
     }
 
-    private void saveOptions(DemandFormRequestDto requestDto, DemandForm demandForm) {
+    private void saveOptions(DemandFormRequestDto requestDto, DemandForm demandForm, Long productId) {
 
         for (FormOptionRequestDto optionDto : requestDto.getOptionList()) {
             // 옵션 수요수량 업데이트
@@ -222,7 +237,7 @@ public class DemandFormService {
             option.updateDemandQuantity(optionDto.getQuantity());
 
             // 옵션 수요조사 내역 저장
-            DemandOption demandOption = optionDto.toEntity(demandForm, option);
+            DemandOption demandOption = optionDto.toEntity(demandForm, option, productId);
             demandOptionRepository.save(demandOption);
             demandForm.getDemandOptionList().add(demandOption);
         }

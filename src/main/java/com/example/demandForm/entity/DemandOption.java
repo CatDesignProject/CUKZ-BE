@@ -19,6 +19,8 @@ public class DemandOption {
 
     private int quantity;
 
+    private Long productId;
+
     private Long optionId;
 
     private String optionName;
