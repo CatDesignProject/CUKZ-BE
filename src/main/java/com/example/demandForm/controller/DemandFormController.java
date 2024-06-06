@@ -5,6 +5,7 @@ import com.example.demandForm.dto.request.DemandFormRequestDto;
 import com.example.demandForm.dto.request.GetFormNonMemberRequestDto;
 import com.example.demandForm.dto.request.ProductDemandRequestDto;
 import com.example.demandForm.dto.response.DemandFormResponseDto;
+import com.example.demandForm.dto.response.FormOptionResponseDto;
 import com.example.demandForm.service.DemandFormService;
 import com.example.product.dto.response.ProductResponseDto;
 import com.example.security.authentication.AuthenticatedMember;
@@ -15,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -97,6 +100,16 @@ public class DemandFormController {
                 member.getMemberId());
 
         return ResponseEntity.ok().body(PageResponseDto.toResponseDto(responseDtoList));
+    }
+
+    @GetMapping("/products/{productId}/demand/count")
+    public ResponseEntity<List<FormOptionResponseDto>> getDemandCount(
+            @PathVariable Long productId,
+            @AuthenticationPrincipal AuthenticatedMember member) {
+
+        List<FormOptionResponseDto> responseDtoList = demandFormService.getDemandCount(productId, member.getMemberId());
+
+        return ResponseEntity.ok().body(responseDtoList);
     }
 
     @PatchMapping("products/{productId}/demand")

@@ -7,6 +7,7 @@ import com.example.demandForm.dto.request.FormOptionRequestDto;
 import com.example.demandForm.dto.request.GetFormNonMemberRequestDto;
 import com.example.demandForm.dto.request.ProductDemandRequestDto;
 import com.example.demandForm.dto.response.DemandFormResponseDto;
+import com.example.demandForm.dto.response.FormOptionResponseDto;
 import com.example.demandForm.entity.DemandForm;
 import com.example.demandForm.entity.DemandOption;
 import com.example.demandForm.repository.DemandFormRepository;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 
 import static com.example.common.exception.BaseErrorCode.*;
@@ -131,6 +133,19 @@ public class DemandFormService {
         Page<DemandForm> demandFormList = demandFormRepository.findByProductId(productId, pageable);
 
         return demandFormList.map(DemandFormResponseDto::toResponseDto);
+    }
+
+    @Transactional(readOnly = true)
+    public List<FormOptionResponseDto> getDemandCount(Long productId, Long memberId) {
+
+        Product product = findProduct(productId);
+        checkMember(product, memberId);
+
+        List<DemandOptionRepository.DemandOptionSummary> demandOptionList = demandOptionRepository.findSummarizedByProductId(productId);
+
+        return demandOptionList.stream()
+                .map(FormOptionResponseDto::toResponseDto)
+                .toList();
     }
 
     @Transactional
