@@ -1,6 +1,7 @@
 package com.example.demandForm.dto.response;
 
 import com.example.demandForm.entity.DemandOption;
+import com.example.demandForm.repository.DemandOptionRepository;
 import com.example.purchaseForm.entity.PurchaseOption;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +26,16 @@ public class FormOptionResponseDto {
                 .optionName(demandOption.getOptionName())
                 .additionalPrice(demandOption.getAdditionalPrice())
                 .quantity(demandOption.getQuantity())
+                .build();
+    }
+
+    public static FormOptionResponseDto toResponseDto(DemandOptionRepository.DemandOptionSummary summary) {
+
+        return FormOptionResponseDto.builder()
+                .optionId(summary.getOptionId())
+                .optionName(summary.getOptionName())
+                .additionalPrice(summary.getAdditionalPrice())
+                .quantity(summary.getQuantity())
                 .build();
     }
 

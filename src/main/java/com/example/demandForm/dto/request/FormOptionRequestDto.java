@@ -31,11 +31,12 @@ public class FormOptionRequestDto {
                 .build();
     }
 
-    public DemandOption toEntity(DemandForm demandForm, Option option) {
+    public DemandOption toEntity(DemandForm demandForm, Option option, Long productId) {
 
         return DemandOption.builder()
                 .quantity(this.quantity)
                 .demandForm(demandForm)
+                .productId(productId)
                 .optionId(optionId)
                 .optionName(option.getName())
                 .additionalPrice(option.getAdditionalPrice())
