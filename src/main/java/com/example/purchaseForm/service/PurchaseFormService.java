@@ -18,6 +18,7 @@ import com.example.purchaseForm.repository.DeliveryRepository;
 import com.example.purchaseForm.repository.PurchaseFormRepository;
 import com.example.purchaseForm.repository.PurchaseOptionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,7 @@ import java.util.Random;
 import static com.example.common.exception.BaseErrorCode.*;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PurchaseFormService {
 
@@ -248,6 +250,7 @@ public class PurchaseFormService {
     public void checkPeriod(Product product) {
         // 판매 기간이 아님
         LocalDateTime now = LocalDateTime.now();
+        log.info("now: {}", now);
         if (now.isAfter(product.getEndDate()) || now.isBefore(product.getStartDate())) {
             throw new GlobalException(NOT_IN_PERIOD);
         }
