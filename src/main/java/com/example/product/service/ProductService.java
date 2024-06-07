@@ -77,7 +77,9 @@ public class ProductService {
                 );
 
         boolean isLiked = likesRepository.findByProductIdAndMemberId(productId, memberId).isPresent();
-        boolean isBuy = purchaseFormRepository.findByProductIdAndMemberId(productId, memberId).isPresent();
+
+        List<PurchaseForm> purchaseForms = purchaseFormRepository.findByProductIdAndMemberId(productId, memberId);
+        boolean isBuy = !purchaseForms.isEmpty();
 
         return ProductResponseDto.toResponseDto(product, isLiked, isBuy);
     }
