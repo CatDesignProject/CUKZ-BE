@@ -250,7 +250,6 @@ public class PurchaseFormService {
     public void checkPeriod(Product product) {
         // 판매 기간이 아님
         LocalDateTime now = LocalDateTime.now();
-        log.info("now: {}", now);
         if (now.isAfter(product.getEndDate()) || now.isBefore(product.getStartDate())) {
             throw new GlobalException(NOT_IN_PERIOD);
         }
