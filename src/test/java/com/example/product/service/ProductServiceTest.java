@@ -29,6 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -147,7 +148,7 @@ class ProductServiceTest {
 
                 given(productRepository.findFetchById(product.getId())).willReturn(Optional.of(product));
                 given(likesRepository.findByProductIdAndMemberId(product.getId(), member2.getId())).willReturn(Optional.of(likes));
-                given(purchaseFormRepository.findByProductIdAndMemberId(product.getId(), member2.getId())).willReturn(Optional.of(purchaseForm));
+                given(purchaseFormRepository.findByProductIdAndMemberId(product.getId(), member2.getId())).willReturn(Arrays.asList(purchaseForm));
                 responseDto = productService.findProduct(product.getId(), member2.getId());
             }
             @Test
@@ -181,7 +182,7 @@ class ProductServiceTest {
 
                 given(productRepository.findFetchById(product.getId())).willReturn(Optional.of(product));
                 given(likesRepository.findByProductIdAndMemberId(product.getId(), member2.getId())).willReturn(Optional.empty());
-                given(purchaseFormRepository.findByProductIdAndMemberId(product.getId(), member2.getId())).willReturn(Optional.empty());
+                given(purchaseFormRepository.findByProductIdAndMemberId(product.getId(), member2.getId())).willReturn(Arrays.asList());
                 responseDto = productService.findProduct(product.getId(), member2.getId());
             }
             @Test
