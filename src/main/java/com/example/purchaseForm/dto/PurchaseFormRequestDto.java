@@ -46,6 +46,7 @@ public class PurchaseFormRequestDto {
                 .recipientPhone(this.recipientPhone)
                 .address(this.address)
                 .payerName(this.payerName)
+                .payStatus(false)
                 .refundName(this.refundName)
                 .refundAccount(this.refundAccount)
                 .purchaseOptionList(new ArrayList<>())
