@@ -111,13 +111,13 @@ public class PurchaseFormController {
         return ResponseEntity.ok().body(responseDto);
     }
 
-    @PatchMapping("/products/{productId}/purchase/pay")
+    @PatchMapping("/purchase/{purchaseFormId}/pay")
     public ResponseEntity<String> updatePayStatus(
-            @PathVariable Long productId,
+            @PathVariable Long purchaseFormId,
             @Valid @RequestBody PayRequestDto requestDto,
             @AuthenticationPrincipal AuthenticatedMember member) {
 
-        purchaseFormService.updatePayStatus(productId, requestDto, member.getMemberId());
+        purchaseFormService.updatePayStatus(purchaseFormId, requestDto, member.getMemberId());
 
         return ResponseEntity.ok().body("입금 상태 변경이 완료되었습니다.");
     }

@@ -142,15 +142,12 @@ public class PurchaseFormService {
     }
 
     @Transactional
-    public void updatePayStatus(Long productId, PayRequestDto requestDto, Long memberId) {
+    public void updatePayStatus(Long purchaseFormId, PayRequestDto requestDto, Long memberId) {
 
-        Product product = findProduct(productId);
-        checkMember(product, memberId);
+        PurchaseForm purchaseForm = findPurchaseForm(purchaseFormId);
+        checkMember(purchaseForm.getProduct(), memberId);
 
-        for (Long formId : requestDto.getPurchaseFormIds()) {
-            PurchaseForm purchaseForm = findPurchaseForm(formId);
-            purchaseForm.updatePayStatus(requestDto.isPayStatus());
-        }
+        purchaseForm.updatePayStatus(requestDto.isPayStatus());
     }
 
     @Transactional
