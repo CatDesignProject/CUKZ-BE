@@ -22,7 +22,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findByMemberId(Long memberId, Pageable pageable);
 
     @Query("SELECT p FROM Product p WHERE DATE(p.endDate) < :date AND p.status = :status ORDER BY p.endDate DESC")
-    List<Product> findEndedProduct(
-            @Param("date") LocalDate date,
-            @Param("status") SaleStatus status);
+    List<Product> findEndedProduct(@Param("date") LocalDate date, @Param("status") SaleStatus status);
 }
