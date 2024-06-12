@@ -282,14 +282,12 @@ class PurchaseFormServiceTest implements PurchaseTest {
     class updatePayStatusTest {
         PayRequestDto payRequestDto = PayRequestDto.builder()
                 .payStatus(true)
-                .purchaseFormIds(List.of(1L, 2L))
                 .build();
 
         @Test
         @DisplayName("성공")
         void updatePayStatusTest_success() {
             // given
-            when(productRepository.findById(any())).thenReturn(Optional.of(product));
             when(purchaseFormRepository.findById(any())).thenReturn(Optional.of(purchaseForm));
 
             // when
@@ -303,7 +301,6 @@ class PurchaseFormServiceTest implements PurchaseTest {
         @DisplayName("실패 - 구매 폼 없음")
         void updatePayStatusTest_fail_notFound() {
             // given
-            when(productRepository.findById(any())).thenReturn(Optional.of(product));
             when(purchaseFormRepository.findById(any())).thenReturn(Optional.empty());
 
             // when - then
@@ -318,7 +315,7 @@ class PurchaseFormServiceTest implements PurchaseTest {
         void updatePayStatusTest_fail_unauthorized() {
             // given
             Long memberId2 = 2L;
-            when(productRepository.findById(any())).thenReturn(Optional.of(product));
+            when(purchaseFormRepository.findById(any())).thenReturn(Optional.of(purchaseForm));
 
             // when - then
             GlobalException e = assertThrows(GlobalException.class, () -> {
