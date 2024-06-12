@@ -19,12 +19,26 @@ import java.util.List;
 public class PurchaseFormResponseDto {
 
     private Long id;
+    private Long memberId;
+
     private Long productId;
     private String productName;
     private int price;
     private SaleStatus status;
-    private Long memberId;
+
+    private String buyerName;
+    private String buyerPhone;
+
+    private String recipientName;
+    private String recipientPhone;
+    private String address;
+
+    private String payerName;
+    private String refundName;
+    private String refundAccount;
+
     private int totalPrice;
+
     private List<String> imageUrlList;
     private List<FormOptionResponseDto> optionList;
 
@@ -42,11 +56,19 @@ public class PurchaseFormResponseDto {
 
         return PurchaseFormResponseDto.builder()
                 .id(purchaseForm.getId())
+                .memberId(purchaseForm.getMemberId())
                 .productId(product.getId())
                 .productName(product.getName())
                 .price(product.getPrice())
                 .status(product.getStatus())
-                .memberId(purchaseForm.getMemberId())
+                .buyerName(purchaseForm.getBuyerName())
+                .buyerPhone(purchaseForm.getBuyerPhone())
+                .recipientName(purchaseForm.getRecipientName())
+                .recipientPhone(purchaseForm.getRecipientPhone())
+                .address(purchaseForm.getAddress())
+                .payerName(purchaseForm.getPayerName())
+                .refundName(purchaseForm.getRefundName())
+                .refundAccount(purchaseForm.getRefundAccount())
                 .totalPrice(purchaseForm.getTotalPrice())
                 .optionList(optionList)
                 .imageUrlList(imageUrlList)
