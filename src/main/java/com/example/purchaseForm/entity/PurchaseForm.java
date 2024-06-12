@@ -24,9 +24,9 @@ public class PurchaseForm extends TimeStamp {
 
     private String buyerName;
     private String buyerPhone;
-    private String buyerEmail;
+    //private String buyerEmail;
 
-    private Long deliveryId;
+    //private Long deliveryId;
     private String recipientName;
     private String recipientPhone;
     private String address;
