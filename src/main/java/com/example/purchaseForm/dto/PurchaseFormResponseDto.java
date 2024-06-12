@@ -33,6 +33,7 @@ public class PurchaseFormResponseDto {
     private String recipientPhone;
     private String address;
 
+    private Boolean payStatus;
     private String payerName;
     private String refundName;
     private String refundAccount;
@@ -66,6 +67,7 @@ public class PurchaseFormResponseDto {
                 .recipientName(purchaseForm.getRecipientName())
                 .recipientPhone(purchaseForm.getRecipientPhone())
                 .address(purchaseForm.getAddress())
+                .payStatus(purchaseForm.getPayStatus())
                 .payerName(purchaseForm.getPayerName())
                 .refundName(purchaseForm.getRefundName())
                 .refundAccount(purchaseForm.getRefundAccount())
