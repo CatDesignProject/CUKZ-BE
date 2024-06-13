@@ -26,6 +26,10 @@ public class PurchaseFormResponseDto {
     private int price;
     private SaleStatus status;
 
+    private Long sellerId;
+    private String sellerNickname;
+    private String sellerAccount;
+
     private String buyerName;
     private String buyerPhone;
 
@@ -62,6 +66,9 @@ public class PurchaseFormResponseDto {
                 .productName(product.getName())
                 .price(product.getPrice())
                 .status(product.getStatus())
+                .sellerId(product.getMember().getId())
+                .sellerNickname(product.getMember().getNickname())
+                .sellerAccount(product.getSellerAccount())
                 .buyerName(purchaseForm.getBuyerName())
                 .buyerPhone(purchaseForm.getBuyerPhone())
                 .recipientName(purchaseForm.getRecipientName())
